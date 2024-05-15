@@ -148,7 +148,7 @@ export default function OrganizationModal(props: any) {
                                 onKeyDown={handleKeyDown}
                                 error={!!error}
                                 helperText={error !== '' ? error : ''}
-                                sx={{ mt: !!error ? 2 : '0px' }}
+                                sx={{ mt: error ? 2 : '0px' }}
                             />
                             <IconButton onClick={addOrganization} ref={buttonRef} disabled={newOrganization === ''} sx={{ ml: 1 }} size='medium'><FaPlus fill={newOrganization === '' ? 'lightgrey' : "#3e79f7"} /></IconButton>
                         </Stack>
