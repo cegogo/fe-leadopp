@@ -376,9 +376,9 @@ export default function Accounts() {
 
     const handleRowSelect = (accountId: string) => {
         const selectedIndex = selected.indexOf(accountId);
-        let newSelected: string[] = [...selected];
-        let newSelectedIds: string[] = [...selectedId];
-        let newIsSelectedId: boolean[] = [...isSelectedId];
+        const newSelected: string[] = [...selected];
+        const newSelectedIds: string[] = [...selectedId];
+        const newIsSelectedId: boolean[] = [...isSelectedId];
 
         if (selectedIndex === -1) {
             newSelected.push(accountId);

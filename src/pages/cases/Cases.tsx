@@ -256,9 +256,9 @@ export default function Cases(props: any) {
 
   const handleRowSelect = (casesId: string) => {
     const selectedIndex = selected.indexOf(casesId);
-    let newSelected: string[] = [...selected];
-    let newSelectedIds: string[] = [...selectedId];
-    let newIsSelectedId: boolean[] = [...isSelectedId];
+    const newSelected: string[] = [...selected];
+    const newSelectedIds: string[] = [...selectedId];
+    const newIsSelectedId: boolean[] = [...isSelectedId];
 
     if (selectedIndex === -1) {
       newSelected.push(casesId);

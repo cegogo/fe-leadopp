@@ -143,7 +143,7 @@ export default function Leads(props: any) {
   const [selectedId, setSelectedId] = useState('')
 
   useEffect(() => {
-    if (!!localStorage.getItem('org')) {
+    if (localStorage.getItem('org')) {
       getLeads()
     }
   }, [!!localStorage.getItem('org')]);

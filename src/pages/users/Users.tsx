@@ -398,9 +398,9 @@ export default function Users() {
 
     const handleRowSelect = (userId: string) => {
         const selectedIndex = selected.indexOf(userId);
-        let newSelected: string[] = [...selected];
-        let newSelectedIds: string[] = [...selectedId];
-        let newIsSelectedId: boolean[] = [...isSelectedId];
+        const newSelected: string[] = [...selected];
+        const newSelectedIds: string[] = [...selectedId];
+        const newIsSelectedId: boolean[] = [...isSelectedId];
 
         if (selectedIndex === -1) {
             newSelected.push(userId);
