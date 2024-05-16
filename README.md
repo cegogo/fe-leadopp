@@ -19,8 +19,8 @@ Ensure that the installed packages are listed in your package.json under the dev
 
 ### Step 2: Add Google OAuth Provider Client ID
 
-In your env.md file, add the client ID with your Google API Client ID:
-clientId="77667127780-sfmalfalf-asjbfkasla"
+In your .env file, add the client ID with your Google API Client ID:
+REACT_APP_CLIENT_ID=77667127780-6gtwetwetew.apps.googleusercontent.com
 
 In your index.tsx:
 
