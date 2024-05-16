@@ -342,7 +342,7 @@ export default function Contacts() {
                                                         <TableRow
                                                             tabIndex={-1}
                                                             key={index}
-                                                            sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)', textTransform: 'capitalize' }}>
+                                                            sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)' }}>
                                                             <TableCell
                                                                 className='tableCell-link'
                                                                 onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
