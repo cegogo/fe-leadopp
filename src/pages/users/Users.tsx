@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button, Card, Stack, Tab, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow, Tabs, Toolbar, Typography, Paper, TableCell, IconButton, Checkbox, Tooltip, TableSortLabel, alpha, Select, MenuItem, Container } from '@mui/material'
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
 import { getComparator, stableSort } from '../../components/Sorting';
-import { DeleteModal } from '../../components/DeleteModal';
-import { Spinner } from '../../components/Spinner';
-import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
+import { DeleteModal } from '../../components/DeleteModal';import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
 import { FiChevronRight } from "@react-icons/all-files/fi/FiChevronRight";
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
@@ -434,7 +432,7 @@ export default function Users() {
                             backgroundColor: tab === 'active' ? '#F0F7FF' : '#284871',
                             color: tab === 'active' ? '#3f51b5' : 'white',
                         }}></CustomTab>
-                    <CustomTab value="inactive" label="In Active"
+                    <CustomTab value="inactive" label="Inactive"
                         sx={{
                             backgroundColor: tab === 'inactive' ? '#F0F7FF' : '#284871',
                             color: tab === 'inactive' ? '#3f51b5' : 'white',
@@ -622,7 +620,7 @@ export default function Users() {
                                                             </TableRow>
                                                         )
                                                     })
-                                                : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}><Spinner /></TableCell> </TableRow>
+                                                : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}></TableCell> </TableRow>
                                         }
                                     </TableBody> :
                                     <TableBody>
@@ -708,7 +706,7 @@ export default function Users() {
                                                             </TableRow>
                                                         )
                                                     })
-                                                : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}><Spinner /></TableCell> </TableRow>
+                                                : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}></TableCell> </TableRow>
                                         }
                                     </TableBody>
                                 }

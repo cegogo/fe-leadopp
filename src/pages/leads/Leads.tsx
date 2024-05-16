@@ -464,7 +464,7 @@ export default function Leads(props: any) {
                   </Box>
                 </Box>
               </Box>
-            )) : <Spinner />
+            )) : null
           }
         </Box>
         : <Box sx={{ p: '10px', mt: '5px' }}>
@@ -532,7 +532,7 @@ export default function Leads(props: any) {
                 </Box>
               </Box>
             )) :
-              <Spinner />
+              null
           }
         </Box>}
       {/* {loading &&

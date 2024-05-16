@@ -1,6 +1,5 @@
 import { Avatar, AvatarGroup, Box, Button, Card, List, Stack, Tab, TablePagination, Tabs, Toolbar, Typography, Link, Select, MenuItem, TableContainer, Table, TableSortLabel, TableCell, TableRow, TableHead, Paper, TableBody, IconButton, Container } from '@mui/material'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
-import { Spinner } from '../../components/Spinner';
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
 import { FiChevronRight } from "@react-icons/all-files/fi/FiChevronRight";
@@ -442,7 +441,7 @@ export default function Cases(props: any) {
                           </TableRow>
                         )
                       })
-                      : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}><Spinner /></TableCell></TableRow>
+                      : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}></TableCell></TableRow>
                   }
                   {/* {
                     emptyRows > 0 && (
