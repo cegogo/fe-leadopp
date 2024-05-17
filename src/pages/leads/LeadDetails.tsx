@@ -729,7 +729,7 @@ function LeadDetails(props: any) {
                                             sx={{ backgroundColor: '#808080b5', borderRadius: '8px', color: 'white', textTransform: 'none', ml: '8px', '&:hover': { backgroundColor: '#C0C0C0' } }}
                                             onClick={resetForm}
                                         >
-                                            Cancel
+                                            Reset
                                         </Button>
                                         <Button variant='contained' size='small'
                                             sx={{ backgroundColor: '#1976d2', borderRadius: '8px', textTransform: 'none', ml: '8px', mr: '12px' }}
