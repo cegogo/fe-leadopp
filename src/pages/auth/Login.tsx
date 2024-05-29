@@ -7,7 +7,7 @@ import imgLogo from '../../assets/images/auth/img_logo.png';
 import imgLogin from '../../assets/images/auth/img_login.png';
 import { GoogleButton } from '../../styles/CssStyled';
 import { fetchData } from '../../components/FetchData';
-import { AuthUrl, LoginUrl } from '../../services/ApiUrls';
+import { AuthUrl, LoginUrl, RegisterUrl} from '../../services/ApiUrls';
 import '../../styles/style.css';
 
 declare global {
@@ -23,6 +23,10 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [token, setToken] = useState(false);
+    const [isSignUp, setIsSignUp] = useState(false);
+    const [signUpEmail, setSignUpEmail] = useState('');
+    const [signUpPassword, setSignUpPassword] = useState('');
+    const [signUpError, setSignUpError] = useState('');
 
     useEffect(() => {
         if (localStorage.getItem('Token')) {
@@ -48,7 +52,7 @@ export default function Login() {
         },
     });
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const loginData = { email, password };
         const head = {
@@ -67,6 +71,28 @@ export default function Login() {
             .catch((error) => {
                 console.error('Error:', error);
                 setError('Something went wrong. Please try again.');
+            });
+    };
+
+    const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const signUpData = { email: signUpEmail, password: signUpPassword };
+        const head = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        fetchData(RegisterUrl, 'POST', JSON.stringify(signUpData), head)
+            .then((res) => {
+                if (res.token) {
+                    localStorage.setItem('Token', `Bearer ${res.token}`);
+                    navigate('/app');
+                } else {
+                    setSignUpError('Error during sign-up. Please try again.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setSignUpError('Something went wrong. Please try again.');
             });
     };
 
@@ -91,14 +117,16 @@ export default function Login() {
                         <Grid sx={{ mt: 2 }}>
                             <img src={imgLogo} alt='register_logo' className='register-logo' />
                         </Grid>
-                        <Typography variant='h5' style={{ fontWeight: 'bolder' }}>Sign In</Typography>
+                        <Typography variant='h5' style={{ fontWeight: 'bolder' }}>
+                            {isSignUp ? 'Sign Up' : 'Sign In'}
+                        </Typography>
                         <Grid item sx={{ mt: 4 }}>
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}>
                                 <TextField
                                     label='Email'
                                     type='email'
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={isSignUp ? signUpEmail : email}
+                                    onChange={(e) => isSignUp ? setSignUpEmail(e.target.value) : setEmail(e.target.value)}
                                     required
                                     fullWidth
                                     sx={{ mb: 2 }}
@@ -106,27 +134,34 @@ export default function Login() {
                                 <TextField
                                     label='Password'
                                     type='password'
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={isSignUp ? signUpPassword : password}
+                                    onChange={(e) => isSignUp ? setSignUpPassword(e.target.value) : setPassword(e.target.value)}
                                     required
                                     fullWidth
                                     sx={{ mb: 2 }}
                                 />
-                                {error && (
+                                {(isSignUp ? signUpError : error) && (
                                     <Typography color='error' sx={{ mb: 2 }}>
-                                        {error}
+                                        {isSignUp ? signUpError : error}
                                     </Typography>
                                 )}
                                 <Button type='submit' variant='contained' color='primary' fullWidth>
-                                    Sign In
+                                    {isSignUp ? 'Sign Up' : 'Sign In'}
                                 </Button>
                             </form>
                         </Grid>
                         <Grid item sx={{ mt: 4 }}>
-                            <GoogleButton variant='outlined' onClick={() => login()} sx={{ fontSize: '12px', fontWeight: 500 }}>
-                                Sign in with Google
-                                <img src={imgGoogle} alt='google' style={{ width: '17px', marginLeft: '5px' }} />
-                            </GoogleButton>
+                            {!isSignUp && (
+                                <GoogleButton variant='outlined' onClick={() => login()} sx={{ fontSize: '12px', fontWeight: 500 }}>
+                                    Sign in with Google
+                                    <img src={imgGoogle} alt='google' style={{ width: '17px', marginLeft: '5px' }} />
+                                </GoogleButton>
+                            )}
+                        </Grid>
+                        <Grid item sx={{ mt: 4 }}>
+                            <Button variant='text' onClick={() => setIsSignUp(!isSignUp)}>
+                                {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
+                            </Button>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -140,7 +175,7 @@ export default function Login() {
                     className='rightBg'
                     sx={{ height: '100%', overflow: 'hidden', justifyItems: 'center' }}
                 >
-                    <Grid item >
+                    <Grid item>
                         <Stack sx={{ alignItems: 'center' }}>
                             <h3>Welcome to BottleCRM</h3>
                             <p> Free and OpenSource CRM for small and medium businesses.</p>
