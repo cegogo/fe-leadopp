@@ -39,6 +39,7 @@ import logo from '../assets/images/auth/img_logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 // import MyContext, { MyContextData } from '../context/Context';
 import MyContext from '../context/Context';
+import  Admin  from '../pages/admin/Admin';
 
 // declare global {
 //     interface Window {
@@ -90,6 +91,8 @@ export default function Sidebar(props: any) {
             setScreen('users')
         } else if (location.pathname.split('/')[2] === 'cases') {
             setScreen('cases')
+        } else if (location.pathname.split('/')[2] === 'admin') {
+            setScreen('admin')
         }
     }
 
@@ -110,7 +113,7 @@ export default function Sidebar(props: any) {
             })
     }
 
-    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'users', 'cases']
+    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'users', 'cases', 'admin']
     const navIcons = (text: any, screen: any): React.ReactNode => {
         switch (text) {
             case 'leads':
@@ -303,6 +306,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
+                            <Route path='/app/admin' element={<Admin />} />                        
                         </Routes>
                     </Box>
                 </MyContext.Provider>
