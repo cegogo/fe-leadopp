@@ -116,8 +116,6 @@ const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         });
 };
 
-
-
     return (
         <div>
             <Stack
