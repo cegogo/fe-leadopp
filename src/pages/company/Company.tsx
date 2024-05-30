@@ -4,7 +4,6 @@ import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
 import { FiChevronRight } from "@react-icons/all-files/fi/FiChevronRight";
 import { getComparator, stableSort } from '../../components/Sorting';
-import { Spinner } from '../../components/Spinner';
 import { fetchData } from '../../components/FetchData';
 import { CompaniesUrl, CompanyUrl, ContactUrl } from '../../services/ApiUrls';
 import { AntSwitch, CustomTab, CustomToolbar, FabLeft, FabRight, StyledTableCell, StyledTableRow } from '../../styles/CssStyled';
@@ -278,7 +277,7 @@ export default function Company() {
                                                         /></TableCell>
                                                     </TableRow>
                                                 ))
-                                            : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}><Spinner /></TableCell></TableRow>
+                                            : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
                                     }
                                 </TableBody>
                             </Table>

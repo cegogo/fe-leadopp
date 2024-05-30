@@ -13,7 +13,6 @@ import { AccountsUrl } from '../../services/ApiUrls';
 import { useNavigate } from 'react-router-dom';
 import { DeleteModal } from '../../components/DeleteModal';
 import { Tags } from '../../components/Tags';
-import { Spinner } from '../../components/Spinner';
 import styled from '@emotion/styled';
 import '../../styles/style.css';
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
@@ -608,7 +607,7 @@ export default function Accounts() {
                                                             </TableRow>
                                                         )
                                                     })
-                                                : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}><Spinner /></TableCell></TableRow>
+                                                : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
                                         }
                                         {
                                             // emptyRows > 0 && (
@@ -686,7 +685,7 @@ export default function Accounts() {
                                                         </TableRow>
                                                     )
                                                 })
-                                                : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}><Spinner /></TableCell></TableRow>
+                                                : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
                                         }
                                     </TableBody>
                                 }
