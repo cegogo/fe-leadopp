@@ -53,48 +53,70 @@ export default function Login() {
     });
 
     const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const loginData = { email, password };
-        const head = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        };
-        fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
-            .then((res) => {
-                if (res.token) {
-                    localStorage.setItem('Token', `Bearer ${res.token}`);
-                    navigate('/app');
-                } else {
-                    setError('Invalid email or password');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setError('Something went wrong. Please try again.');
-            });
+    e.preventDefault();
+    const loginData = { email, password };
+    const head = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
     };
 
-    const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const signUpData = { email: signUpEmail, password: signUpPassword };
-        const head = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        };
-        fetchData(RegisterUrl, 'POST', JSON.stringify(signUpData), head)
-            .then((res) => {
-                if (res.token) {
-                    localStorage.setItem('Token', `Bearer ${res.token}`);
-                    navigate('/app');
-                } else {
-                    setSignUpError('Error during sign-up. Please try again.');
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setSignUpError('Something went wrong. Please try again.');
-            });
+    fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
+        .then((res) => {
+            console.log('Response:', res);
+            if (res.access_token) {
+                localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                navigate('/app');
+            } else {
+                console.log('Login failed:', res);
+                setError('Invalid email or password');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            setError('Something went wrong. Please try again.');
+        });
+};
+
+
+const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const signUpData = { email: signUpEmail, password: signUpPassword };
+    const head = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
     };
+
+    fetchData(RegisterUrl, 'POST', JSON.stringify(signUpData), head)
+        .then((res) => {
+            console.log('Sign-up response:', res);
+            if (res.email && res.user_id) {
+                // Optionally, log the user in automatically or navigate to a different page
+                // For example, you might want to log the user in automatically by making a login request
+                const loginData = { email: signUpEmail, password: signUpPassword };
+                fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
+                    .then((loginRes) => {
+                        if (loginRes.access_token) {
+                            localStorage.setItem('Token', `Bearer ${loginRes.access_token}`);
+                            navigate('/app');
+                        } else {
+                            setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Auto-login error:', error);
+                        setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
+                    });
+            } else {
+                setSignUpError('Error during sign-up. Please try again.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            setSignUpError('Something went wrong. Please try again.');
+        });
+};
+
+
 
     return (
         <div>
