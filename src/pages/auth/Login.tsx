@@ -171,9 +171,11 @@ export default function Login() {
                             <img src={imgLogo} alt='register_logo' className='register-logo' />
                         </Grid>
                         <Typography variant='h5' style={{ fontWeight: 'bolder' }}>
+                            {/* Choosing the header depend on condition */}
                             {userExists ? 'Sign In' : 'Sign Up'}
                         </Typography>
                         <Grid item sx={{ mt: 4 }}>
+                            {/* Rendering one form and choosing handler on submit depend on condition */}
                             <form onSubmit={userExists ? handleLoginSubmit : handleSignUpSubmit}>
                                 <TextField
                                     label='Email'
@@ -203,6 +205,7 @@ export default function Login() {
                                 </Button>
                             </form>
                         </Grid>
+                        {/* Here it should be another condition for google aut is disabled or not */}
                         {userExists && (
                             <Grid item sx={{ mt: 4 }}>
                                 <GoogleButton variant='outlined' onClick={() => login()} sx={{ fontSize: '12px', fontWeight: 500 }}>

@@ -29,5 +29,5 @@ export const UserUrl = 'user'
 export const ProfileUrl = 'profile'
 //  admin
 export const AdminUrl = 'admin'
-// User count checking
+// User count checking (no idea why it's not working without full url)
 export const CheckUserCountUrl = 'http://localhost:8000/api/check-user-count/'
