@@ -7,7 +7,7 @@ import imgLogo from '../../assets/images/auth/img_logo.png';
 import imgLogin from '../../assets/images/auth/img_login.png';
 import { GoogleButton } from '../../styles/CssStyled';
 import { fetchData } from '../../components/FetchData';
-import { AuthUrl, LoginUrl, RegisterUrl} from '../../services/ApiUrls';
+import { AuthUrl, LoginUrl, RegisterUrl, CheckUserCountUrl } from '../../services/ApiUrls';
 import '../../styles/style.css';
 
 declare global {
@@ -27,11 +27,28 @@ export default function Login() {
     const [signUpEmail, setSignUpEmail] = useState('');
     const [signUpPassword, setSignUpPassword] = useState('');
     const [signUpError, setSignUpError] = useState('');
+    const [userExists, setUserExists] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem('Token')) {
             navigate('/app');
         }
+
+        // Check if users exist in the database
+        fetch(CheckUserCountUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setUserExists(data.user_count > 0);
+        })
+        .catch(error => {
+            console.error('Error fetching user count:', error);
+        });
     }, [token, navigate]);
 
     const login = useGoogleLogin({
@@ -53,70 +70,62 @@ export default function Login() {
     });
 
     const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const loginData = { email, password };
-    const head = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        e.preventDefault();
+        const loginData = { email, password };
+        const head = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
+            .then((res) => {
+                if (res.access_token) {
+                    localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                    navigate('/app');
+                } else {
+                    setError('Invalid email or password');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setError('Something went wrong. Please try again.');
+            });
     };
 
-    fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
-        .then((res) => {
-            console.log('Response:', res);
-            if (res.access_token) {
-                localStorage.setItem('Token', `Bearer ${res.access_token}`);
-                navigate('/app');
-            } else {
-                console.log('Login failed:', res);
-                setError('Invalid email or password');
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            setError('Something went wrong. Please try again.');
-        });
-};
+    const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const signUpData = { email: signUpEmail, password: signUpPassword };
+        const head = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
 
-
-const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const signUpData = { email: signUpEmail, password: signUpPassword };
-    const head = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    };
-
-    fetchData(RegisterUrl, 'POST', JSON.stringify(signUpData), head)
-        .then((res) => {
-            console.log('Sign-up response:', res);
-            if (res.email && res.user_id) {
-                // Optionally, log the user in automatically or navigate to a different page
-                // For example, you might want to log the user in automatically by making a login request
-                const loginData = { email: signUpEmail, password: signUpPassword };
-                fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
-                    .then((loginRes) => {
-                        if (loginRes.access_token) {
-                            localStorage.setItem('Token', `Bearer ${loginRes.access_token}`);
-                            navigate('/app');
-                        } else {
+        fetchData(RegisterUrl, 'POST', JSON.stringify(signUpData), head)
+            .then((res) => {
+                if (res.email && res.user_id) {
+                    const loginData = { email: signUpEmail, password: signUpPassword };
+                    fetchData(LoginUrl, 'POST', JSON.stringify(loginData), head)
+                        .then((loginRes) => {
+                            if (loginRes.access_token) {
+                                localStorage.setItem('Token', `Bearer ${loginRes.access_token}`);
+                                navigate('/app');
+                            } else {
+                                setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Auto-login error:', error);
                             setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Auto-login error:', error);
-                        setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
-                    });
-            } else {
-                setSignUpError('Error during sign-up. Please try again.');
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            setSignUpError('Something went wrong. Please try again.');
-        });
-};
-
-
+                        });
+                } else {
+                    setSignUpError('Error during sign-up. Please try again.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                setSignUpError('Something went wrong. Please try again.');
+            });
+    };
 
     return (
         <div>
@@ -126,6 +135,31 @@ const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                 alignItems='center'
                 sx={{ height: '100%', width: '100%', position: 'fixed' }}
             >
+                <Grid
+                    container
+                    item
+                    xs={8}
+                    direction='column'
+                    justifyContent='center'
+                    alignItems='center'
+                    className='rightBg'
+                    sx={{ height: '100%', overflow: 'hidden', justifyItems: 'center' }}
+                >
+                    <Grid item>
+                        <Stack sx={{ alignItems: 'center' }}>
+                            <h3>Welcome to BottleCRM</h3>
+                            <p> Free and OpenSource CRM for small and medium businesses.</p>
+                            <img
+                                src={imgLogin}
+                                alt='register_ad_image'
+                                className='register-ad-image'
+                            />
+                            <footer className='register-footer'>
+                                bottlecrm.com
+                            </footer>
+                        </Stack>
+                    </Grid>
+                </Grid>
                 <Grid
                     container
                     item
@@ -181,35 +215,12 @@ const handleSignUpSubmit = (e: React.FormEvent<HTMLFormElement>) => {
                             )}
                         </Grid>
                         <Grid item sx={{ mt: 4 }}>
-                            <Button variant='text' onClick={() => setIsSignUp(!isSignUp)}>
-                                {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
-                            </Button>
+                            {!userExists && (
+                                <Button variant='text' onClick={() => setIsSignUp(!isSignUp)}>
+                                    {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
+                                </Button>
+                            )}
                         </Grid>
-                    </Grid>
-                </Grid>
-                <Grid
-                    container
-                    item
-                    xs={8}
-                    direction='column'
-                    justifyContent='center'
-                    alignItems='center'
-                    className='rightBg'
-                    sx={{ height: '100%', overflow: 'hidden', justifyItems: 'center' }}
-                >
-                    <Grid item>
-                        <Stack sx={{ alignItems: 'center' }}>
-                            <h3>Welcome to BottleCRM</h3>
-                            <p> Free and OpenSource CRM for small and medium businesses.</p>
-                            <img
-                                src={imgLogin}
-                                alt='register_ad_image'
-                                className='register-ad-image'
-                            />
-                            <footer className='register-footer'>
-                                bottlecrm.com
-                            </footer>
-                        </Stack>
                     </Grid>
                 </Grid>
             </Stack>

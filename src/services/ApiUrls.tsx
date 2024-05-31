@@ -29,3 +29,5 @@ export const UserUrl = 'user'
 export const ProfileUrl = 'profile'
 //  admin
 export const AdminUrl = 'admin'
+// User count checking
+export const CheckUserCountUrl = 'http://localhost:8000/api/check-user-count/'
