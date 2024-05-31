@@ -23,11 +23,10 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [token, setToken] = useState(false);
-    const [isSignUp, setIsSignUp] = useState(false);
+    const [userExists, setUserExists] = useState(true);
     const [signUpEmail, setSignUpEmail] = useState('');
     const [signUpPassword, setSignUpPassword] = useState('');
     const [signUpError, setSignUpError] = useState('');
-    const [userExists, setUserExists] = useState(false);
 
     useEffect(() => {
         if (localStorage.getItem('Token')) {
@@ -114,7 +113,6 @@ export default function Login() {
                             }
                         })
                         .catch((error) => {
-                            console.error('Auto-login error:', error);
                             setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
                         });
                 } else {
@@ -122,7 +120,6 @@ export default function Login() {
                 }
             })
             .catch((error) => {
-                console.error('Error:', error);
                 setSignUpError('Something went wrong. Please try again.');
             });
     };
@@ -174,15 +171,15 @@ export default function Login() {
                             <img src={imgLogo} alt='register_logo' className='register-logo' />
                         </Grid>
                         <Typography variant='h5' style={{ fontWeight: 'bolder' }}>
-                            {isSignUp ? 'Sign Up' : 'Sign In'}
+                            {userExists ? 'Sign In' : 'Sign Up'}
                         </Typography>
                         <Grid item sx={{ mt: 4 }}>
-                            <form onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}>
+                            <form onSubmit={userExists ? handleLoginSubmit : handleSignUpSubmit}>
                                 <TextField
                                     label='Email'
                                     type='email'
-                                    value={isSignUp ? signUpEmail : email}
-                                    onChange={(e) => isSignUp ? setSignUpEmail(e.target.value) : setEmail(e.target.value)}
+                                    value={userExists ? email : signUpEmail}
+                                    onChange={(e) => userExists ? setEmail(e.target.value) : setSignUpEmail(e.target.value)}
                                     required
                                     fullWidth
                                     sx={{ mb: 2 }}
@@ -190,37 +187,30 @@ export default function Login() {
                                 <TextField
                                     label='Password'
                                     type='password'
-                                    value={isSignUp ? signUpPassword : password}
-                                    onChange={(e) => isSignUp ? setSignUpPassword(e.target.value) : setPassword(e.target.value)}
+                                    value={userExists ? password : signUpPassword}
+                                    onChange={(e) => userExists ? setPassword(e.target.value) : setSignUpPassword(e.target.value)}
                                     required
                                     fullWidth
                                     sx={{ mb: 2 }}
                                 />
-                                {(isSignUp ? signUpError : error) && (
+                                {(userExists ? error : signUpError) && (
                                     <Typography color='error' sx={{ mb: 2 }}>
-                                        {isSignUp ? signUpError : error}
+                                        {userExists ? error : signUpError}
                                     </Typography>
                                 )}
                                 <Button type='submit' variant='contained' color='primary' fullWidth>
-                                    {isSignUp ? 'Sign Up' : 'Sign In'}
+                                    {userExists ? 'Sign In' : 'Sign Up'}
                                 </Button>
                             </form>
                         </Grid>
-                        <Grid item sx={{ mt: 4 }}>
-                            {!isSignUp && (
+                        {userExists && (
+                            <Grid item sx={{ mt: 4 }}>
                                 <GoogleButton variant='outlined' onClick={() => login()} sx={{ fontSize: '12px', fontWeight: 500 }}>
                                     Sign in with Google
                                     <img src={imgGoogle} alt='google' style={{ width: '17px', marginLeft: '5px' }} />
                                 </GoogleButton>
-                            )}
-                        </Grid>
-                        <Grid item sx={{ mt: 4 }}>
-                            {!userExists && (
-                                <Button variant='text' onClick={() => setIsSignUp(!isSignUp)}>
-                                    {isSignUp ? 'Already have an account? Sign In' : 'Don\'t have an account? Sign Up'}
-                                </Button>
-                            )}
-                        </Grid>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
             </Stack>
