@@ -123,6 +123,7 @@ export default function Login() {
                 setSignUpError('Something went wrong. Please try again.');
             });
     };
+    
 
     return (
         <div>
