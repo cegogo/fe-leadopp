@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers } from "react-icons/fa";
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, } from "react-icons/fa";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { fetchData } from './FetchData';
 import { ProfileUrl } from '../services/ApiUrls';
@@ -40,6 +40,7 @@ import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 // import MyContext, { MyContextData } from '../context/Context';
 import MyContext from '../context/Context';
 import  Admin  from '../pages/admin/Admin';
+import {EditProfile} from '../pages/profile/EditProfile';
 
 // declare global {
 //     interface Window {
@@ -75,6 +76,7 @@ export default function Sidebar(props: any) {
     // }
     // toggleScreen()
     // }, [])
+    
     const toggleScreen = () => {
         // console.log(location.pathname.split('/'), 'll')
         if (location.pathname.split('/')[1] === '' || location.pathname.split('/')[1] === undefined || location.pathname.split('/')[2] === 'leads') {
@@ -222,6 +224,16 @@ export default function Sidebar(props: any) {
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
+                                 <ListItem disablePadding>
+                                    <StyledListItemButton onClick={() => {
+                                        setAnchorEl(null);
+                                        navigate('/app/edit-profile');
+
+                                }}>
+                                        <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
+                                        <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                    </StyledListItemButton>
+                                </ListItem>
                             </List>
                             {/* <Tooltip title='logout' sx={{ ml: '15px' }}>
                                 <IconButton
@@ -306,7 +318,8 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
-                            <Route path='/app/admin' element={<Admin />} />                        
+                            <Route path='/app/admin' element={<Admin />} />  
+                            <Route path='/app/edit-profile' element={<EditProfile />} />                    
                         </Routes>
                     </Box>
                 </MyContext.Provider>
