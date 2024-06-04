@@ -185,6 +185,7 @@ export default function Login() {
                                     onChange={(e) => userExists ? setEmail(e.target.value) : setSignUpEmail(e.target.value)}
                                     required
                                     fullWidth
+                                    autoFocus
                                     sx={{ mb: 2 }}
                                 />
                                 <TextField
