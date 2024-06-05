@@ -113,7 +113,7 @@ export default function Sidebar(props: any) {
             })
     }
 
-    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'users', 'cases', 'admin', 'dashboard']
+    const navList = ['opportunities', 'leads', 'contacts', 'accounts', 'companies', 'users', 'cases', 'dashboard', 'admin']
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
         switch (text) {
@@ -249,17 +249,26 @@ export default function Sidebar(props: any) {
                             {navList.map((text, index) => (
                                 <ListItem key={text} disablePadding  >
                                     <StyledListItemButton
-                                        sx={{ pt: '6px', pb: '6px' }}
+                                        sx={{
+                                            justifyContent: 'center',
+                                            pt: drawerWidth === 60 ? '12px' : '12px',
+                                            pb: drawerWidth === 60 ? '12px' : '12px'
+                                        }}
                                         onClick={() => {
                                             navigate(`/app/${text}`)
                                             setScreen(text)
                                         }}
                                         selected={screen === text}
                                     >
-                                        <ListItemIcon sx={{ ml: '5px' }}>
+                                        <ListItemIcon sx={{ 
+                                            justifyContent: 'center',
+                                            minWidth: 0
+                                        }}>
                                             {navIcons(text, screen)}
                                         </ListItemIcon>
-                                        <StyledListItemText primary={text} sx={{ ml: -2, textTransform: 'capitalize' }} />
+                                        {drawerWidth > 60 && (
+                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                        )}
                                     </StyledListItemButton>
                                 </ListItem>
                             ))}
