@@ -168,9 +168,11 @@ export default function Login() {
                     sx={{ height: '100%', overflow: 'hidden' }}
                 >
                     <Grid item>
+                        {/*
                         <Grid sx={{ mt: 2 }}>
                             <img src={imgLogo} alt='register_logo' className='register-logo' />
                         </Grid>
+                        */}
                         <Typography variant='h5' style={{ fontWeight: 'bolder' }}>
                             {/* Choosing the header depend on condition */}
                             {userExists ? 'Sign In' : 'Sign Up'}
