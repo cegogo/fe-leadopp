@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers } from "react-icons/fa";
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUserEdit } from "react-icons/fa";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { fetchData } from './FetchData';
 import { ProfileUrl } from '../services/ApiUrls';
@@ -39,7 +39,7 @@ import logo from '../assets/images/auth/img_logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 // import MyContext, { MyContextData } from '../context/Context';
 import MyContext from '../context/Context';
-import  Admin  from '../pages/admin/Admin';
+import Admin from '../pages/admin/Admin';
 
 // declare global {
 //     interface Window {
@@ -51,7 +51,7 @@ export default function Sidebar(props: any) {
     const navigate = useNavigate()
     const location = useLocation()
     const [screen, setScreen] = useState('contacts')
-    const [drawerWidth, setDrawerWidth] = useState(200)
+    const [drawerWidth, setDrawerWidth] = useState(60)
     const [headerWidth, setHeaderWidth] = useState(drawerWidth)
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
@@ -132,6 +132,8 @@ export default function Sidebar(props: any) {
                 return screen === 'users' ? <FaUserFriends fill='#3e79f7' /> : <FaUserFriends />
             case 'cases':
                 return screen === 'cases' ? <FaBriefcase fill='#3e79f7' /> : <FaBriefcase />
+            case 'admin':
+                return screen === 'admin' ? <FaUserEdit fill='#3e79f7' /> : <FaUserEdit />
             default: return <FaDiceD6 fill='#3e79f7' />
         }
     }
@@ -306,7 +308,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
-                            <Route path='/app/admin' element={<Admin />} />                        
+                            <Route path='/app/admin' element={<Admin />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>
