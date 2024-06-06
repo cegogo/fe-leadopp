@@ -7,7 +7,7 @@ import imgLogo from '../../assets/images/auth/img_logo.png';
 import imgLogin from '../../assets/images/auth/img_login.png';
 import { GoogleButton } from '../../styles/CssStyled';
 import { fetchData } from '../../components/FetchData';
-import { AuthUrl, LoginUrl, RegisterUrl, CheckUserCountUrl } from '../../services/ApiUrls';
+import { AuthUrl, LoginUrl, RegisterUrl, CheckUserCountUrl, ProfileUrl } from '../../services/ApiUrls';
 import '../../styles/style.css';
 
 declare global {
@@ -41,13 +41,13 @@ export default function Login() {
                 'Content-Type': 'application/json',
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            setUserExists(data.user_count > 0);
-        })
-        .catch(error => {
-            console.error('Error fetching user count:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                setUserExists(data.user_count > 0);
+            })
+            .catch(error => {
+                console.error('Error fetching user count:', error);
+            });
     }, [token, navigate]);
 
     const login = useGoogleLogin({
@@ -123,7 +123,7 @@ export default function Login() {
                 setSignUpError('Something went wrong. Please try again.');
             });
     };
-    
+
 
     return (
         <div>
