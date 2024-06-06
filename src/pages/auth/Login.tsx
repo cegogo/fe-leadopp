@@ -144,7 +144,7 @@ export default function Login() {
                 >
                     <Grid item>
                         <Stack sx={{ alignItems: 'center' }}>
-                            <Typography variant="h3" sx={{ fontSize: '40px' }}>Welcome to LeadOpp!</Typography>
+                            <Typography variant="h3" sx={{ fontSize: '40px', fontWeight: 'bold' }}>Welcome to LeadOpp!</Typography>
                             <Typography variant="body1" sx={{ fontSize: '25px' }}>Unlock Opportunities, Lead the Future​</Typography>
                             <img
                                 src={imgLogo}
@@ -166,7 +166,13 @@ export default function Login() {
                     alignItems='center'
                     sx={{ height: '100%', overflow: 'hidden' }}
                 >
-                    <Grid item>
+                    <Grid item
+                    sx={{ 
+                        backgroundColor: 'white', 
+                        borderRadius: '10px', 
+                        padding: '50px', 
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' 
+                    }}>
                         {/*
                         <Grid sx={{ mt: 2 }}>
                             <img src={imgLogo} alt='register_logo' className='register-logo' />
