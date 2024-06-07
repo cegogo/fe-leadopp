@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
 import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaCog, FaHandshake, FaIndustry, FaSignOutAlt, FaUserFriends, FaUsers, FaUserEdit, FaDiceD6 } from "react-icons/fa";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { fetchData } from './FetchData';
-import { ProfileUrl } from '../services/ApiUrls';
-import { Header } from './FetchData';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
 import AddCompany from '../pages/company/AddCompany';
@@ -56,6 +53,7 @@ export default function Sidebar(props: any) {
     };
 
     const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'cases'];
+    {/* Admin items list shown only if role stored in selected organization is ADMIN */}
     const adminNavList = ['admin', 'users'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
