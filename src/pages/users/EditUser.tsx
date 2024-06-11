@@ -61,6 +61,7 @@ interface FormData {
   // has_marketing_access: boolean,
   // is_organization_admin: boolean
 }
+
 export function EditUser() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -88,9 +89,43 @@ export function EditUser() {
     // has_marketing_access: false,
     // is_organization_admin: false
   });
+  const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState('');
+
+  useEffect(() => {
+    if (state?.id) {
+      fetchUserData(state.id);
+    }
+  }, [state?.id]);
+
   useEffect(() => {
     setFormData(state?.value);
   }, [state?.id]);
+
+  const fetchUserData = (id: any) => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    };
+
+    fetchData(`user/${id}/`, 'GET', undefined, Header)
+      .then((res) => {
+        //debugger;
+        if (!res.error) {
+          setFormData(res.data.profile_obj); //fix this part : map profile object to proper formData instance
+          setCountries(res.data.countries);
+        } else {
+          setError(true);
+          setProfileErrors(res.errors.profile_errors);
+          setUserErrors(res.errors.user_errors);
+        }
+      })
+      .catch((error) => {
+        console.error('There was a problem with your fetch operation:', error);
+      });
+  };
 
   useEffect(() => {
     if (reset) {
@@ -175,9 +210,10 @@ export function EditUser() {
       Authorization: localStorage.getItem('Token'),
       org: localStorage.getItem('org'),
     };
-    // console.log('Form data:', data);
+    //debugger;
+    //console.log('Form data:', formData);
     const data = {
-      email: formData.email,
+      email: (formData as any).user_details.email, //this stinks! remove the cast to 'any'!
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,
@@ -241,6 +277,7 @@ export function EditUser() {
   const inputStyles = {
     display: 'none',
   };
+  
   // console.log(state, 'edit',profileErrors)
   // console.log(formData, 'as', state?.value);
   return (
@@ -594,12 +631,15 @@ export function EditUser() {
                             onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
-                            {state?.countries?.length &&
-                              state?.countries.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[0]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))}
+                            {countries.map((option: any) => (
+                              <MenuItem
+                                key={option[0]}
+                                value={option[0]}
+                                onClick={() => setCountry(option[0])}
+                              >
+                                {option[1]}
+                              </MenuItem>
+                            ))}
                           </Select>
                           <FormHelperText>
                             {profileErrors?.country?.[0]
