@@ -57,18 +57,30 @@ export default function Sidebar(props: any) {
     const adminNavList = ['admin', 'users'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
+        const iconStyle = { fontSize: '30px' };
         switch (text) {
-            case 'leads': return screen === 'leads' ? <FaUsers fill='#3e79f7' /> : <FaUsers />;
-            case 'contacts': return screen === 'contacts' ? <FaAddressBook fill='#3e79f7' /> : <FaAddressBook />;
-            case 'opportunities': return screen === 'opportunities' ? <FaHandshake fill='#3e79f7' /> : <FaHandshake />;
-            case 'accounts': return screen === 'accounts' ? <FaBuilding fill='#3e79f7' /> : <FaBuilding />;
-            case 'companies': return screen === 'companies' ? <FaIndustry fill='#3e79f7' /> : <FaIndustry />;
-            case 'users': return screen === 'users' ? <FaUserFriends fill='#3e79f7' /> : <FaUserFriends />;
-            case 'cases': return screen === 'cases' ? <FaBriefcase fill='#3e79f7' /> : <FaBriefcase />;
-            case 'admin': return screen === 'admin' ? <FaUserEdit fill='#3e79f7' /> : <FaUserEdit />;
-            default: return <FaDiceD6 fill='#3e79f7' />;
-        }
-    };
+        case 'leads':
+            return <FaUsers style={screen === 'leads' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'contacts':
+            return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'opportunities':
+            return <FaHandshake style={screen === 'opportunities' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'accounts':
+            return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'companies':
+            return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'users':
+            return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'cases':
+            return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'admin':
+            return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'dashboard':
+            return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        default:
+            return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
+    }
+}
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -118,7 +130,7 @@ export default function Sidebar(props: any) {
                 }}>
                     <Box>
                         <Toolbar>
-                            {drawerWidth === 60 ? <img src={logo} width={'40px'} style={{ transform: 'rotate(270deg)', marginLeft: '-15px', marginRight: '10px' }} /> : <img src={logo} width={'100px'} style={{ marginLeft: '-5px', marginRight: '30px' }} />}
+                            {drawerWidth === 60}
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
@@ -202,17 +214,26 @@ export default function Sidebar(props: any) {
                             {localStorage.role === 'ADMIN' && adminNavList.map((text) => (
                                 <ListItem key={text} disablePadding>
                                     <StyledListItemButton
-                                        sx={{ pt: '6px', pb: '6px' }}
+                                        sx={{
+                                            justifyContent: 'center',
+                                            pt: drawerWidth === 60 ? '12px' : '12px',
+                                            pb: drawerWidth === 60 ? '12px' : '12px'
+                                        }}
                                         onClick={() => {
                                             navigate(`/app/${text}`)
                                             setScreen(text)
                                         }}
                                         selected={screen === text}
                                     >
-                                        <ListItemIcon sx={{ ml: '5px' }}>
+                                        <ListItemIcon sx={{ 
+                                            justifyContent: 'center',
+                                            minWidth: 0
+                                        }}>
                                             {navIcons(text, screen)}
                                         </ListItemIcon>
-                                        <StyledListItemText primary={text} sx={{ ml: -2, textTransform: 'capitalize' }} />
+                                        {drawerWidth > 60 && (
+                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                        )}
                                     </StyledListItemButton>
                                 </ListItem>
                             ))}
