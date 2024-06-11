@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaCog, FaHandshake, FaIndustry, FaSignOutAlt, FaUserFriends, FaUsers, FaUserEdit, FaDiceD6 } from "react-icons/fa";
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaHandshake, FaIndustry, FaSignOutAlt, FaUserFriends, FaUsers, FaUserEdit, FaDiceD6 } from "react-icons/fa";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
@@ -52,7 +52,7 @@ export default function Sidebar(props: any) {
         setScreen(path || 'contacts');
     };
 
-    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'cases'];
+    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'cases', 'dashboard'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */}
     const adminNavList = ['admin', 'users'];
 
@@ -196,17 +196,26 @@ export default function Sidebar(props: any) {
                             {navList.map((text) => (
                                 <ListItem key={text} disablePadding>
                                     <StyledListItemButton
-                                        sx={{ pt: '6px', pb: '6px' }}
+                                        sx={{
+                                            justifyContent: 'center',
+                                            pt: drawerWidth === 60 ? '12px' : '12px',
+                                            pb: drawerWidth === 60 ? '12px' : '12px'
+                                        }}
                                         onClick={() => {
                                             navigate(`/app/${text}`)
                                             setScreen(text)
                                         }}
                                         selected={screen === text}
                                     >
-                                        <ListItemIcon sx={{ ml: '5px' }}>
+                                        <ListItemIcon sx={{ 
+                                            justifyContent: 'center',
+                                            minWidth: 0
+                                        }}>
                                             {navIcons(text, screen)}
                                         </ListItemIcon>
-                                        <StyledListItemText primary={text} sx={{ ml: -2, textTransform: 'capitalize' }} />
+                                        {drawerWidth > 60 && (
+                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                        )}
                                     </StyledListItemButton>
                                 </ListItem>
                             ))}
