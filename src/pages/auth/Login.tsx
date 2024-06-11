@@ -6,7 +6,7 @@ import imgGoogle from '../../assets/images/auth/google.svg';
 import imgLogo from '../../assets/images/auth/logo.png';
 import { GoogleButton } from '../../styles/CssStyled';
 import { fetchData } from '../../components/FetchData';
-import { AuthUrl, LoginUrl, RegisterUrl, CheckUserCountUrl } from '../../services/ApiUrls';
+import { AuthUrl, LoginUrl, RegisterUrl, CheckUserCountUrl, ProfileUrl } from '../../services/ApiUrls';
 import '../../styles/style.css';
 
 declare global {
