@@ -154,7 +154,7 @@ export default function Login() {
         }
         getAuth();
 
-}, []);
+    }, []);
 
     return (
         <div>
