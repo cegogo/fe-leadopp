@@ -39,7 +39,7 @@ import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
-import Deals from '../pages/deals/Deals';
+import Deals from '../pages/deals/Deals'
 import Admin from '../pages/admin/Admin';
 //import {EditProfile} from '../pages/profile/EditProfile';
 
@@ -311,13 +311,13 @@ export default function Sidebar(props: any) {
                             <Route index element={<Deals />} />
                             <Route path='/app/deals' element={<Deals />} />
                             <Route path='/app/deals/leads' element={<Leads />} />
-                            <Route path='/app/deals/leads/add-leads' element={<AddLeads />} />
-                            <Route path='/app/deals/leads/edit-lead' element={<EditLead />} />
-                            <Route path='/app/deals/leads/lead-details' element={<LeadDetails />} />
+                            <Route path='/app/leads/add-leads' element={<AddLeads />} />
+                            <Route path='/app/leads/edit-lead' element={<EditLead />} />
+                            <Route path='/app/leads/lead-details' element={<LeadDetails />} />
                             <Route path='/app/deals/opportunities' element={<Opportunities />} />
-                            <Route path='/app/deals/opportunities/add-opportunity' element={<AddOpportunity />} />
-                            <Route path='/app/deals/opportunities/opportunity-details' element={<OpportunityDetails />} />
-                            <Route path='/app/deals/opportunities/edit-opportunity' element={<EditOpportunity />} />
+                            <Route path='/app/opportunities/add-opportunity' element={<AddOpportunity />} />
+                            <Route path='/app/opportunities/opportunity-details' element={<OpportunityDetails />} />
+                            <Route path='/app/opportunities/edit-opportunity' element={<EditOpportunity />} />
                             <Route path='/app/companies' element={<Company />} />
                             <Route path='/app/companies/add-company' element={<AddCompany />} />
                             <Route path='/app/companies/edit-company' element={<EditCompany />} />
@@ -334,7 +334,6 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
-
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
                             <Route path='/app/users/add-users' element={<AddUsers />} />
