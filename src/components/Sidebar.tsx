@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
 
+
 import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, } from "react-icons/fa";
+
 
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -38,8 +40,9 @@ import logo from '../assets/images/auth/logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
 import Deals from '../pages/deals/Deals';
-import  Admin  from '../pages/admin/Admin';
+import Admin from '../pages/admin/Admin';
 //import {EditProfile} from '../pages/profile/EditProfile';
+
 
 // declare global {
 //     interface Window {
@@ -49,11 +52,16 @@ import  Admin  from '../pages/admin/Admin';
 
 
 export default function Sidebar(props: any) {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [screen, setScreen] = useState('contacts');
-    const [drawerWidth, setDrawerWidth] = useState(60);
-    const [organizationModal, setOrganizationModal] = useState(false);
+    const navigate = useNavigate()
+    const location = useLocation()
+    const [screen, setScreen] = useState('contacts')
+    const [drawerWidth, setDrawerWidth] = useState(200)
+    const [headerWidth, setHeaderWidth] = useState(drawerWidth)
+    const [userDetail, setUserDetail] = useState('')
+    const [organizationModal, setOrganizationModal] = useState(false)
+    const organizationModalClose = () => { setOrganizationModal(false) }
+
+    
 
     useEffect(() => {
         toggleScreen();
@@ -74,7 +82,7 @@ export default function Sidebar(props: any) {
     // }
     // toggleScreen()
     // }, [])
-    
+
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
@@ -82,33 +90,32 @@ export default function Sidebar(props: any) {
     };
 
     const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
-    // Admin items list shown only if role stored in selected organization is ADMIN
+    {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin', 'users'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
         switch (text) {
-        case 'deals':
-            return <FaHandshake  style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'dashboard':
-            return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'contacts':
-            return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'accounts':
-            return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'companies':
-            return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'cases':
-            return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'users':
-            return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        case 'admin':
-            return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-        default:
-            return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
+            case 'deals':
+                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'dashboard':
+                return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'contacts':
+                return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'accounts':
+                return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'companies':
+                return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'cases':
+                return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'users':
+                return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'admin':
+                return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            default:
+                return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
+        }
     }
-}
-
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -143,6 +150,10 @@ export default function Sidebar(props: any) {
         });
     };
 
+    const capitalizeFirstLetter = (string: string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     return (
         <>
             <Box>
@@ -161,9 +172,9 @@ export default function Sidebar(props: any) {
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
-                            <Avatar alt="App Logo" src={logo} sx={{ width: 40, height: 40, ml: 2 }} />
-                            <Typography sx={{ fontWeight: 'bold', color: 'black', ml: 2, textTransform: 'capitalize', fontSize: '24px' }}>
-                                LeadOpp CRM
+                            <img src={logo} alt="App Logo" width={'40px'} style={{ marginLeft: '10px', marginRight: '0px' }} />
+                            <Typography sx={{ fontWeight: 'bold', color: 'black', ml: '20px', textTransform: 'capitalize', fontSize: '20px', mt: '5px' }}>
+                                LeadOpp CRM {drawerWidth == 60 && ` - ${screen}`}
                             </Typography>
                         </Toolbar>
                     </Box>
@@ -206,16 +217,18 @@ export default function Sidebar(props: any) {
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
-                                 <ListItem disablePadding>
+
+                               {/*  <ListItem disablePadding>
+
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
-                                        navigate('/app/edit-profile');
+                                        navigate('/app/users/edit-user');
 
-                                }}>
+                                    }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
-                                </ListItem>
+                                </ListItem>  */}
                             </List>
                         </Popover>
                     </Box>
@@ -233,55 +246,60 @@ export default function Sidebar(props: any) {
                         <List sx={{ pt: '65px' }}>
                             {navList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <StyledListItemButton
-                                        sx={{
-                                            justifyContent: 'center',
-                                            pt: drawerWidth === 60 ? '12px' : '12px',
-                                            pb: drawerWidth === 60 ? '12px' : '12px'
-                                        }}
-                                        onClick={() => {
-                                            navigate(`/app/${text}`)
-                                            setScreen(text)
-                                        }}
-                                        selected={screen === text}
-                                    >
-                                        <ListItemIcon sx={{ 
-                                            justifyContent: 'center',
-                                            minWidth: 0
-                                        }}>
-                                            {navIcons(text, screen)}
-                                        </ListItemIcon>
-                                        {drawerWidth > 60 && (
-                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
-                                        )}
-                                    </StyledListItemButton>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
+                                        <StyledListItemButton
+                                            sx={{
+                                                justifyContent: 'center',
+                                                pt: drawerWidth === 60 ? '12px' : '12px',
+                                                pb: drawerWidth === 60 ? '12px' : '12px'
+                                            }}
+                                            onClick={() => {
+                                                navigate(`/app/${text}`)
+                                                setScreen(text)
+                                            }}
+                                            selected={screen === text}
+                                        >
+                                            <ListItemIcon sx={{
+                                                justifyContent: 'center',
+                                                minWidth: 0
+                                            }}>
+                                                {navIcons(text, screen)}
+                                            </ListItemIcon>
+                                            {drawerWidth > 60 && (
+                                                <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                            )}
+                                        </StyledListItemButton>
+                                    </Tooltip>
                                 </ListItem>
                             ))}
+
                             {/* Admin items list shown only if role stored in selected organization is ADMIN */}
                             {localStorage.role === 'ADMIN' && adminNavList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <StyledListItemButton
-                                        sx={{
-                                            justifyContent: 'center',
-                                            pt: drawerWidth === 60 ? '12px' : '12px',
-                                            pb: drawerWidth === 60 ? '12px' : '12px'
-                                        }}
-                                        onClick={() => {
-                                            navigate(`/app/${text}`)
-                                            setScreen(text)
-                                        }}
-                                        selected={screen === text}
-                                    >
-                                        <ListItemIcon sx={{ 
-                                            justifyContent: 'center',
-                                            minWidth: 0
-                                        }}>
-                                            {navIcons(text, screen)}
-                                        </ListItemIcon>
-                                        {drawerWidth > 60 && (
-                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
-                                        )}
-                                    </StyledListItemButton>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
+                                        <StyledListItemButton
+                                            sx={{
+                                                justifyContent: 'center',
+                                                pt: drawerWidth === 60 ? '12px' : '12px',
+                                                pb: drawerWidth === 60 ? '12px' : '12px'
+                                            }}
+                                            onClick={() => {
+                                                navigate(`/app/${text}`)
+                                                setScreen(text)
+                                            }}
+                                            selected={screen === text}
+                                        >
+                                            <ListItemIcon sx={{
+                                                justifyContent: 'center',
+                                                minWidth: 0
+                                            }}>
+                                                {navIcons(text, screen)}
+                                            </ListItemIcon>
+                                            {drawerWidth > 60 && (
+                                                <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                            )}
+                                        </StyledListItemButton>
+                                    </Tooltip>
                                 </ListItem>
                             ))}
                         </List>
@@ -295,7 +313,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/deals/leads' element={<Leads />} />
                             <Route path='/app/deals/leads/add-leads' element={<AddLeads />} />
                             <Route path='/app/deals/leads/edit-lead' element={<EditLead />} />
-                            <Route path='/app/deals/leads/lead-details' element={<LeadDetails />} />                            
+                            <Route path='/app/deals/leads/lead-details' element={<LeadDetails />} />
                             <Route path='/app/deals/opportunities' element={<Opportunities />} />
                             <Route path='/app/deals/opportunities/add-opportunity' element={<AddOpportunity />} />
                             <Route path='/app/deals/opportunities/opportunity-details' element={<OpportunityDetails />} />
@@ -315,12 +333,14 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases' element={<Cases />} />
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
-                            <Route path='/app/cases/case-details' element={<CaseDetails />} />                   
+                            <Route path='/app/cases/case-details' element={<CaseDetails />} />
+
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
                             <Route path='/app/users/add-users' element={<AddUsers />} />
                             <Route path='/app/users/edit-user' element={<EditUser />} />
                             <Route path='/app/users/user-details' element={<UserDetails />} />
+
                         </Routes>
                     </Box>
                 </MyContext.Provider>
