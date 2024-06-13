@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
 
+
 import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, } from "react-icons/fa";
+
 
 
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -40,6 +42,7 @@ import MyContext from '../context/Context';
 import Deals from '../pages/deals/Deals';
 import Admin from '../pages/admin/Admin';
 //import {EditProfile} from '../pages/profile/EditProfile';
+//import {EditProfile} from '../pages/profile/EditProfile';
 
 // declare global {
 //     interface Window {
@@ -49,11 +52,16 @@ import Admin from '../pages/admin/Admin';
 
 
 export default function Sidebar(props: any) {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [screen, setScreen] = useState('contacts');
-    const [drawerWidth, setDrawerWidth] = useState(60);
-    const [organizationModal, setOrganizationModal] = useState(false);
+    const navigate = useNavigate()
+    const location = useLocation()
+    const [screen, setScreen] = useState('contacts')
+    const [drawerWidth, setDrawerWidth] = useState(200)
+    const [headerWidth, setHeaderWidth] = useState(drawerWidth)
+    const [userDetail, setUserDetail] = useState('')
+    const [organizationModal, setOrganizationModal] = useState(false)
+    const organizationModalClose = () => { setOrganizationModal(false) }
+
+    
 
     useEffect(() => {
         toggleScreen();
@@ -209,16 +217,18 @@ export default function Sidebar(props: any) {
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
+
                                 <ListItem disablePadding>
+
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
-                                        navigate('/app/edit-profile');
+                                        navigate('/app/users/edit-user');
 
                                     }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
-                                </ListItem>
+                                </ListItem> */}
                             </List>
                         </Popover>
                     </Box>
@@ -324,11 +334,13 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
+
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
                             <Route path='/app/users/add-users' element={<AddUsers />} />
                             <Route path='/app/users/edit-user' element={<EditUser />} />
                             <Route path='/app/users/user-details' element={<UserDetails />} />
+
                         </Routes>
                     </Box>
                 </MyContext.Provider>
