@@ -1329,7 +1329,7 @@ export function AddLeads() {
                           ':hover': { backgroundColor: '#1e3750' },
                         }}
                       >
-                        Cancel
+                        Reset
                       </Button>
                       <Button
                         className="header-button"

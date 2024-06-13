@@ -11,6 +11,7 @@ interface Item {
         id: any;
         name: any;
     };
+    role: string; // Added role to the Item interface
 }
 
 export default function OrganizationModal(props: any) {
@@ -35,15 +36,16 @@ export default function OrganizationModal(props: any) {
             buttonRef.current?.click();
         }
     };
+
     const headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: localStorage.getItem('Token')
     }
+
     const getOrganization = () => {
         fetchData(`${OrgUrl}/`, 'GET', null as any, headers)
             .then((res: any) => {
-                // console.log(res, 'org')
                 if (res?.profile_org_list) {
                     setOrganization(res?.profile_org_list)
                     setNewOrganization('')
@@ -53,11 +55,11 @@ export default function OrganizationModal(props: any) {
                 console.error('Error:', error)
             })
     }
+
     const addOrganization = () => {
         const organizationName = { name: newOrganization }
         fetchData(`${OrgUrl}/`, 'POST', JSON.stringify(organizationName), headers)
             .then(res => {
-                // console.log(res)
                 if (res?.error) {
                     setError(res?.errors?.name[0])
                 } else if (res.status === 201) {
@@ -67,37 +69,28 @@ export default function OrganizationModal(props: any) {
             })
             .catch(err => console.error(err))
     }
+
     const onHandleClose = () => {
         handleClose()
         setError('')
         setNewOrganization('')
     }
+
     const selectedOrganization = (id: any) => {
-        // if(localStorage.getItem('org')){
-        //     localStorage.setItem('org', id)    
-        //     handleClose()
-        // }else{
-        localStorage.setItem('org', id)
-        // navigate('/')
-        onHandleClose()
-        if (localStorage.getItem('org')) {
-            // navigate('/app/leads')
-            navigate('/')
+        const selectedOrg = organization.find(org => org.org.id === id);
+        if (selectedOrg) {
+            localStorage.setItem('org', id);
+            localStorage.setItem('role', selectedOrg.role); // Store the role in local storage
+            navigate('/app/leads');
+            onHandleClose();
         }
-        // } 
     }
 
-    // const handleBackdropClick = (event: React.MouseEvent<HTMLElement>) => {
-    //     event.stopPropagation();
-    //   };
     return (
         <div>
             <Dialog
                 open={open}
                 onClose={onHandleClose}
-            // BackdropProps={{
-            //     onClick: handleBackdropClick,
-            //   }}
             >
                 <Box sx={{ width: '400px' }}>
                     {localStorage.getItem('org') ?
@@ -121,7 +114,7 @@ export default function OrganizationModal(props: any) {
                                 sx={{ width: '100%' }}>
                                 {organization?.length > 0 &&
                                     organization.map((item, i) => (
-                                        <ListItem >
+                                        <ListItem key={i}>
                                             <StyledListItemButton
                                                 selected={item?.org?.id === localStorage?.getItem('org')}
                                                 onClick={() => selectedOrganization(item?.org?.id)}>

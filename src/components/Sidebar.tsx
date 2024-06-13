@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
+
 import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, } from "react-icons/fa";
+
+
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { fetchData } from './FetchData';
-import { ProfileUrl } from '../services/ApiUrls';
-import { Header1 } from './FetchData';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
 import AddCompany from '../pages/company/AddCompany';
@@ -37,9 +36,10 @@ import { EditCase } from '../pages/cases/EditCase';
 import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/img_logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
-// import MyContext, { MyContextData } from '../context/Context';
 import MyContext from '../context/Context';
+
 import  Admin  from '../pages/admin/Admin';
+//import {EditProfile} from '../pages/profile/EditProfile';
 //import {EditProfile} from '../pages/profile/EditProfile';
 
 // declare global {
@@ -47,6 +47,7 @@ import  Admin  from '../pages/admin/Admin';
 //         drawer: any;
 //     }
 // }
+
 
 export default function Sidebar(props: any) {
     const navigate = useNavigate()
@@ -61,8 +62,9 @@ export default function Sidebar(props: any) {
     
 
     useEffect(() => {
-        toggleScreen()
-    }, [navigate])
+        toggleScreen();
+    }, [navigate]);
+
 
     // useEffect(() => {
     // navigate('/leads')
@@ -79,72 +81,45 @@ export default function Sidebar(props: any) {
     // toggleScreen()
     // }, [])
     
+
     const toggleScreen = () => {
-        // console.log(location.pathname.split('/'), 'll')
-        if (location.pathname.split('/')[1] === '' || location.pathname.split('/')[1] === undefined || location.pathname.split('/')[2] === 'leads') {
-            setScreen('leads')
-        } else if (location.pathname.split('/')[2] === 'contacts') {
-            setScreen('contacts')
-        } else if (location.pathname.split('/')[2] === 'opportunities') {
-            setScreen('opportunities')
-        } else if (location.pathname.split('/')[2] === 'accounts') {
-            setScreen('accounts')
-        } else if (location.pathname.split('/')[2] === 'companies') {
-            setScreen('companies')
-        } else if (location.pathname.split('/')[2] === 'users') {
-            setScreen('users')
-        } else if (location.pathname.split('/')[2] === 'cases') {
-            setScreen('cases')
-        } else if (location.pathname.split('/')[2] === 'admin') {
-            setScreen('admin')
-        }
-    }
+        const path = location.pathname.split('/')[2];
+        setScreen(path || 'contacts');
+    };
 
-    // useEffect(() => {
-    //     userProfile()
-    // }, [])
+    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'cases', 'dashboard'];
+    {/* Admin items list shown only if role stored in selected organization is ADMIN */}
+    const adminNavList = ['admin', 'users'];
 
-    const userProfile = () => {
-        fetchData(`${ProfileUrl}/`, 'GET', null as any, Header1)
-            .then((res: any) => {
-                // console.log(res, 'user')
-                if (res?.user_obj) {
-                    setUserDetail(res?.user_obj)
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error)
-            })
-    }
-
-    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'users', 'cases', 'admin']
     const navIcons = (text: any, screen: any): React.ReactNode => {
+        const iconStyle = { fontSize: '30px' };
         switch (text) {
-            case 'leads':
-                return screen === 'leads' ? <FaUsers fill='#3e79f7' /> : <FaUsers />
-            case 'contacts':
-                return screen === 'contacts' ? <FaAddressBook fill='#3e79f7' /> : <FaAddressBook />
-            case 'opportunities':
-                return screen === 'opportunities' ? <FaHandshake fill='#3e79f7' /> : <FaHandshake />
-            case 'accounts':
-                return screen === 'accounts' ? <FaBuilding fill='#3e79f7' /> : <FaBuilding />
-            case 'companies':
-                return screen === 'companies' ? <FaIndustry fill='#3e79f7' /> : <FaIndustry />
-            // case 'analytics':
-            //     return screen === 'analytics' ? <FaChartLine fill='#3e79f7' /> : <FaChartLine />
-            case 'users':
-                return screen === 'users' ? <FaUserFriends fill='#3e79f7' /> : <FaUserFriends />
-            case 'cases':
-                return screen === 'cases' ? <FaBriefcase fill='#3e79f7' /> : <FaBriefcase />
-            default: return <FaDiceD6 fill='#3e79f7' />
-        }
+        case 'leads':
+            return <FaUsers style={screen === 'leads' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'contacts':
+            return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'opportunities':
+            return <FaHandshake style={screen === 'opportunities' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'accounts':
+            return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'companies':
+            return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'users':
+            return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'cases':
+            return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'admin':
+            return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'dashboard':
+            return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        default:
+            return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
     }
-
+}
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        userProfile();
         setAnchorEl(event.currentTarget);
     };
 
@@ -154,27 +129,43 @@ export default function Sidebar(props: any) {
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
-    // console.log(screen, 'sidebar');
-    const context = { drawerWidth: drawerWidth, screen: screen }
+
+    /**
+     * Clears the browser's local storage, session storage, and cookies.
+     * This function is used to remove all cached data and user-specific information
+     * from the browser, typically when the user logs out or the application needs
+     * to reset the user's session.
+     */
+    const clearCache = () => {
+        // Clear local storage
+        localStorage.clear();
+
+        // Clear session storage
+        sessionStorage.clear();
+
+        // Clear cookies
+        document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+                .replace(/^ +/, "")
+                .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+    };
+
     return (
         <>
             <Box>
-                <AppBar position="fixed"
-                    sx={{
-                        zIndex: (theme) => theme.zIndex.drawer + 1,
-                        height: '60px',
-                        backgroundColor: 'white',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        // boxShadow: 'none',
-                        // borderBottom: `0.5px solid #0000001f`
-                        boxShadow: '1px'
-                    }}
-                >
+                <AppBar position="fixed" sx={{
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                    height: '60px',
+                    backgroundColor: 'white',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    boxShadow: '1px'
+                }}>
                     <Box>
                         <Toolbar>
-                            {drawerWidth === 60 ? <img src={logo} width={'40px'} style={{ transform: 'rotate(270deg)', marginLeft: '-15px', marginRight: '10px' }} /> : <img src={logo} width={'100px'} style={{ marginLeft: '-5px', marginRight: '30px' }} />}
+                            {drawerWidth === 60}
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
@@ -189,12 +180,8 @@ export default function Sidebar(props: any) {
                         flexDirection: 'row',
                         alignItems: 'center'
                     }}>
-                        {/* <IconButton onClick={userProfile} sx={{ mr: 2 }}><FaCog /></IconButton> */}
                         <IconButton onClick={handleClick} sx={{ mr: 3 }}>
-                            <Avatar
-                                // src='hj'
-                                sx={{ height: '27px', width: '27px' }}
-                            />
+                            <Avatar sx={{ height: '27px', width: '27px' }} />
                         </IconButton>
                         <Popover
                             anchorOrigin={{
@@ -213,7 +200,7 @@ export default function Sidebar(props: any) {
                             <List disablePadding>
                                 <ListItem disablePadding>
                                     <StyledListItemButton onClick={() => {
-                                        localStorage.clear()
+                                        clearCache();
                                         navigate('/login')
                                     }}>
                                         <ListItemIcon > <FaSignOutAlt fill='#3e79f7' /></ListItemIcon>
@@ -237,11 +224,6 @@ export default function Sidebar(props: any) {
                                     </StyledListItemButton>
                                 </ListItem> */}
                             </List>
-                            {/* <Tooltip title='logout' sx={{ ml: '15px' }}>
-                                <IconButton
-                                    >
-                                </IconButton>
-                            </Tooltip> */}
                         </Popover>
                     </Box>
                 </AppBar>
@@ -256,42 +238,66 @@ export default function Sidebar(props: any) {
                 >
                     <Box>
                         <List sx={{ pt: '65px' }}>
-                            {navList.map((text, index) => (
-                                <ListItem key={text} disablePadding  >
+                            {navList.map((text) => (
+                                <ListItem key={text} disablePadding>
                                     <StyledListItemButton
-                                        sx={{ pt: '6px', pb: '6px' }}
+                                        sx={{
+                                            justifyContent: 'center',
+                                            pt: drawerWidth === 60 ? '12px' : '12px',
+                                            pb: drawerWidth === 60 ? '12px' : '12px'
+                                        }}
                                         onClick={() => {
                                             navigate(`/app/${text}`)
                                             setScreen(text)
                                         }}
                                         selected={screen === text}
                                     >
-                                        <ListItemIcon sx={{ ml: '5px' }}>
+                                        <ListItemIcon sx={{ 
+                                            justifyContent: 'center',
+                                            minWidth: 0
+                                        }}>
                                             {navIcons(text, screen)}
                                         </ListItemIcon>
-                                        <StyledListItemText primary={text} sx={{ ml: -2, textTransform: 'capitalize' }} />
+                                        {drawerWidth > 60 && (
+                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                        )}
+                                    </StyledListItemButton>
+                                </ListItem>
+                            ))}
+                            {/* Admin items list shown only if role stored in selected organization is ADMIN */}
+                            {localStorage.role === 'ADMIN' && adminNavList.map((text) => (
+                                <ListItem key={text} disablePadding>
+                                    <StyledListItemButton
+                                        sx={{
+                                            justifyContent: 'center',
+                                            pt: drawerWidth === 60 ? '12px' : '12px',
+                                            pb: drawerWidth === 60 ? '12px' : '12px'
+                                        }}
+                                        onClick={() => {
+                                            navigate(`/app/${text}`)
+                                            setScreen(text)
+                                        }}
+                                        selected={screen === text}
+                                    >
+                                        <ListItemIcon sx={{ 
+                                            justifyContent: 'center',
+                                            minWidth: 0
+                                        }}>
+                                            {navIcons(text, screen)}
+                                        </ListItemIcon>
+                                        {drawerWidth > 60 && (
+                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                        )}
                                     </StyledListItemButton>
                                 </ListItem>
                             ))}
                         </List>
                     </Box>
-
                 </Drawer>
-                <MyContext.Provider value={context}>
-
-                    {/* <Box sx={{ width: drawerWidth === 60 ? '1380px' : '1240px', ml: drawerWidth === 60 ? '60px' : '200px', overflowX: 'hidden' }}> */}
+                <MyContext.Provider value={{ drawerWidth: drawerWidth, screen: screen }}>
                     <Box sx={{ width: 'auto', ml: drawerWidth === 60 ? '60px' : '200px', overflowX: 'hidden' }}>
-                        {/* {location.pathname.split('/')[1] === '' && <Contacts />}
-                {location.pathname.split('/')[1] === 'contacts' && <Contacts />}
-                {location.pathname.split('/')[2] === 'add-leads' && <AddLeads />} */}
-                        {/* {location.pathname === 'leads' && <LeadList />}
-                        {screen === 'contacts' && <Contacts />} */}
-                        {/* <Routes>
-                            <Route index element={<Navigate to="/contacts" replace />} />
-                            </Routes> */}
                         <Routes>
                             <Route index element={<Leads />} />
-                            {/* <Route path='/' element={<Contacts />} /> */}
                             <Route path='/app/leads' element={<Leads />} />
                             <Route path='/app/leads/add-leads' element={<AddLeads />} />
                             <Route path='/app/leads/edit-lead' element={<EditLead />} />
@@ -308,10 +314,6 @@ export default function Sidebar(props: any) {
                             <Route path='/app/accounts/add-account' element={<AddAccount />} />
                             <Route path='/app/accounts/account-details' element={<AccountDetails />} />
                             <Route path='/app/accounts/edit-account' element={<EditAccount />} />
-                            <Route path='/app/users' element={<Users />} />
-                            <Route path='/app/users/add-users' element={<AddUsers />} />
-                            <Route path='/app/users/edit-user' element={<EditUser />} />
-                            <Route path='/app/users/user-details' element={<UserDetails />} />
                             <Route path='/app/opportunities' element={<Opportunities />} />
                             <Route path='/app/opportunities/add-opportunity' element={<AddOpportunity />} />
                             <Route path='/app/opportunities/opportunity-details' element={<OpportunityDetails />} />
@@ -325,13 +327,8 @@ export default function Sidebar(props: any) {
                         </Routes>
                     </Box>
                 </MyContext.Provider>
-                <OrganizationModal
-                    open={organizationModal}
-                    handleClose={organizationModalClose}
-                />
-            </Box >
+                <OrganizationModal open={organizationModal} handleClose={() => setOrganizationModal(false)} />
+            </Box>
         </>
-
-    )
+    );
 }
-

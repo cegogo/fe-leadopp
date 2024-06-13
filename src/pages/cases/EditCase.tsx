@@ -628,7 +628,7 @@ export function EditCase() {
                                             startIcon={<FaTimesCircle style={{ fill: 'white', width: '16px', marginLeft: '2px' }} />}
                                             sx={{ backgroundColor: '#2b5075', ':hover': { backgroundColor: '#1e3750' } }}
                                         >
-                                            Cancel
+                                            Reset
                                         </Button>
                                         <Button
                                             className='header-button'
