@@ -42,7 +42,7 @@ import MyContext from '../context/Context';
 import Deals from '../pages/deals/Deals';
 import Admin from '../pages/admin/Admin';
 //import {EditProfile} from '../pages/profile/EditProfile';
-//import {EditProfile} from '../pages/profile/EditProfile';
+
 
 // declare global {
 //     interface Window {
@@ -218,7 +218,7 @@ export default function Sidebar(props: any) {
                                     </StyledListItemButton>
                                 </ListItem>
 
-                                <ListItem disablePadding>
+                               {/*  <ListItem disablePadding>
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
@@ -228,7 +228,7 @@ export default function Sidebar(props: any) {
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
-                                </ListItem> */}
+                                </ListItem>  */}
                             </List>
                         </Popover>
                     </Box>
