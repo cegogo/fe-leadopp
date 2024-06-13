@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaHandshake, FaIndustry, FaSignOutAlt, FaUserFriends, FaUsers, FaUserEdit, FaDiceD6 } from "react-icons/fa";
+
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, } from "react-icons/fa";
+
+
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
@@ -34,7 +37,16 @@ import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/img_logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
-import Admin from '../pages/admin/Admin';
+
+import  Admin  from '../pages/admin/Admin';
+//import {EditProfile} from '../pages/profile/EditProfile';
+
+// declare global {
+//     interface Window {
+//         drawer: any;
+//     }
+// }
+
 
 export default function Sidebar(props: any) {
     const navigate = useNavigate();
@@ -46,6 +58,23 @@ export default function Sidebar(props: any) {
     useEffect(() => {
         toggleScreen();
     }, [navigate]);
+
+
+    // useEffect(() => {
+    // navigate('/leads')
+    // if (localStorage.getItem('Token') && localStorage.getItem('org')) {
+    //     // setScreen('contacts')
+    //     navigate('/contacts')
+    // }
+    // if (!localStorage.getItem('Token')) {
+    //     navigate('/login')
+    // }
+    // if (!localStorage.getItem('org')) {
+    //     navigate('/organization')
+    // }
+    // toggleScreen()
+    // }, [])
+    
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
@@ -178,6 +207,16 @@ export default function Sidebar(props: any) {
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
+                                 <ListItem disablePadding>
+                                    <StyledListItemButton onClick={() => {
+                                        setAnchorEl(null);
+                                        navigate('/app/edit-profile');
+
+                                }}>
+                                        <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
+                                        <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                    </StyledListItemButton>
+                                </ListItem>
                             </List>
                         </Popover>
                     </Box>
@@ -277,11 +316,15 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
+
+                             
+
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
                             <Route path='/app/users/add-users' element={<AddUsers />} />
                             <Route path='/app/users/edit-user' element={<EditUser />} />
                             <Route path='/app/users/user-details' element={<UserDetails />} />
+
                         </Routes>
                     </Box>
                 </MyContext.Provider>
