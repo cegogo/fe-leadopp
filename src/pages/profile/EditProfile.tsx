@@ -19,9 +19,8 @@ import {
   Select,
   FormControl,
   FormHelperText,
-  SelectChangeEvent,
 } from '@mui/material';
-import { UserUrl } from '../../services/ApiUrls';
+import { UserUrl, UsersUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { FaArrowDown, FaTimes, FaUpload } from 'react-icons/fa';
@@ -41,12 +40,7 @@ type FormErrors = {
   state?: string[];
   postcode?: string[];
   country?: string[];
-  // profile_pic?: string[];
-  // has_sales_access?: string[];
-  // has_marketing_access?: string[];
-  // is_organization_admin?: string[];
 };
-
 interface FormData {
   email: string;
   role: string;
@@ -58,13 +52,10 @@ interface FormData {
   state: string;
   postcode: string;
   country: string;
-  // profile_pic: string | null,
-  // has_sales_access: boolean,
-  // has_marketing_access: boolean,
-  // is_organization_admin: boolean
 }
 
 export function EditProfile() {
+  console.log('EditProfile component is rendering');
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -86,46 +77,83 @@ export function EditProfile() {
     state: '',
     postcode: '',
     country: '',
-    // profile_pic: null,
-    // has_sales_access: false,
-    // has_marketing_access: false,
-    // is_organization_admin: false
-  });
+   });
+  const [countries, setCountries] = useState([]);
+  const [, setCountry] = useState('');
 
   useEffect(() => {
+    //console.log('State in EditProfile:', state);
+    if (state?.id) {
+      fetchUserData(state.id);
+    }
+  }, [state?.id]);
+
+  useEffect(() => {
+    //console.log('State value in EditProfile:', state?.value);
     if (state?.value) {
       setFormData(state.value);
     }
-  }, [state?.id, state?.value]);
+  }, [state?.value]);
+
+ const fetchUserData = (id : any) => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    };
+
+    fetchData(`user/${id}/`, 'GET', null as any, Header)
+      .then((res) => { 
+        if (!res.error) {
+          const profileObj = res.data.profile_obj;
+          const formData = {
+            email: profileObj.user_details.email,
+            role: profileObj.role,
+            phone: profileObj.phone,
+            alternate_phone: profileObj.alternate_phone,
+            address_line: profileObj.address.address_line,
+            street: profileObj.address.street,
+            city: profileObj.address.city,
+            state: profileObj.address.state,
+            postcode: profileObj.address.postcode,
+            country: profileObj.address.country,
+          };
+          console.log(res)
+          setFormData(formData);
+          setCountries(res.data.countries);
+        } else {
+          setError(true);
+          setProfileErrors(res.errors.profile_errors);
+          setUserErrors(res.errors.user_errors);
+        }
+      })
+      .catch((error) => {
+        console.error('There was a problem with your fetch operation:', error);
+      });
+      
+  };
+
 
   useEffect(() => {
     if (reset) {
-      if (state?.value) {
-        setFormData(state.value);
-      }
-      setReset(false);
+      setFormData(state?.value);
     }
-  }, [reset, state?.value]);
+    return () => {
+      setReset(false);
+    };
+  }, [reset]);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, files, type, checked } = e.target as HTMLInputElement;
+  const handleChange = (e: any) => {
+    const { name, value, files, type, checked } = e.target;
     if (type === 'file') {
-      setFormData({ ...formData, [name]: files?.[0] || null });
-    } else if (type === 'checkbox') {
+      setFormData({ ...formData, [name]: e.target.files?.[0] || null });
+    }
+    if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked });
     } else {
       setFormData({ ...formData, [name]: value });
     }
-  };
-
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-  const handleCountryChange = (event: SelectChangeEvent<string>) => {
-    setFormData({ ...formData, country: event.target.value });
   };
 
   const backbtnHandle = () => {
@@ -137,16 +165,10 @@ export function EditProfile() {
       });
     }
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
-    if (state?.id) { // Check if state?.id is defined
-        submitForm();
-      } else {
-        // Handle the case where state?.id is undefined
-        console.error("User ID is undefined.");
-      }
-    };
+    submitForm();
+  };
 
   const submitForm = () => {
     const Header = {
@@ -155,9 +177,10 @@ export function EditProfile() {
       Authorization: localStorage.getItem('Token'),
       org: localStorage.getItem('org'),
     };
-
+    //debugger;
+    //console.log('Form data:', formData);
     const data = {
-      email: formData.email,
+      email: formData.email, 
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,
@@ -167,18 +190,15 @@ export function EditProfile() {
       state: formData.state,
       postcode: formData.postcode,
       country: formData.country,
-      // profile_pic: formData.profile_pic,
-      // has_sales_access: formData.has_sales_access,
-      // has_marketing_access: formData.has_marketing_access,
-      // is_organization_admin: formData.is_organization_admin
     };
 
-    fetchData(`${UserUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
+    fetchData(`${UsersUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
         if (!res.error) {
           resetForm();
           navigate('/app/users');
-        } else {
+        }
+        if (res.error) {
           setError(true);
           setProfileErrors(
             res?.errors?.profile_errors || res?.profile_errors[0]
@@ -188,7 +208,6 @@ export function EditProfile() {
       })
       .catch(() => {});
   };
-
   const resetForm = () => {
     setFormData({
       email: '',
@@ -201,19 +220,14 @@ export function EditProfile() {
       state: '',
       postcode: '',
       country: '',
-      // profile_pic: null,
-      // has_sales_access: false,
-      // has_marketing_access: false,
-      // is_organization_admin: false
     });
     setProfileErrors({});
     setUserErrors({});
   };
-
   const onCancel = () => {
     setReset(true);
+    // resetForm()
   };
-
   const module = 'Users';
   const crntPage = 'Edit User';
   const backBtn = state?.edit ? 'Back To Users' : 'Back To UserDetails';
@@ -221,8 +235,8 @@ export function EditProfile() {
   const inputStyles = {
     display: 'none',
   };
-
-  return (
+  
+   return (
     <Box sx={{ mt: '60px' }}>
       <CustomAppBar
         backbtnHandle={backbtnHandle}
@@ -286,37 +300,33 @@ export function EditProfile() {
                                 onClick={() =>
                                   setRoleSelectOpen(!roleSelectOpen)
                                 }
-                                className="dropdownIcon"
+                                className="select-icon-background"
                               >
-                                {!roleSelectOpen ? (
-                                  <FiChevronDown style={{ fontSize: '25px' }} />
+                                {roleSelectOpen ? (
+                                  <FiChevronUp className="select-icon" />
                                 ) : (
-                                  <FiChevronUp style={{ fontSize: '25px' }} />
+                                  <FiChevronDown className="select-icon" />
                                 )}
                               </div>
                             )}
-                            size="small"
-                            onChange={handleSelectChange}
-                            error={
-                              !!profileErrors?.role?.[0] ||
-                              !!userErrors?.role?.[0]
-                            }
+                            className={'select'}
+                            onChange={handleChange}
+                            error={!!errors?.role?.[0]}
                           >
-                            <MenuItem value={'ADMIN'}>Admin</MenuItem>
-                            <MenuItem value={'USER'}>User</MenuItem>
+                            {['ADMIN', 'USER'].map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
                           </Select>
-                          <FormHelperText error>
-                            {profileErrors?.role?.[0] ||
-                              userErrors?.role?.[0] ||
-                              ''}
-                          </FormHelperText>
+                          
                         </FormControl>
                       </div>
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Phone Number</div>
-                        <Tooltip title="Country code required. e.g:+31">
+                        <Tooltip title="Number must starts with +91">
                           <RequiredTextField
                             name="phone"
                             value={formData.phone}
@@ -338,7 +348,7 @@ export function EditProfile() {
                       </div>
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Alternate Phone</div>
-                        <Tooltip title="Country code required. e.g:+31">
+                        <Tooltip title="Number must starts with +91">
                           <RequiredTextField
                             required
                             name="alternate_phone"
@@ -509,15 +519,18 @@ export function EditProfile() {
                               </div>
                             )}
                             className={'select'}
-                            onChange={handleCountryChange}
+                            onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
-                            {state?.countries?.length &&
-                              state?.countries.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[0]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))}
+                            {countries.map((option: any) => (
+                              <MenuItem
+                                key={option[0]}
+                                value={option[0]}
+                                onClick={() => setCountry(option[0])}
+                              >
+                                {option[1]}
+                              </MenuItem>
+                            ))}
                           </Select>
                           <FormHelperText>
                             {profileErrors?.country?.[0]
@@ -531,6 +544,7 @@ export function EditProfile() {
                 </AccordionDetails>
               </Accordion>
             </div>
+            
           </div>
         </form>
       </Box>

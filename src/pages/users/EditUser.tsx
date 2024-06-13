@@ -90,7 +90,7 @@ export function EditUser() {
     // is_organization_admin: false
   });
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState('');
+  const [, setCountry] = useState('');
 
   useEffect(() => {
     if (state?.id) {
@@ -100,9 +100,9 @@ export function EditUser() {
 
   useEffect(() => {
     setFormData(state?.value);
-  }, [state?.id]);
+  }, [state.id, state?.value]);
 
-  const fetchUserData = (id: any) => {
+ const fetchUserData = (id : any) => {
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -110,11 +110,24 @@ export function EditUser() {
       org: localStorage.getItem('org'),
     };
 
-    fetchData(`user/${id}/`, 'GET', undefined, Header)
+    fetchData(`user/${id}/`, 'GET', null as any, Header)
       .then((res) => {
-        //debugger;
         if (!res.error) {
-          setFormData(res.data.profile_obj); //fix this part : map profile object to proper formData instance
+          const profileObj = res.data.profile_obj;
+          const formData = {
+            email: profileObj.user_details.email,
+            role: profileObj.role,
+            phone: profileObj.phone,
+            alternate_phone: profileObj.alternate_phone,
+            address_line: profileObj.address.address_line,
+            street: profileObj.address.street,
+            city: profileObj.address.city,
+            state: profileObj.address.state,
+            postcode: profileObj.address.postcode,
+            country: profileObj.address.country,
+          };
+
+          setFormData(formData);
           setCountries(res.data.countries);
         } else {
           setError(true);
@@ -213,7 +226,7 @@ export function EditUser() {
     //debugger;
     //console.log('Form data:', formData);
     const data = {
-      email: (formData as any).user_details.email, //this stinks! remove the cast to 'any'!
+      email: formData.email, //this stinks! remove the cast to 'any'!
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,

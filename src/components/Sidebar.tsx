@@ -40,7 +40,7 @@ import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 // import MyContext, { MyContextData } from '../context/Context';
 import MyContext from '../context/Context';
 import  Admin  from '../pages/admin/Admin';
-import {EditProfile} from '../pages/profile/EditProfile';
+//import {EditProfile} from '../pages/profile/EditProfile';
 
 // declare global {
 //     interface Window {
@@ -57,6 +57,8 @@ export default function Sidebar(props: any) {
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
+
+    
 
     useEffect(() => {
         toggleScreen()
@@ -224,16 +226,16 @@ export default function Sidebar(props: any) {
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
-                                 <ListItem disablePadding>
+                                 {/* <ListItem disablePadding>
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
-                                        navigate('/app/edit-profile');
+                                        navigate('/app/users/edit-user');
 
                                 }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
-                                </ListItem>
+                                </ListItem> */}
                             </List>
                             {/* <Tooltip title='logout' sx={{ ml: '15px' }}>
                                 <IconButton
@@ -319,7 +321,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
                             <Route path='/app/admin' element={<Admin />} />  
-                            <Route path='/app/edit-profile' element={<EditProfile />} />                    
+                                                
                         </Routes>
                     </Box>
                 </MyContext.Provider>
