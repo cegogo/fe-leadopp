@@ -116,6 +116,10 @@ export default function Sidebar(props: any) {
         });
     };
 
+    const capitalizeFirstLetter = (string: string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     return (
         <>
             <Box>
@@ -134,9 +138,9 @@ export default function Sidebar(props: any) {
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
-                            <img src={logo} width={'40px'} style={{ marginLeft: '10px', marginRight: '10px' }} />
+                            <img src={logo} width={'40px'} style={{ marginLeft: '10px', marginRight: '0px' }} />
                             <Typography sx={{ fontWeight: 'bold', color: 'black', ml: '20px', textTransform: 'capitalize', fontSize: '20px', mt: '5px' }}>
-                                {screen}
+                                LeadOpp CRM {drawerWidth == 60 && ` - ${screen}`}
                             </Typography>
                         </Toolbar>
                     </Box>
@@ -196,7 +200,7 @@ export default function Sidebar(props: any) {
                         <List sx={{ pt: '65px' }}>
                             {navList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <Tooltip title={drawerWidth === 60 ? text.toUpperCase() : ''} placement="right" arrow>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
                                         <StyledListItemButton
                                             sx={{
                                                 justifyContent: 'center',
@@ -226,7 +230,7 @@ export default function Sidebar(props: any) {
                             {/* Admin items list shown only if role stored in selected organization is ADMIN */}
                             {localStorage.role === 'ADMIN' && adminNavList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <Tooltip title={drawerWidth === 60 ? text.toUpperCase() : ''} placement="right" arrow>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
                                         <StyledListItemButton
                                             sx={{
                                                 justifyContent: 'center',
