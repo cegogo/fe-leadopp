@@ -82,7 +82,7 @@ export default function Sidebar(props: any) {
     };
 
     const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
-    // Admin items list shown only if role stored in selected organization is ADMIN
+    {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin', 'users'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
@@ -107,7 +107,6 @@ export default function Sidebar(props: any) {
         default:
             return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
     }
-}
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -143,6 +142,10 @@ export default function Sidebar(props: any) {
         });
     };
 
+    const capitalizeFirstLetter = (string: string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
     return (
         <>
             <Box>
@@ -161,9 +164,9 @@ export default function Sidebar(props: any) {
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
-                            <Avatar alt="App Logo" src={logo} sx={{ width: 40, height: 40, ml: 2 }} />
-                            <Typography sx={{ fontWeight: 'bold', color: 'black', ml: 2, textTransform: 'capitalize', fontSize: '24px' }}>
-                                LeadOpp CRM
+                            <img src={logo} alt="App Logo" width={'40px'} style={{ marginLeft: '10px', marginRight: '0px' }} />
+                            <Typography sx={{ fontWeight: 'bold', color: 'black', ml: '20px', textTransform: 'capitalize', fontSize: '20px', mt: '5px' }}>
+                                LeadOpp CRM {drawerWidth == 60 && ` - ${screen}`}
                             </Typography>
                         </Toolbar>
                     </Box>
@@ -233,55 +236,60 @@ export default function Sidebar(props: any) {
                         <List sx={{ pt: '65px' }}>
                             {navList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <StyledListItemButton
-                                        sx={{
-                                            justifyContent: 'center',
-                                            pt: drawerWidth === 60 ? '12px' : '12px',
-                                            pb: drawerWidth === 60 ? '12px' : '12px'
-                                        }}
-                                        onClick={() => {
-                                            navigate(`/app/${text}`)
-                                            setScreen(text)
-                                        }}
-                                        selected={screen === text}
-                                    >
-                                        <ListItemIcon sx={{ 
-                                            justifyContent: 'center',
-                                            minWidth: 0
-                                        }}>
-                                            {navIcons(text, screen)}
-                                        </ListItemIcon>
-                                        {drawerWidth > 60 && (
-                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
-                                        )}
-                                    </StyledListItemButton>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
+                                        <StyledListItemButton
+                                            sx={{
+                                                justifyContent: 'center',
+                                                pt: drawerWidth === 60 ? '12px' : '12px',
+                                                pb: drawerWidth === 60 ? '12px' : '12px'
+                                            }}
+                                            onClick={() => {
+                                                navigate(`/app/${text}`)
+                                                setScreen(text)
+                                            }}
+                                            selected={screen === text}
+                                        >
+                                            <ListItemIcon sx={{
+                                                justifyContent: 'center',
+                                                minWidth: 0
+                                            }}>
+                                                {navIcons(text, screen)}
+                                            </ListItemIcon>
+                                            {drawerWidth > 60 && (
+                                                <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                            )}
+                                        </StyledListItemButton>
+                                    </Tooltip>
                                 </ListItem>
                             ))}
+
                             {/* Admin items list shown only if role stored in selected organization is ADMIN */}
                             {localStorage.role === 'ADMIN' && adminNavList.map((text) => (
                                 <ListItem key={text} disablePadding>
-                                    <StyledListItemButton
-                                        sx={{
-                                            justifyContent: 'center',
-                                            pt: drawerWidth === 60 ? '12px' : '12px',
-                                            pb: drawerWidth === 60 ? '12px' : '12px'
-                                        }}
-                                        onClick={() => {
-                                            navigate(`/app/${text}`)
-                                            setScreen(text)
-                                        }}
-                                        selected={screen === text}
-                                    >
-                                        <ListItemIcon sx={{ 
-                                            justifyContent: 'center',
-                                            minWidth: 0
-                                        }}>
-                                            {navIcons(text, screen)}
-                                        </ListItemIcon>
-                                        {drawerWidth > 60 && (
-                                            <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
-                                        )}
-                                    </StyledListItemButton>
+                                    <Tooltip title={drawerWidth === 60 ? capitalizeFirstLetter(text) : ''} placement="right" arrow>
+                                        <StyledListItemButton
+                                            sx={{
+                                                justifyContent: 'center',
+                                                pt: drawerWidth === 60 ? '12px' : '12px',
+                                                pb: drawerWidth === 60 ? '12px' : '12px'
+                                            }}
+                                            onClick={() => {
+                                                navigate(`/app/${text}`)
+                                                setScreen(text)
+                                            }}
+                                            selected={screen === text}
+                                        >
+                                            <ListItemIcon sx={{
+                                                justifyContent: 'center',
+                                                minWidth: 0
+                                            }}>
+                                                {navIcons(text, screen)}
+                                            </ListItemIcon>
+                                            {drawerWidth > 60 && (
+                                                <StyledListItemText primary={text} sx={{ ml: 2, textTransform: 'capitalize' }} />
+                                            )}
+                                        </StyledListItemButton>
+                                    </Tooltip>
                                 </ListItem>
                             ))}
                         </List>
