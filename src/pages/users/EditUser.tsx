@@ -226,7 +226,7 @@ export function EditUser() {
     //debugger;
     //console.log('Form data:', formData);
     const data = {
-      email: formData.email, //this stinks! remove the cast to 'any'!
+      email: formData.email, 
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,
