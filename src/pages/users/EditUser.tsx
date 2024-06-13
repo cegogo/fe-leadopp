@@ -110,12 +110,13 @@ export function EditUser() {
       org: localStorage.getItem('org'),
     };
 
-    fetchData(`user/${id}/`, 'GET', undefined, Header)
+    fetchData(`user/${id}/`, 'GET', '', Header)
       .then((res) => {
         //debugger;
         if (!res.error) {
           setFormData(res.data.profile_obj); //fix this part : map profile object to proper formData instance
-          setCountries(res.data.countries);
+          setCountries(res.data.COUNTRIES);
+          console.log(countries);
         } else {
           setError(true);
           setProfileErrors(res.errors.profile_errors);
@@ -213,7 +214,7 @@ export function EditUser() {
     //debugger;
     //console.log('Form data:', formData);
     const data = {
-      email: (formData as any).user_details.email, //this stinks! remove the cast to 'any'!
+      email: formData.email, //this stinks! remove the cast to 'any'!
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,
