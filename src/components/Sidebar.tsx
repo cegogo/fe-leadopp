@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaHandshake, FaIndustry, FaSignOutAlt, FaUserFriends, FaUsers, FaUserEdit, FaDiceD6 } from "react-icons/fa";
+
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, } from "react-icons/fa";
+
+
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
@@ -34,7 +37,16 @@ import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
-import Admin from '../pages/admin/Admin';
+import Deals from '../pages/deals/Deals';
+import  Admin  from '../pages/admin/Admin';
+//import {EditProfile} from '../pages/profile/EditProfile';
+
+// declare global {
+//     interface Window {
+//         drawer: any;
+//     }
+// }
+
 
 export default function Sidebar(props: any) {
     const navigate = useNavigate();
@@ -47,39 +59,53 @@ export default function Sidebar(props: any) {
         toggleScreen();
     }, [navigate]);
 
+
+    // useEffect(() => {
+    // navigate('/leads')
+    // if (localStorage.getItem('Token') && localStorage.getItem('org')) {
+    //     // setScreen('contacts')
+    //     navigate('/contacts')
+    // }
+    // if (!localStorage.getItem('Token')) {
+    //     navigate('/login')
+    // }
+    // if (!localStorage.getItem('org')) {
+    //     navigate('/organization')
+    // }
+    // toggleScreen()
+    // }, [])
+    
+
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
         setScreen(path || 'contacts');
     };
 
-    const navList = ['leads', 'contacts', 'opportunities', 'accounts', 'companies', 'cases', 'dashboard'];
+    const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin', 'users'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
         switch (text) {
-            case 'leads':
-                return <FaUsers style={screen === 'leads' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'contacts':
-                return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'opportunities':
-                return <FaHandshake style={screen === 'opportunities' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'accounts':
-                return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'companies':
-                return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'users':
-                return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'cases':
-                return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'admin':
-                return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            case 'dashboard':
-                return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
-            default:
-                return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
-        }
+        case 'deals':
+            return <FaHandshake  style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'dashboard':
+            return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'contacts':
+            return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'accounts':
+            return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'companies':
+            return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'cases':
+            return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'users':
+            return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        case 'admin':
+            return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+        default:
+            return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
     }
 
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -133,12 +159,12 @@ export default function Sidebar(props: any) {
                     boxShadow: '1px'
                 }}>
                     <Box>
-                        <Toolbar>
+                        <Toolbar sx={{ display: 'flex', alignItems: 'center' }}>
                             {drawerWidth === 60}
                             <IconButton sx={{ ml: '-10px' }} onClick={() => setDrawerWidth(drawerWidth === 60 ? 200 : 60)}>
                                 <FaBars style={{ height: '20px' }} />
                             </IconButton>
-                            <img src={logo} width={'40px'} style={{ marginLeft: '10px', marginRight: '0px' }} />
+                            <img src={logo} alt="App Logo" width={'40px'} style={{ marginLeft: '10px', marginRight: '0px' }} />
                             <Typography sx={{ fontWeight: 'bold', color: 'black', ml: '20px', textTransform: 'capitalize', fontSize: '20px', mt: '5px' }}>
                                 LeadOpp CRM {drawerWidth == 60 && ` - ${screen}`}
                             </Typography>
@@ -181,6 +207,16 @@ export default function Sidebar(props: any) {
                                     <StyledListItemButton onClick={() => setOrganizationModal(!organizationModal)}>
                                         <ListItemIcon > <FaIndustry fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                    </StyledListItemButton>
+                                </ListItem>
+                                 <ListItem disablePadding>
+                                    <StyledListItemButton onClick={() => {
+                                        setAnchorEl(null);
+                                        navigate('/app/edit-profile');
+
+                                }}>
+                                        <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
+                                        <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
                             </List>
@@ -262,11 +298,16 @@ export default function Sidebar(props: any) {
                 <MyContext.Provider value={{ drawerWidth: drawerWidth, screen: screen }}>
                     <Box sx={{ width: 'auto', ml: drawerWidth === 60 ? '60px' : '200px', overflowX: 'hidden' }}>
                         <Routes>
-                            <Route index element={<Leads />} />
-                            <Route path='/app/leads' element={<Leads />} />
-                            <Route path='/app/leads/add-leads' element={<AddLeads />} />
-                            <Route path='/app/leads/edit-lead' element={<EditLead />} />
-                            <Route path='/app/leads/lead-details' element={<LeadDetails />} />
+                            <Route index element={<Deals />} />
+                            <Route path='/app/deals' element={<Deals />} />
+                            <Route path='/app/deals/leads' element={<Leads />} />
+                            <Route path='/app/deals/leads/add-leads' element={<AddLeads />} />
+                            <Route path='/app/deals/leads/edit-lead' element={<EditLead />} />
+                            <Route path='/app/deals/leads/lead-details' element={<LeadDetails />} />                            
+                            <Route path='/app/deals/opportunities' element={<Opportunities />} />
+                            <Route path='/app/deals/opportunities/add-opportunity' element={<AddOpportunity />} />
+                            <Route path='/app/deals/opportunities/opportunity-details' element={<OpportunityDetails />} />
+                            <Route path='/app/deals/opportunities/edit-opportunity' element={<EditOpportunity />} />
                             <Route path='/app/companies' element={<Company />} />
                             <Route path='/app/companies/add-company' element={<AddCompany />} />
                             <Route path='/app/companies/edit-company' element={<EditCompany />} />
@@ -279,14 +320,10 @@ export default function Sidebar(props: any) {
                             <Route path='/app/accounts/add-account' element={<AddAccount />} />
                             <Route path='/app/accounts/account-details' element={<AccountDetails />} />
                             <Route path='/app/accounts/edit-account' element={<EditAccount />} />
-                            <Route path='/app/opportunities' element={<Opportunities />} />
-                            <Route path='/app/opportunities/add-opportunity' element={<AddOpportunity />} />
-                            <Route path='/app/opportunities/opportunity-details' element={<OpportunityDetails />} />
-                            <Route path='/app/opportunities/edit-opportunity' element={<EditOpportunity />} />
                             <Route path='/app/cases' element={<Cases />} />
                             <Route path='/app/cases/add-case' element={<AddCase />} />
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
-                            <Route path='/app/cases/case-details' element={<CaseDetails />} />
+                            <Route path='/app/cases/case-details' element={<CaseDetails />} />                   
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
                             <Route path='/app/users/add-users' element={<AddUsers />} />
