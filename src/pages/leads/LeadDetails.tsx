@@ -1035,100 +1035,66 @@ function LeadDetails(props: any) {
                                     />
                                 </div>
                             </div> */}
-              <div style={{ padding: '20px', marginBottom: '10px' }}>
-                <TextField
-                  label="Add Note"
-                  id="fullWidth"
-                  value={note}
-                  onChange={(e: any) => setNote(e.target.value)}
-                  InputProps={{ style: { borderRadius: '10px' } }}
-                  sx={{ mb: '30px', width: '100%', borderRadius: '10px' }}
-                  // InputProps={{ disableUnderline: true }}
-                />
-                <CustomInputBoxWrapper
-                  aria-label="qwe"
-                  // className='CustomInputBoxWrapper'
-                  contentEditable="true"
-                  onInput={(e: any) => setInputValue(e.currentTarget.innerText)}
-                  // onInput={(e: React.SyntheticEvent<HTMLDivElement>) => setInputValue(e.currentTarget.innerText)}
-                  // onInput={(e) => setInputValue(e.target.innerText)}
-                >
-                  {attachedFiles.length > 0 && (
-                    <div>
-                      {attachedFiles.map((file, index) => (
-                        <div key={index}>
-                          <div>{file.name}</div>
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            style={{
-                              maxWidth: '100%',
-                              maxHeight: '100px',
-                              marginTop: '8px',
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CustomInputBoxWrapper>
-                <Box
-                  sx={{
-                    pt: '10px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    border: '1px solid #ccc',
-                    borderTop: 'none',
-                    mt: '-5px',
-                    borderBottomLeftRadius: '8px',
-                    borderBottomRightRadius: '8px',
-                    pb: '10px',
-                  }}
-                >
-                  <Button
-                    component="label"
-                    onClick={handleAttachmentClick}
-                    sx={{ ml: '5px' }}
-                  >
-                    <FaPaperclip style={{ fill: 'gray' }} />
-                  </Button>
-                  <Grid container justifyContent="flex-end">
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="inherit"
-                      disableFocusRipple
-                      disableRipple
-                      disableTouchRipple
-                      sx={{
-                        backgroundColor: '#808080b5',
-                        borderRadius: '8px',
-                        color: 'white',
-                        textTransform: 'none',
-                        ml: '8px',
-                        '&:hover': { backgroundColor: '#C0C0C0' },
-                      }}
-                      onClick={resetForm}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      sx={{
-                        backgroundColor: '#1976d2',
-                        borderRadius: '8px',
-                        textTransform: 'none',
-                        ml: '8px',
-                        mr: '12px',
-                      }}
-                      onClick={sendComment}
-                    >
-                      Send
-                    </Button>
-                  </Grid>
-                </Box>
-                {/* {attachedFiles.length > 0 && (
+
+                            <div style={{ padding: '20px', marginBottom: '10px' }}>
+                                <TextField
+                                    label='Add Note'
+                                    id='fullWidth'
+                                    value={note}
+                                    onChange={(e: any) => setNote(e.target.value)}
+                                    InputProps={{ style: { borderRadius: '10px' } }}
+                                    sx={{ mb: '30px', width: '100%', borderRadius: '10px' }}
+                                // InputProps={{ disableUnderline: true }}
+                                />
+                                <CustomInputBoxWrapper
+                                    aria-label='qwe'
+                                    // className='CustomInputBoxWrapper'
+                                    contentEditable="true"
+                                    onInput={(e: any) => setInputValue(e.currentTarget.innerText)}
+                                // onInput={(e: React.SyntheticEvent<HTMLDivElement>) => setInputValue(e.currentTarget.innerText)}
+                                // onInput={(e) => setInputValue(e.target.innerText)}
+                                >
+                                    {attachedFiles.length > 0 && (
+                                        <div>
+                                            {attachedFiles.map((file, index) => (
+                                                <div key={index}>
+                                                    <div>{file.name}</div>
+                                                    <img src={URL.createObjectURL(file)} alt={file.name} style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '8px' }} />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </CustomInputBoxWrapper>
+                                <Box sx={{
+                                    pt: '10px', display: 'flex', justifyContent: 'space-between', border: '1px solid #ccc', borderTop: 'none', mt: '-5px',
+                                    borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', pb: '10px'
+                                }}>
+                                    <Button component='label' onClick={handleAttachmentClick} sx={{ ml: '5px' }}>
+                                        <FaPaperclip style={{ fill: 'gray' }} />
+                                    </Button>
+                                    <Grid container justifyContent="flex-end">
+                                        <Button
+                                            variant='contained'
+                                            size='small'
+                                            color='inherit'
+                                            disableFocusRipple
+                                            disableRipple
+                                            disableTouchRipple
+                                            sx={{ backgroundColor: '#808080b5', borderRadius: '8px', color: 'white', textTransform: 'none', ml: '8px', '&:hover': { backgroundColor: '#C0C0C0' } }}
+                                            onClick={resetForm}
+                                        >
+                                            Reset
+                                        </Button>
+                                        <Button variant='contained' size='small'
+                                            sx={{ backgroundColor: '#1976d2', borderRadius: '8px', textTransform: 'none', ml: '8px', mr: '12px' }}
+                                            onClick={sendComment}
+                                        >
+                                            Send
+                                        </Button>
+                                    </Grid>
+                                </Box>
+                                {/* {attachedFiles.length > 0 && (
+
                                     <div>
                                         <strong>Attached Files:</strong>
                                         <ul>
