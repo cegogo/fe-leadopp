@@ -395,7 +395,7 @@ export default function Admin() {
     return (
         <Box sx={{ mt: '60px' }}>
             <CustomToolbar>
-                <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {/* <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Select
                         value={tab === 'active' ? activeRecordsPerPage : inactiveRecordsPerPage}
                         onChange={(e: any) => handleRecordsPerPage(e)}
@@ -438,7 +438,7 @@ export default function Admin() {
                     >
                         Add User
                     </Button>
-                </Stack>
+                </Stack> */}
             </CustomToolbar>
             <Container sx={{ width: '100%', maxWidth: '100%', minWidth: '100%' }}>
                 <Box sx={{ width: '100%', minWidth: '100%', m: '15px 0px 0px 0px' }}>
