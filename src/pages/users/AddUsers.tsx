@@ -303,7 +303,7 @@ export function AddUsers() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Phone Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Please enter the country code (e.g., +31).">
                           <RequiredTextField
                             name="phone"
                             id="outlined-error-helper-text"
@@ -326,8 +326,8 @@ export function AddUsers() {
                       </div>
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Alternate Phone</div>
-                        <Tooltip title="Number must starts with +91">
-                          <RequiredTextField
+                        <Tooltip title="Please enter the country code (e.g., +31).">
+                          <TextField
                             required
                             name="alternate_phone"
                             value={formData.alternate_phone}
