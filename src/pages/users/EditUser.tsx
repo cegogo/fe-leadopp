@@ -28,6 +28,7 @@ import { AntSwitch, RequiredTextField } from '../../styles/CssStyled';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import '../../styles/style.css';
+import { COUNTRIES } from '../../components/Data';
 
 type FormErrors = {
   email?: string[];
@@ -623,9 +624,7 @@ export function EditUser() {
                             name="country"
                             value={formData.country}
                             open={countrySelectOpen}
-                            onClick={() =>
-                              setCountrySelectOpen(!countrySelectOpen)
-                            }
+                            onClick={() => setCountrySelectOpen(!countrySelectOpen)}
                             IconComponent={() => (
                               <div
                                 onClick={() =>
@@ -644,13 +643,12 @@ export function EditUser() {
                             onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
-                            {countries.map((option: any) => (
+                            {COUNTRIES.map((option) => (
                               <MenuItem
-                                key={option[0]}
-                                value={option[0]}
-                                onClick={() => setCountry(option[0])}
+                                key={option.code}
+                                value={option.code}
                               >
-                                {option[1]}
+                                {option.name}
                               </MenuItem>
                             ))}
                           </Select>
