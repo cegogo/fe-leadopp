@@ -1,23 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Card,
-  Link,
-  Button,
-  Avatar,
-  Divider,
-  TextField,
-  Box,
-  AvatarGroup,
-} from '@mui/material';
-import {
-  Fa500Px,
-  FaAccusoft,
-  FaAd,
-  FaAddressCard,
-  FaEnvelope,
-  FaRegAddressCard,
-  FaStar,
-} from 'react-icons/fa';
+import { Card, Link, Button, Avatar, Divider, TextField, Box, AvatarGroup } from '@mui/material';
+import { Fa500Px, FaAccusoft, FaAd, FaAddressCard, FaEnvelope, FaRegAddressCard, FaStar } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AntSwitch } from '../../styles/CssStyled';

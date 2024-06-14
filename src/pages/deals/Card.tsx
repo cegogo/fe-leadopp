@@ -2,7 +2,7 @@ import React from 'react';
 
 interface CardProps {
     title: string;
-    content: string; // Or any other props you need for the card content
+    content: string;
 }
 
 const Card: React.FC<CardProps> = ({ title, content }) => {
