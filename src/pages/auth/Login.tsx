@@ -215,7 +215,6 @@ export default function Login() {
                             {/* Choosing the header depend on condition */}
                             {userExists ? 'Sign In' : 'Sign Up'}
                         </Typography>
-                        {!authData && (
                         <Grid item sx={{ mt: 4 }}>
                             {/* Rendering one form and choosing handler on submit depend on condition */}
                             <form onSubmit={userExists ? handleLoginSubmit : handleSignUpSubmit}>
@@ -248,7 +247,6 @@ export default function Login() {
                                 </Button>
                             </form>
                         </Grid>
-                        )}
                         {/* Here it should be another condition for google aut is disabled or not */}
                         {userExists && authData && (
                             <Grid item sx={{ mt: 4 }}>
