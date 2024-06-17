@@ -259,7 +259,7 @@ export default function UserDetails() {
                   <div className="title3">{userDetails?.phone || '---'}</div>
                 </div>
                 <div style={{ width: '32%' }}>
-                  <div className="title2">Marketing Access</div>
+                  <div className="title2">Marketing Manager</div>
                   <div className="title3">
                     <AntSwitch checked={userDetails?.has_marketing_access} />
                   </div>
@@ -275,7 +275,13 @@ export default function UserDetails() {
                 }}
               >
                 <div style={{ width: '34%' }}>
-                  <div className="title2">Sales Access</div>
+                  <div className="title2">Sales Manager</div>
+                  <div className="title3">
+                    <AntSwitch checked={userDetails?.has_sales_access} />
+                  </div>
+                </div>
+                <div style={{ width: '34%' }}>
+                  <div className="title2">Sales Representative</div>
                   <div className="title3">
                     <AntSwitch checked={userDetails?.has_sales_access} />
                   </div>
@@ -286,6 +292,7 @@ export default function UserDetails() {
                     {userDetails?.date_of_joining || '---'}
                   </div>
                 </div>
+                
                 {/* <div style={{ width: '32%' }}>
                                     <div className='title2'>Do Not Call</div>
                                     <div className='title3'>
