@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Card, Link, Button, Avatar, Divider, TextField, Box, AvatarGroup } from '@mui/material';
 import { Fa500Px, FaAccusoft, FaAd, FaAddressCard, FaEnvelope, FaRegAddressCard, FaStar } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
@@ -25,6 +25,7 @@ type response = {
   is_organization_admin: boolean;
   has_marketing_access: boolean;
   has_sales_access: boolean;
+  has_sales_representative_access: boolean;
   phone: string;
   alternate_phone: string;
   date_of_joining: string;
@@ -67,6 +68,22 @@ export default function UserDetails() {
     });
   };
 
+  const handleToggleChange = (key: keyof response) => (event: ChangeEvent<HTMLInputElement>) => {
+    if (!userDetails) return;
+  
+    const updatedUserDetails = { ...userDetails, [key]: event.target.checked };
+    setUserDetails(updatedUserDetails);
+  
+    const dataToUpdate = { [key]: event.target.checked };
+    const headers = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
+    };
+  };
+  
+
   //   useEffect(() => {
   // navigate(-1)
   //     fetchData(`${ContactUrl}/${state.contactId}/`, 'GET', null as any, headers)
@@ -108,6 +125,7 @@ export default function UserDetails() {
           country: userDetails?.address?.country,
           profile_pic: userDetails?.user_details?.profile_pic,
           has_sales_access: userDetails?.has_sales_access,
+          has_sales_representative_access: userDetails?.has_sales_representative_access,
           has_marketing_access: userDetails?.has_marketing_access,
           is_organization_admin: userDetails?.is_organization_admin,
         },
@@ -261,7 +279,7 @@ export default function UserDetails() {
                 <div style={{ width: '32%' }}>
                   <div className="title2">Marketing Manager</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_marketing_access} />
+                    <AntSwitch checked={userDetails?.has_marketing_access} onChange={handleToggleChange('has_marketing_access')} />
                   </div>
                 </div>
               </div>
@@ -277,13 +295,13 @@ export default function UserDetails() {
                 <div style={{ width: '34%' }}>
                   <div className="title2">Sales Manager</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_sales_access} />
+                    <AntSwitch checked={userDetails?.has_sales_access} onChange={handleToggleChange('has_sales_access')} />
                   </div>
                 </div>
                 <div style={{ width: '34%' }}>
                   <div className="title2">Sales Representative</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_sales_access} />
+                    <AntSwitch checked={userDetails?.has_sales_representative_access} onChange={handleToggleChange('has_sales_representative_access')} />
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
