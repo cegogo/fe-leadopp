@@ -1,6 +1,6 @@
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import React, { useEffect, useState } from 'react';
-import { Card, Switch, Typography, Avatar, CircularProgress, Box } from '@mui/material';
+import { Card, TextField, Button, Typography, Avatar, CircularProgress, Box } from '@mui/material';
 import { CustomAppBar } from '../../components/CustomAppBar';
 
 interface UserDetails {
@@ -95,7 +95,7 @@ export function UserProfile() {
             <Box sx={{ width: '100%' }}>
                 <Card sx={{ borderRadius: '7px' }}>
                     <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0'}}>My profile</Typography>
+                        <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0' }}>My profile</Typography>
                     </Box>
                     <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 160, height: 160, mr: '20px' }} />
@@ -152,7 +152,72 @@ export function UserProfile() {
                         </Box>
                     </Box>
                 </Card>
+
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Card sx={{ mt: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '33%' }}>
+                        <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>Password</Typography>
+                        <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
+                        <TextField
+                            label="Current Password"
+                            variant="outlined"
+                            fullWidth
+                            sx={{ mb: '10px' }}
+                        />
+                        <TextField
+                            label="New Password"
+                            variant="outlined"
+                            fullWidth
+                            sx={{ mb: '10px' }}
+                        />
+                        <TextField
+                            label="Confirm Password"
+                            variant="outlined"
+                            fullWidth
+                            sx={{ mb: '20px' }}
+                        />
+                        <Button variant="contained" sx={{ color: 'black', backgroundColor: '#c7dde5' }}>
+                            Save
+                        </Button>
+                    </Card>
+
+                    <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
+                        <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>My teams</Typography>
+                        <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
+                        <Box>
+                            <Typography sx={{ mb: '10px' }} className="title2">Team 1</Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', mb: '20px' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                            </Box>
+                            <Typography  sx={{ mb: '10px' }} className="title2">Team 2</Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                    <Typography className="title3">Team member</Typography>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Card>
+                </div>
             </Box>
-        </Box>
+        </Box >
     );
 }
