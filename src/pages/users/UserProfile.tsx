@@ -94,9 +94,18 @@ export function UserProfile() {
         <Box sx={{ mt: '120px', p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <Box sx={{ width: '100%' }}>
             <Card sx={{ borderRadius: '7px' }}>
-              <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 120, height: 120, mb: '20px' }} />
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a3353f0' }}>User Information</Typography>
+              <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a3353f0' }}>My profile</Typography>
+              </Box>
+              <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 120, height: 120, mr: '20px' }} />
+                <Box>
+                  <Typography variant="h4" sx={{ fontWeight: 600 }}>My name</Typography>
+                  <Typography variant="body1" sx={{ color: 'gray', mb: '10px' }}>Job title</Typography>
+                  <Box sx={{ backgroundColor: '#4f575b', color: 'white', px: '10px', py: '5px', borderRadius: '4px', display: 'inline-block' }}>
+                    <Typography variant="body2">{userProfile.role || '---'}</Typography>
+                  </Box>
+                </Box>
               </Box>
               <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Box sx={{ width: '32%' }}>
@@ -106,10 +115,6 @@ export function UserProfile() {
                 <Box sx={{ width: '32%' }}>
                   <Typography variant="body2" className="title2">Is Active</Typography>
                   <Switch checked={userProfile.user_details.is_active} />
-                </Box>
-                <Box sx={{ width: '32%' }}>
-                  <Typography variant="body2" className="title2">Profile pic</Typography>
-                  <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" />
                 </Box>
               </Box>
               <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: '15px' }}>
