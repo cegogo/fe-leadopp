@@ -58,7 +58,7 @@ const headCells: readonly HeadCell[] = [
         id: '',
         numeric: true,
         disablePadding: false,
-        label: 'Action'
+        label: 'Do not call'
     }
 ]
 
@@ -116,7 +116,7 @@ export default function Contacts() {
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('Token'),
             org: localStorage.getItem('org')
-          }
+        }
         try {
             const offset = (currentPage - 1) * recordsPerPage;
             await fetchData(`${ContactUrl}/?offset=${offset}&limit=${recordsPerPage}`, 'GET', null as any, Header)
@@ -158,7 +158,7 @@ export default function Contacts() {
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('Token'),
             org: localStorage.getItem('org')
-          }
+        }
         fetchData(`${ContactUrl}/${selectedId}/`, 'DELETE', null as any, Header)
             .then((res: any) => {
                 // console.log('delete:', res);
@@ -342,30 +342,30 @@ export default function Contacts() {
                                                         <TableRow
                                                             tabIndex={-1}
                                                             key={index}
-                                                            sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)', textTransform: 'capitalize' }}>
+                                                            sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)' }}>
                                                             <TableCell
                                                                 className='tableCell-link'
                                                                 onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
                                                             <TableCell className='tableCell'>{item.primary_email}</TableCell>
                                                             <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
-                                                            {/* <StyledTableCell align='left'>
-                                                <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} />
-                                            </StyledTableCell> */}
+                                                            <TableCell className='tableCell'>
+                                                                <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} />
+                                                            </TableCell>
                                                             <TableCell className='tableCell'><FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} /></TableCell>
                                                         </TableRow>
                                                     )
                                                 })
-                                            : ''
+                                            : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
                                     }
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        {loading &&
+                        {/* {loading &&
                             // <Skeleton variant="rectangular" 
                             // width={210} height={118} 
                             // />
                             <Spinner />
-                        }
+                        } */}
                     </Paper>
                 </Box>
             </Container>

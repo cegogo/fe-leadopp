@@ -91,7 +91,7 @@ export default function Sidebar(props: any) {
 
     const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
-    const adminNavList = ['admin', 'users'];
+    const adminNavList = ['admin'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
@@ -336,9 +336,9 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
                             <Route path='/app/admin' element={<Admin />} />
                             <Route path='/app/users' element={<Users />} />
-                            <Route path='/app/users/add-users' element={<AddUsers />} />
-                            <Route path='/app/users/edit-user' element={<EditUser />} />
-                            <Route path='/app/users/user-details' element={<UserDetails />} />
+                            <Route path='/app/admin/add-users' element={<AddUsers />} />
+                            <Route path='/app/admin/edit-user' element={<EditUser />} />
+                            <Route path='/app/admin/user-details' element={<UserDetails />} />
 
                         </Routes>
                     </Box>

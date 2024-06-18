@@ -465,7 +465,7 @@ export default function ContactDetails() {
                   }}
                 >
                   <div style={{ width: '32%' }}>
-                    <div className="title2">postcode</div>
+                    <div className="title2">Postcode</div>
                     <div className="title3">
                       {addressDetails?.postcode || '----'}
                     </div>

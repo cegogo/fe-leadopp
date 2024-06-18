@@ -400,7 +400,7 @@ function AddContacts() {
                     <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Mobile Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 10 digits">
                           <RequiredTextField
                             name='mobile_number'
                             value={formData.mobile_number}
@@ -415,7 +415,7 @@ function AddContacts() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Secondary Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 10 digits">
                           <RequiredTextField
                             required
                             name='secondary_number'

@@ -70,7 +70,6 @@ function EditContact() {
   const [hasInitialFocus, setHasInitialFocus] = useState(false);
 
   const [reset, setReset] = useState(false)
-  const [error, setError] = useState(false)
   const [formData, setFormData] = useState({
     salutation: '',
     first_name: '',
@@ -214,15 +213,14 @@ function EditContact() {
     // console.log(data, 'edit')
     fetchData(`${ContactUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
-        console.log('Form data:', res);
+        // console.log('Form data:', res);
         if (!res.error) {
           backbtnHandle()
           // setResponceError(data.error)
-          // navigate('/contacts')
+          navigate('/contacts')
           // resetForm()
         }
         if (res.error) {
-          setError(true)
           setErrors(res?.errors?.contact_errors)
         }
       })
@@ -380,7 +378,7 @@ function EditContact() {
                     <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Mobile Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 10 digits">
                           <RequiredTextField
                             name='mobile_number'
                             value={formData.mobile_number}
@@ -395,7 +393,7 @@ function EditContact() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Secondary Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 10 digits">
                           <RequiredTextField
                             required
                             name='secondary_number'
