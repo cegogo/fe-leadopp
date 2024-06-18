@@ -1,7 +1,7 @@
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import React, { useEffect, useState } from 'react';
-import { Card, TextField, Button, Typography, Avatar, CircularProgress, Box } from '@mui/material';
-import { CustomAppBar } from '../../components/CustomAppBar';
+import { Card, TextField, Button, Typography, Avatar, CircularProgress, Box, Stack } from '@mui/material';
+import { CustomToolbar } from '../../styles/CssStyled';
 
 interface UserDetails {
     email: string;
@@ -91,133 +91,146 @@ export function UserProfile() {
     }
 
     return (
-        <Box sx={{ mt: '120px', p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Box sx={{ width: '100%' }}>
-                <Card sx={{ borderRadius: '7px' }}>
-                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0' }}>My profile</Typography>
-                    </Box>
-                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                        <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 160, height: 160, mr: '20px' }} />
-                        <Box>
-                            <Typography variant="h4" sx={{ fontWeight: 600 }}>My name</Typography>
-                            <Typography sx={{ fontSize: '22px', color: 'gray', mb: '10px' }}>Job title</Typography>
-                            <Box sx={{ backgroundColor: '#4f575b', color: 'white', px: '10px', py: '5px', borderRadius: '4px', display: 'inline-block' }}>
-                                <Typography variant="body2">{userProfile.role || '---'}</Typography>
-                            </Box>
+        <Box sx={{ mt: '60px' }}>
+            <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
+                <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Button
+                        variant='contained'
+                        className={'add-button'}
+                    > Edit profile
+                    </Button>
+                </Stack>
+            </CustomToolbar>
+
+            <Box sx={{ mt: '10px', p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Box sx={{ width: '100%' }}>
+
+                    <Card sx={{ borderRadius: '7px' }}>
+                        <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0' }}>My profile</Typography>
                         </Box>
-                    </Box>
-                    <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: '15px' }}>
-                        <Box sx={{ width: '32%' }}>
-                            <Typography className="title2">Email</Typography>
-                            <Typography className="title3">{userProfile.user_details.email || '---'}</Typography>
-                        </Box>
-                        <Box sx={{ width: '32%' }}>
-                            <Typography className="title2">Mobile Number</Typography>
-                            <Typography className="title3">{userProfile.phone || '---'}</Typography>
-                        </Box>
-                        <Box sx={{ width: '32%' }}>
-                            <Typography className="title2">Date of joining</Typography>
-                            <Typography className="title3">{userProfile.date_of_joining || '---'}</Typography>
-                        </Box>
-                    </Box>
-                    <Box sx={{ mt: '15px' }}>
-                        <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">Address Line</Typography>
-                                <Typography className="title3">{userProfile.address.address_line || '---'}</Typography>
-                            </Box>
-                            <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">Street</Typography>
-                                <Typography className="title3">{userProfile.address.street || '---'}</Typography>
-                            </Box>
-                            <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">City</Typography>
-                                <Typography className="title3">{userProfile.address.city || '---'}</Typography>
+                        <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 160, height: 160, mr: '20px' }} />
+                            <Box>
+                                <Typography variant="h4" sx={{ fontWeight: 600 }}>My name</Typography>
+                                <Typography sx={{ fontSize: '22px', color: 'gray', mb: '10px' }}>Job title</Typography>
+                                <Box sx={{ backgroundColor: '#4f575b', color: 'white', px: '10px', py: '5px', borderRadius: '4px', display: 'inline-block' }}>
+                                    <Typography variant="body2">{userProfile.role || '---'}</Typography>
+                                </Box>
                             </Box>
                         </Box>
                         <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: '15px' }}>
                             <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">Postcode</Typography>
-                                <Typography className="title3">{userProfile.address.postcode || '---'}</Typography>
+                                <Typography className="title2">Email</Typography>
+                                <Typography className="title3">{userProfile.user_details.email || '---'}</Typography>
                             </Box>
                             <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">State</Typography>
-                                <Typography className="title3">{userProfile.address.state || '---'}</Typography>
+                                <Typography className="title2">Mobile Number</Typography>
+                                <Typography className="title3">{userProfile.phone || '---'}</Typography>
                             </Box>
                             <Box sx={{ width: '32%' }}>
-                                <Typography className="title2">Country</Typography>
-                                <Typography className="title3">{userProfile.address.country || '---'}</Typography>
+                                <Typography className="title2">Date of joining</Typography>
+                                <Typography className="title3">{userProfile.date_of_joining || '---'}</Typography>
                             </Box>
                         </Box>
-                    </Box>
-                </Card>
-
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <Card sx={{ mt: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '33%' }}>
-                        <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>Password</Typography>
-                        <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
-                        <TextField
-                            label="Current Password"
-                            variant="outlined"
-                            fullWidth
-                            sx={{ mb: '10px' }}
-                        />
-                        <TextField
-                            label="New Password"
-                            variant="outlined"
-                            fullWidth
-                            sx={{ mb: '10px' }}
-                        />
-                        <TextField
-                            label="Confirm Password"
-                            variant="outlined"
-                            fullWidth
-                            sx={{ mb: '20px' }}
-                        />
-                        <Button variant="contained" sx={{ color: 'black', backgroundColor: '#c7dde5' }}>
-                            Save
-                        </Button>
-                    </Card>
-
-                    <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
-                        <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>My teams</Typography>
-                        <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
-                        <Box>
-                            <Typography sx={{ mb: '10px' }} className="title2">Team 1</Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', mb: '20px' }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                        <Box sx={{ mt: '15px' }}>
+                            <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">Address Line</Typography>
+                                    <Typography className="title3">{userProfile.address.address_line || '---'}</Typography>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">Street</Typography>
+                                    <Typography className="title3">{userProfile.address.street || '---'}</Typography>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">City</Typography>
+                                    <Typography className="title3">{userProfile.address.city || '---'}</Typography>
                                 </Box>
                             </Box>
-                            <Typography  sx={{ mb: '10px' }} className="title2">Team 2</Typography>
-                            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                            <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: '15px' }}>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">Postcode</Typography>
+                                    <Typography className="title3">{userProfile.address.postcode || '---'}</Typography>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">State</Typography>
+                                    <Typography className="title3">{userProfile.address.state || '---'}</Typography>
                                 </Box>
-                                <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
-                                    <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
-                                    <Typography className="title3">Team member</Typography>
+                                <Box sx={{ width: '32%' }}>
+                                    <Typography className="title2">Country</Typography>
+                                    <Typography className="title3">{userProfile.address.country || '---'}</Typography>
                                 </Box>
                             </Box>
                         </Box>
                     </Card>
-                </div>
-            </Box>
-        </Box >
+
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <Card sx={{ mt: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '33%' }}>
+                            <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>Password</Typography>
+                            <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
+                            <TextField
+                                label="Current Password"
+                                variant="outlined"
+                                fullWidth
+                                sx={{ mb: '10px' }}
+                            />
+                            <TextField
+                                label="New Password"
+                                variant="outlined"
+                                fullWidth
+                                sx={{ mb: '10px' }}
+                            />
+                            <TextField
+                                label="Confirm Password"
+                                variant="outlined"
+                                fullWidth
+                                sx={{ mb: '20px' }}
+                            />
+                            <Button variant="contained" sx={{ color: 'black', backgroundColor: '#c7dde5' }}>
+                                Save
+                            </Button>
+                        </Card>
+
+                        <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
+                            <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>My teams</Typography>
+                            <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
+                            <Box>
+                                <Typography sx={{ mb: '10px' }} className="title2">Team 1</Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', mb: '20px' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                </Box>
+                                <Typography sx={{ mb: '10px' }} className="title2">Team 2</Typography>
+                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mb: '10px' }}>
+                                        <Avatar sx={{ width: 24, height: 24, mr: '5px' }} />
+                                        <Typography className="title3">Team member</Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Card>
+                    </div>
+                </Box>
+            </Box >
+        </Box>
     );
 }
