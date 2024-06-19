@@ -39,6 +39,7 @@ type FormErrors = {
   secondary_email?: string[];
   mobile_number?: string[];
   secondary_number?: string[];
+  website?: string[];
   department?: string[];
   country?: string[];
   language?: string[];
@@ -84,6 +85,7 @@ function AddContacts() {
     title: '',
     language: '',
     do_not_call: false,
+    website: '',
     department: '',
     address_line: '',
     street: '',
@@ -182,7 +184,7 @@ function AddContacts() {
       Authorization: localStorage.getItem('Token'),
       org: localStorage.getItem('org')
     }
-    // console.log(formData.description, 'des')
+    console.log(formData.description, 'des')
     const data = {
       salutation: formData.salutation,
       first_name: formData.first_name,
@@ -193,6 +195,7 @@ function AddContacts() {
       secondary_email: formData.secondary_email,
       mobile_number: formData.mobile_number,
       secondary_number: formData.secondary_number,
+      website : formData.website,
       department: formData.department,
       country: formData.country,
       language: formData.language,
@@ -201,6 +204,7 @@ function AddContacts() {
       street: formData.street,
       city: formData.city,
       state: formData.state,
+      postcode: formData.postcode,
       description: formData.description,
       linked_in_url: formData.linked_in_url,
       facebook_url: formData.facebook_url,
@@ -237,6 +241,7 @@ function AddContacts() {
       title: '',
       language: '',
       do_not_call: false,
+      website:'',
       department: '',
       address_line: '',
       street: '',
@@ -443,6 +448,7 @@ function AddContacts() {
                           helperText={errors?.language?.[0] ? errors?.language[0] : ''}
                         />
                       </div>
+                      
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Do Not Call</div>
                         {/* <FormControlLabel
@@ -453,6 +459,7 @@ function AddContacts() {
                             sx={{ mt: '1%' }}
                           />}
                         /> */}
+                        
                         <AntSwitch
                           name='do_not_call'
                           checked={formData.do_not_call}
@@ -461,7 +468,20 @@ function AddContacts() {
                           sx={{ mt: '1%' }}
                         />
                       </div>
+                    {/* website is added */}
                     </div>
+                    <div className='fieldSubContainer'>
+                        <div className='fieldTitle'>Website</div>
+                        <TextField
+                          name='website'
+                          value={formData.website}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.website?.[0]}
+                          helperText={errors?.website?.[0] ? errors?.website[0] : ''}
+                        />
+                      </div>
                   </Box>
                 </AccordionDetails>
               </Accordion>

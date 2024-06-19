@@ -87,11 +87,12 @@ export default function ContactDetails() {
     };
     fetchData(`${ContactUrl}/${id}/`, 'GET', null as any, Header).then(
       (res) => {
-        // console.log(res, 'res');
+        console.log(res, 'res');
         if (!res.error) {
           setContactDetails(res?.contact_obj);
           setAddressDetails(res?.address_obj);
-          setOrg(res?.org);
+          //setOrg(res?.org);
+          //console.log (res?.org);
         }
       }
     );
@@ -138,6 +139,7 @@ export default function ContactDetails() {
           title: contactDetails?.title,
           language: contactDetails?.language,
           do_not_call: contactDetails?.do_not_call,
+          website: contactDetails?.website,
           department: contactDetails?.department,
           address: addressDetails?.address_line,
           street: addressDetails?.street,
@@ -301,7 +303,8 @@ export default function ContactDetails() {
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Organization Name</div>
-                  <div className="title3">{org?.name || '----'}</div>
+                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/} 
+                  <div className="title3">{contactDetails?.organization|| '----'}</div> 
                 </div>
               </div>
               <div
