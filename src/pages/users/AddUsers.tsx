@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   TextField,
@@ -54,10 +54,10 @@ type FormErrors = {
   state?: string[];
   postcode?: string[];
   country?: string[];
-  profile_pic?: string[];
-  has_sales_access?: string[];
-  has_marketing_access?: string[];
-  is_organization_admin?: string[];
+  //profile_pic?: string[];
+  //has_sales_access?: string[];
+  //has_marketing_access?: string[];
+  //is_organization_admin?: string[];
 };
 interface FormData {
   email: string;
@@ -70,10 +70,10 @@ interface FormData {
   state: string;
   postcode: string;
   country: string;
-  profile_pic: string | null;
-  has_sales_access: boolean;
-  has_marketing_access: boolean;
-  is_organization_admin: boolean;
+  //profile_pic: string | null;
+  //has_sales_access: boolean;
+  //has_marketing_access: boolean;
+  //is_organization_admin: boolean;
 }
 export function AddUsers() {
   const { state } = useLocation();
@@ -122,13 +122,64 @@ export function AddUsers() {
     state: '',
     postcode: '',
     country: '',
-    profile_pic: null,
-    has_sales_access: false,
-    has_marketing_access: false,
-    is_organization_admin: false,
+    //profile_pic: null,
+    //has_sales_access: false,
+    //has_marketing_access: false,
+    //is_organization_admin: false,
   });
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+const [countries, setCountries] = useState([]);
+  const [, setCountry] = useState('');
+ /* 
+  useEffect(() => {
+    if (state?.id) {
+      fetchUserData(state.id);
+    }
+  }, [state?.id]);
+
+  useEffect(() => {
+    setFormData(state?.value);
+  }, [ state?.value]);
+
+  const fetchUserData = (id: any) => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    };
+
+    fetchData(`user/${id}/`, 'GET', null as any, Header)
+      .then((res) => {
+        if (!res.error) {
+          const profileObj = res.data.profile_obj;
+          const formData = {
+            email: profileObj.user_details.email,
+            role: profileObj.role,
+            phone: profileObj.phone,
+            alternate_phone: profileObj.alternate_phone,
+            address_line: profileObj.address.address_line,
+            street: profileObj.address.street,
+            city: profileObj.address.city,
+            state: profileObj.address.state,
+            postcode: profileObj.address.postcode,
+            country: profileObj.address.country,
+          };
+
+          setFormData(formData);
+          setCountries(res.data.countries);
+        } else {
+          setError(true);
+          setProfileErrors(res.errors.profile_errors);
+          setUserErrors(res.errors.user_errors);
+        }
+      })
+      .catch((error) => {
+        console.error('There was a problem with your fetch operation:', error);
+      });
+  };  */
+
+  /* const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     if (file) {
       const reader = new FileReader();
@@ -137,7 +188,7 @@ export function AddUsers() {
       };
       reader.readAsDataURL(file);
     }
-  };
+  }; */
 
   const submitForm = () => {
     const Header = {
@@ -147,7 +198,7 @@ export function AddUsers() {
       org: localStorage.getItem('org'),
     };
     // console.log('Form data:', data);
-
+    //debugger;
     const data = {
       email: formData.email,
       role: formData.role,
@@ -159,10 +210,10 @@ export function AddUsers() {
       state: formData.state,
       postcode: formData.postcode,
       country: formData.country,
-      profile_pic: formData.profile_pic,
-      has_sales_access: formData.has_sales_access,
-      has_marketing_access: formData.has_marketing_access,
-      is_organization_admin: formData.is_organization_admin,
+      //profile_pic: formData.profile_pic,
+      //has_sales_access: formData.has_sales_access,
+      //has_marketing_access: formData.has_marketing_access,
+      //is_organization_admin: formData.is_organization_admin,
     };
 
     fetchData(`${UsersUrl}/`, 'POST', JSON.stringify(data), Header)
@@ -197,10 +248,10 @@ export function AddUsers() {
       state: '',
       postcode: '',
       country: '',
-      profile_pic: null,
-      has_sales_access: false,
-      has_marketing_access: false,
-      is_organization_admin: false,
+      //profile_pic: null,
+      //has_sales_access: false,
+      //has_marketing_access: false,
+      //is_organization_admin: false,
     });
     setProfileErrors({});
     setUserErrors({});
@@ -327,7 +378,9 @@ export function AddUsers() {
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Alternate Phone</div>
                         <Tooltip title="Please enter the country code (e.g., +31).">
+
                           <TextField
+
                             required
                             name="alternate_phone"
                             value={formData.alternate_phone}
@@ -347,110 +400,6 @@ export function AddUsers() {
                         </Tooltip>
                       </div>
                     </div>
-                    {/* <div className='fieldContainer2'>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Profile picture</div>
-                                                <Stack sx={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <Stack sx={{ display: 'flex', flexDirection: 'row' }}>
-                                                        <label htmlFor="avatar-input">
-                                                            <input
-                                                                id="avatar-input"
-                                                                name="profile_pic"
-                                                                type="file"
-                                                                accept="image/*"
-                                                                onChange={(e: any) => {
-                                                                    handleFileChange(e);
-                                                                    handleChange(e);
-                                                                }}
-                                                                style={inputStyles}
-                                                            />
-                                                            <IconButton
-                                                                component="span"
-                                                                color="primary"
-                                                                aria-label="upload avatar"
-                                                            >
-                                                                <FaUpload fill='lightgrey' />
-                                                            </IconButton>
-                                                        </label>
-                                                        <Box>  {formData.profile_pic !== null ?
-                                                            <Box sx={{ position: 'relative' }}>
-                                                                <Avatar src={formData.profile_pic || ''} />
-                                                                <FaTimes style={{ position: 'absolute', marginTop: '-45px', marginLeft: '25px', fill: 'lightgray', cursor: 'pointer' }}
-                                                                    onClick={() => setFormData({ ...formData, profile_pic: null })} />
-                                                            </Box> : ''}
-                                                        </Box>
-                                                        {formData.profile_pic && <Typography sx={{ color: '#d32f2f', fontSize: '12px', ml: '-70px', mt: '40px' }}>{profileErrors?.profile_pic?.[0] || userErrors?.profile_pic?.[0] || ''}</Typography>}
-                                                    </Stack>
-                                                </Stack>
-
-
-                                                {/* <label htmlFor='icon-button-file' style={{backgroundColor:'grey'}}>
-                                                    <Input
-                                                        id='icon-button-file'
-                                                        type='file'
-                                                        // ref={inputFileRef}
-                                                        sx={{
-                                                            display: 'table-caption'
-                                                        }}
-                                                    //     onChange={handleChange}
-                                                    // name='profile_pic'
-                                                    />
-                                                    <Button
-                                                        variant='outlined'
-                                                        sx={{
-                                                            width: '147px',
-                                                            height: '42px',
-                                                            position: 'relative',
-                                                            top: '-21px'
-                                                        }}
-                                                    // disableRipple
-                                                    // disableFocusRipple
-                                                    // disableTouchRipple
-                                                    // onClick={() => inputFileRef.current.click()}
-                                                    >
-                                                    <IconButton type='file' onChange={handleChange}
-                                                    name='profile_pic' >
-                                                        <Avatar src={formData.profile_pic}></Avatar></IconButton>
-                                                         Upload Files 
-                                                     </Button> 
-                                                </label> 
-                                                 <TextField
-                                                    type="file"
-                                                    onChange={handleChange}
-                                                    name='profile_pic'
-                                                    style={{ width: '70%' }}
-                                                    size='small'
-                                                    error={!!errors.profile_pic || !!errors?.profile_pic?.[0]}
-                                                    helperText={errors.profile_pic || errors?.profile_pic?.[0] || ''}
-                                                /> 
-                                            </div>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Sales Access</div>
-                                                <AntSwitch
-                                                    name='has_sales_access'
-                                                    checked={formData.has_sales_access}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className='fieldContainer2'>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Marketing Access</div>
-                                                <AntSwitch
-                                                    name='has_marketing_access'
-                                                    checked={formData.has_marketing_access}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Organization Admin</div>
-                                                <AntSwitch
-                                                    name='is_organization_admin'
-                                                    checked={formData.is_organization_admin}
-                                                    onChange={handleChange}
-                                                />
-                                            </div>
-                                        </div> */}
                   </Box>
                 </AccordionDetails>
               </Accordion>
@@ -602,12 +551,14 @@ export function AddUsers() {
                             onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
+
                             {COUNTRIES.map((option) => (
                               <MenuItem
                                 key={option.code}
                                 value={option.code}
                               >
                                 {option.name}
+
                               </MenuItem>
                             ))}
                           </Select>
@@ -623,229 +574,7 @@ export function AddUsers() {
                 </AccordionDetails>
               </Accordion>
             </div>
-            {/* Business Hours */}
-            {/* <div className='leadContainer'>
-                            <Accordion defaultExpanded style={{ width: '98%' }}>
-                        <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
-                                    <Typography className='accordion-header'>Account Information</Typography>
-                                </AccordionSummary>
-                                <Divider className='divider' />
-                                <AccordionDetails>
-                                    <Box
-                                        sx={{ width: '98%', color: '#1A3353' }}
-                                        component='form'
-                                        noValidate
-                                        autoComplete='off'
-                                    >
-                                        <div>
-                                            <div className='fieldSubContainer' style={{ marginLeft: '4.8%' }}>
-                                                <div className='fieldTitle'>Business Hours</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                    {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                        </div> */}
-            {/* Preferences */}
-            {/* <div className='leadContainer'>
-                            <Accordion defaultExpanded style={{ width: '98%' }}>
-                       <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
-                                    <Typography className='accordion-header'>Account Information</Typography>
-                                </AccordionSummary>
-                                <Divider className='divider' />
-                                <AccordionDetails>
-                                    <Box
-                                        sx={{ width: '98%', color: '#1A3353' }}
-                                        component='form'
-                                        noValidate
-                                        autoComplete='off'
-                                    >
-                                        <div className='fieldContainer'>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Default Page After Login</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                    {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Persone Name Format</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                    {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                        </div>
-                                        <div className='fieldContainer2'>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Prefferred Currency</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                     {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Digit Grouping Pattern</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                    {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                        </div>
-                                        <div className='fieldContainer2'>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Digit Grouping Seperator</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                     {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                            <div className='fieldSubContainer'>
-                                                <div className='fieldTitle'>Number of Currency Decimals</div>
-                                                <TextField
-                                                    name='lead_source'
-                                                    select
-                                                    // onChange={onChange}
-                                                    // InputProps={{
-                                                    //     classes: {
-                                                    //         root: textFieldClasses.root
-                                                    //     }
-                                                    // }}
-                                                    className="custom-textfield"
-                                                    style={{ width: '70%' }}
-                                                >
-                                                 {state.roles && state.roles.map((option) => (
-                          <MenuItem key={option[1]} value={option[0]}>
-                            {option[0]}
-                          </MenuItem>
-                        ))} 
-                                                </TextField>
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                        </div> */}
-            {/* Signature Block */}
-            {/* <div className='leadContainer'>
-                            <Accordion defaultExpanded style={{ width: '98%' }}>
-                              <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
-                                    <Typography className='accordion-header'>Account Information</Typography>
-                                </AccordionSummary>
-                                <Divider className='divider' />
-                                <AccordionDetails>
-                                    <Box
-                                        sx={{ width: '100%', color: '#1A3353' }}
-                                        component='form'
-                                        noValidate
-                                        autoComplete='off'
-                                    >
-                                        <div className='DescriptionDetail'>
-                                            <div className='descriptionSubContainer'>
-                                                <div className='descriptionTitle'>Signature</div>
-                                                <TextareaAutosize
-                                                    aria-label='minimum height'
-                                                    name='description'
-                                                    minRows={8}
-                                                    // defaultValue={state.editData && state.editData.description ? state.editData.description : ''}
-                                                    // onChange={onChange} 
-                                                    style={{ width: '70%', padding: '5px' }}
-                                                    placeholder='Add Description'
-                                                />
-                                            </div>
-                                        </div>
-                                    </Box>
-                                </AccordionDetails>
-                            </Accordion>
-                        </div> */}
+           
           </div>
         </form>
       </Box>

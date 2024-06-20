@@ -147,7 +147,7 @@ export function EditUser() {
     return () => {
       setReset(false);
     };
-  }, [reset]);
+  }, [reset]); 
 
   const handleChange = (e: any) => {
     const { name, value, files, type, checked } = e.target;
@@ -280,8 +280,8 @@ export function EditUser() {
     setUserErrors({});
   };
   const onCancel = () => {
-    setReset(true);
-    // resetForm()
+    //setReset(true);
+    resetForm()
   };
   const module = 'Admin';
   const crntPage = 'Edit User';
