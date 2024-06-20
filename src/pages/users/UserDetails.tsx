@@ -1,10 +1,10 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Card, Link, Button, Avatar, Divider, TextField, Box, AvatarGroup } from '@mui/material';
+import { Card, Link, Button, Avatar, Divider, TextField, Box, AvatarGroup, FormControlLabel, Switch } from '@mui/material';
 import { Fa500Px, FaAccusoft, FaAd, FaAddressCard, FaEnvelope, FaRegAddressCard, FaStar } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AntSwitch } from '../../styles/CssStyled';
-import { ContactUrl, UserUrl } from '../../services/ApiUrls';
+import { ContactUrl, ProfileUrl, UserUrl } from '../../services/ApiUrls';
 import { fetchData, Header } from '../../components/FetchData';
 
 type response = {
@@ -68,7 +68,7 @@ export default function UserDetails() {
     });
   };
 
-  const handleToggleChange = (key: keyof response) => (event: ChangeEvent<HTMLInputElement>) => {
+  const handleToggleChange = (key: keyof response) => async (event: ChangeEvent<HTMLInputElement>) => {
     if (!userDetails) return;
   
     const updatedUserDetails = { ...userDetails, [key]: event.target.checked };
@@ -81,9 +81,27 @@ export default function UserDetails() {
       Authorization: localStorage.getItem('Token') || '',
       org: localStorage.getItem('org') || '',
     };
+  
+    try {
+      const res = await fetchData(`${ProfileUrl}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
+      console.log('Response from server:', res);
+  
+      if (!res.error) {
+        // Assuming the user details are directly under res.data
+        const updatedDetails = {
+          ...userDetails,
+          ...res.data, // Update userDetails with the new data from response
+        };
+        setUserDetails(updatedDetails);
+        console.log('Update successful');
+      } else {
+        console.log('Update failed');
+      }
+    } catch (error) {
+      console.error('Error updating user details:', error);
+    }
   };
   
-
   //   useEffect(() => {
   // navigate(-1)
   //     fetchData(`${ContactUrl}/${state.contactId}/`, 'GET', null as any, headers)
@@ -279,8 +297,11 @@ export default function UserDetails() {
                 <div style={{ width: '32%' }}>
                   <div className="title2">Marketing Manager</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_marketing_access} onChange={handleToggleChange('has_marketing_access')} />
-                  </div>
+                  <FormControlLabel
+                    control={<Switch checked={userDetails?.has_marketing_access} onChange={handleToggleChange('has_marketing_access')} />}
+                    label={userDetails?.has_marketing_access ? 'Enabled' : 'Disabled'}
+                  />
+                </div>
                 </div>
               </div>
               <div
@@ -295,14 +316,20 @@ export default function UserDetails() {
                 <div style={{ width: '34%' }}>
                   <div className="title2">Sales Manager</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_sales_access} onChange={handleToggleChange('has_sales_access')} />
-                  </div>
+                  <FormControlLabel
+                    control={<Switch checked={userDetails?.has_sales_access} onChange={handleToggleChange('has_sales_access')} />}
+                    label={userDetails?.has_sales_access ? 'Enabled' : 'Disabled'}
+                  />
+                </div>
                 </div>
                 <div style={{ width: '34%' }}>
                   <div className="title2">Sales Representative</div>
                   <div className="title3">
-                    <AntSwitch checked={userDetails?.has_sales_representative_access} onChange={handleToggleChange('has_sales_representative_access')} />
-                  </div>
+                  <FormControlLabel
+                    control={<Switch checked={userDetails?.has_sales_representative_access} onChange={handleToggleChange('has_sales_representative_access')} />}
+                    label={userDetails?.has_sales_representative_access ? 'Enabled' : 'Disabled'}
+                  />
+                </div>
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Date of joining</div>
