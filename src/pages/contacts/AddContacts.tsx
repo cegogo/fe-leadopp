@@ -468,20 +468,7 @@ function AddContacts() {
                           sx={{ mt: '1%' }}
                         />
                       </div>
-                    {/* website is added */}
                     </div>
-                    <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Website</div>
-                        <TextField
-                          name='website'
-                          value={formData.website}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          error={!!errors?.website?.[0]}
-                          helperText={errors?.website?.[0] ? errors?.website[0] : ''}
-                        />
-                      </div>
                   </Box>
                 </AccordionDetails>
               </Accordion>
@@ -683,66 +670,68 @@ function AddContacts() {
                 </AccordionDetails>
               </Accordion>
             </div>
-            {/* Socials */}
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '20px' }}>
-              <Accordion
-                defaultExpanded
-                style={{ width: '98%' }}>
-                <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
-                  <Typography className='accordion-header'>Socials</Typography>
-                </AccordionSummary>
-                <Divider className='divider' />
-                <AccordionDetails>
-                  <Box
-                    sx={{ width: '100%', color: '#1A3353', mb: 1 }}
-                    component='form'
-                    noValidate
-                    autoComplete='off'
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row' }}>
-                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Linkedin Url</div>
-                        <TextField
-                          name='linked_in_url'
-                          value={formData.linked_in_url}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          error={!!errors?.linked_in_url?.[0]}
-                          helperText={errors?.linked_in_url?.[0] ? errors?.linked_in_url[0] : ''}
-                        />
-                      </div>
-                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row' }}>
-                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Facebook Url</div>
-                        <TextField
-                          name='facebook_url'
-                          value={formData.facebook_url}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          error={!!errors?.facebook_url?.[0]}
-                          helperText={errors?.facebook_url?.[0] ? errors?.facebook_url[0] : ''}
-                        />
-                      </div>
-                    </div>
-                    <div style={{ marginTop: '20px' }}>
-                      <div style={{
-                        width: '40%', display: 'flex', flexDirection: 'row'
-                        , marginLeft: '5%'
-                      }}>
-                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter Username</div>
-                        <RequiredTextField
-                          required
-                          name='twitter_username'
-                          value={formData.twitter_username}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          error={!!errors?.twitter_username?.[0]}
-                          helperText={errors?.twitter_username?.[0] ? errors?.twitter_username[0] : ''}
-                        />
-                      </div>
-                    </div>
+           {/* Socials */}
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '20px' }}>
+          <Accordion defaultExpanded style={{ width: '98%' }}>
+            <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
+              <Typography className='accordion-header'>Socials</Typography>
+            </AccordionSummary>
+            <Divider className='divider' />
+            <AccordionDetails>
+              <Box sx={{ width: '100%', color: '#1A3353', mb: 1 }} component='form' noValidate autoComplete='off'>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
+                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
+                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Linkedin Url</div>
+                    <TextField
+                      name='linked_in_url'
+                      value={formData.linked_in_url}
+                      onChange={handleChange}
+                      style={{ width: '70%' }}
+                      size='small'
+                      error={!!errors?.linked_in_url?.[0]}
+                      helperText={errors?.linked_in_url?.[0] ? errors?.linked_in_url[0] : ''}
+                    />
+                  </div>
+                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
+                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Facebook Url</div>
+                    <TextField
+                      name='facebook_url'
+                      value={formData.facebook_url}
+                      onChange={handleChange}
+                      style={{ width: '70%' }}
+                      size='small'
+                      error={!!errors?.facebook_url?.[0]}
+                      helperText={errors?.facebook_url?.[0] ? errors?.facebook_url[0] : ''}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
+                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter-username</div>
+                    <TextField
+                      name='twitter_username'
+                      value={formData.twitter_username}
+                      onChange={handleChange}
+                      style={{ width: '70%' }}
+                      size='small'
+                      error={!!errors?.twitter_username?.[0]}
+                      helperText={errors?.twitter_username?.[0] ? errors?.twitter_username[0] : ''}
+                    />
+                  </div>
+                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Website Url</div>
+                    <TextField
+                      name='website'
+                      value={formData.website}
+                      onChange={handleChange}
+                      style={{ width: '70%' }}
+                      size='small'
+                      error={!!errors?.website?.[0]}
+                      helperText={errors?.website?.[0] ? errors?.website[0] : ''}
+                    />
+                  </div>
+                </div>                 
                   </Box>
                 </AccordionDetails>
               </Accordion>
@@ -750,7 +739,6 @@ function AddContacts() {
           </div>
         </form>
       </Box>
-
     </Box>
   )
 }
