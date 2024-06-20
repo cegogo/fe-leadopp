@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 // import { makeStyles } from '@mui/styles'
 // import isEmail from 'validator/lib/isEmail'
+import { COUNTRIES } from '../../components/Data';
 
 import '../../styles/style.css';
 import { UsersUrl } from '../../services/ApiUrls';
@@ -377,7 +378,9 @@ const [countries, setCountries] = useState([]);
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Alternate Phone</div>
                         <Tooltip title="Please enter the country code (e.g., +31).">
-                          <RequiredTextField
+
+                          <TextField
+
                             required
                             name="alternate_phone"
                             value={formData.alternate_phone}
@@ -529,9 +532,7 @@ const [countries, setCountries] = useState([]);
                             name="country"
                             value={formData.country}
                             open={countrySelectOpen}
-                            onClick={() =>
-                              setCountrySelectOpen(!countrySelectOpen)
-                            }
+                            onClick={() => setCountrySelectOpen(!countrySelectOpen)}
                             IconComponent={() => (
                               <div
                                 onClick={() =>
@@ -550,13 +551,14 @@ const [countries, setCountries] = useState([]);
                             onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
-                            {countries.map((option: any) => (
+
+                            {COUNTRIES.map((option) => (
                               <MenuItem
-                                key={option[0]}
-                                value={option[0]}
-                                onClick={() => setCountry(option[0])}
+                                key={option.code}
+                                value={option.code}
                               >
-                                {option[1]}
+                                {option.name}
+
                               </MenuItem>
                             ))}
                           </Select>
