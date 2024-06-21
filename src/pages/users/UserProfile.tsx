@@ -5,9 +5,11 @@ import { CustomToolbar } from '../../styles/CssStyled';
 
 interface UserDetails {
     email: string;
-    id: string;
     is_active: boolean;
     profile_pic: string | null;
+    first_name: string;
+    last_name:  string;
+    job_title: string;  
 }
 
 interface Address {
@@ -20,8 +22,6 @@ interface Address {
     state: string;
     postcode: string;
     country: string;
-    created_by: string;
-    updated_by: string;
 }
 
 interface UserObj {
@@ -112,8 +112,8 @@ export function UserProfile() {
                         <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Avatar src={userProfile.user_details.profile_pic || ''} alt="Profile Picture" sx={{ width: 160, height: 160, mr: '20px' }} />
                             <Box>
-                                <Typography variant="h4" sx={{ fontWeight: 600 }}>My name</Typography>
-                                <Typography sx={{ fontSize: '22px', color: 'gray', mb: '10px' }}>Job title</Typography>
+                                <Typography variant="h4" sx={{ fontWeight: 600 }}>{userProfile.user_details.first_name || '---'} {userProfile.user_details.last_name || '---'}</Typography>
+                                <Typography sx={{ fontSize: '22px', color: 'gray', mb: '10px' }}>{userProfile.user_details.job_title || '---'}</Typography>
                                 <Box sx={{ backgroundColor: '#4f575b', color: 'white', px: '10px', py: '5px', borderRadius: '4px', display: 'inline-block' }}>
                                     <Typography variant="body2">{userProfile.role || '---'}</Typography>
                                 </Box>
@@ -137,29 +137,29 @@ export function UserProfile() {
                             <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">Address Line</Typography>
-                                    <Typography className="title3">{userProfile.address.address_line || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.address_line || '---'}</Typography>
                                 </Box>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">Street</Typography>
-                                    <Typography className="title3">{userProfile.address.street || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.street || '---'}</Typography>
                                 </Box>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">City</Typography>
-                                    <Typography className="title3">{userProfile.address.city || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.city || '---'}</Typography>
                                 </Box>
                             </Box>
                             <Box sx={{ p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mt: '15px' }}>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">Postcode</Typography>
-                                    <Typography className="title3">{userProfile.address.postcode || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.postcode || '---'}</Typography>
                                 </Box>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">State</Typography>
-                                    <Typography className="title3">{userProfile.address.state || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.state || '---'}</Typography>
                                 </Box>
                                 <Box sx={{ width: '32%' }}>
                                     <Typography className="title2">Country</Typography>
-                                    <Typography className="title3">{userProfile.address.country || '---'}</Typography>
+                                    <Typography className="title3">{userProfile?.address?.country || '---'}</Typography>
                                 </Box>
                             </Box>
                         </Box>
