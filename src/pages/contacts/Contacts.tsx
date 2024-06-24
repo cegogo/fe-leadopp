@@ -16,6 +16,20 @@ import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
 import { useMyContext } from '../../context/Context';
 
+import { CATEGORY_OPTIONS, CategoryList } from './constants'; // Import category constants
+
+// Function to get category color
+const getCategoryColor = (category: any) => {
+    const option = CATEGORY_OPTIONS.find(opt => opt.value === category);
+    return option ? option.color : 'defaultColor';
+};
+
+// Function to get category label
+const getCategoryLabel = (category: any) => {
+    const option = CATEGORY_OPTIONS.find(opt => opt.value === category);
+    return option ? option.label : '';
+};
+
 interface HeadCell {
     disablePadding: boolean;
     id: any;
@@ -58,7 +72,7 @@ const headCells: readonly HeadCell[] = [
         id: '',
         numeric: true,
         disablePadding: false,
-        label: 'Do not call'
+        label: 'Category'
     }
 ]
 
@@ -151,6 +165,12 @@ export default function Contacts() {
         setOrder(isAsc ? 'desc' : 'asc')
         setOrderBy(property)
     }
+
+    // Function to handle category change
+    const handleCategoryChange = (contactId: any, newCategory: any) => {
+        // API call to update category
+        // Update contactList state with new category
+    };
 
     const DeleteItem = () => {
         const Header = {
@@ -349,7 +369,13 @@ export default function Contacts() {
                                                             <TableCell className='tableCell'>{item.primary_email}</TableCell>
                                                             <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
                                                             <TableCell className='tableCell'>
-                                                                <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} />
+                                                                {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
+                                                                <Button
+                                                                    style={{ backgroundColor: getCategoryColor(item.category), color: 'white' }}
+                                                                    onClick={() => handleCategoryChange(item.id, item.category)}
+                                                                >
+                                                                    {getCategoryLabel(item.category)}
+                                                                </Button>
                                                             </TableCell>
                                                             <TableCell className='tableCell'><FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} /></TableCell>
                                                         </TableRow>
