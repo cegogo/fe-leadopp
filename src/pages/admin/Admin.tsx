@@ -16,7 +16,7 @@ import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssSty
 interface HeadCell {
     disablePadding: boolean;
     id: any;
-    label: string;
+    //label: string;
     numeric: boolean;
 }
 
@@ -26,13 +26,13 @@ const headCells: readonly HeadCell[] = [
         id: 'organizations',
         numeric: true,
         disablePadding: false,
-        label: 'Organizations'
+        //label: 'Organizations'
     },
     {
         id: 'actions',
         numeric: true,
         disablePadding: false,
-        label: 'Actions'
+        //label: 'Actions'
     }
 ]
 
@@ -79,7 +79,7 @@ export default function Admin() {
     const [values, setValues] = useState(10)
     const [dense] = useState(false)
     const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [orgData, setOrgData] = useState<OrgData>({ name: '', google_authentication: false });
+    const [authData, setAuthData] = useState<AuthData>({  google_authentication: false });
     const [deleteItemId, setDeleteItemId] = useState('')
     const [loader, setLoader] = useState(true)
     const [isDelete, setIsDelete] = useState(false)
@@ -109,8 +109,7 @@ export default function Admin() {
     const [inactiveTotalPages, setInactiveTotalPages] = useState<number>(0);
     const [inactiveLoading, setInactiveLoading] = useState(true);
 
-    interface OrgData {
-        name: string;
+    interface AuthData {        
         google_authentication: boolean;
     }
 
@@ -127,29 +126,23 @@ export default function Admin() {
     };
 
     useEffect(() => {
-        const fetchOrgData = async () => {
-            const orgId = localStorage.getItem('org');
 
 
-            const getOrg = async () => {
+            const getAuth = async () => {
                 const Header = {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
-                    Authorization: localStorage.getItem('Token'),
-                    org: localStorage.getItem('org')
+
                 }
                 try {
-                    await fetchData(`${OrgUrl}/`, 'GET', null as any, Header)
+                    await fetchData(`${AdminUrl}/`, 'GET', null as any, Header)
                         .then((res: any) => {
                             if (!res.error) {
                                 console.log(res)
                                 setLoading(false)
-                                const orgInfo = res.profile_org_list.find((profile: ProfileOrgList) => profile?.org?.id === orgId)?.org;
-                                console.log(orgInfo)
-                                setOrgData(
-                                    {
-                                        name: orgInfo.name,
-                                        google_authentication: orgInfo.is_google_auth,
+                                setAuthData(
+                                    {                                        
+                                        google_authentication: res.is_google_auth,
                                     }
                                 )
                             }
@@ -159,10 +152,8 @@ export default function Admin() {
                     console.error('Error fetching data:', error);
                 }
             }
-            await getOrg();
-        };
+            getAuth();
 
-        fetchOrgData();
     }, []);
 
     /*const OrgDetail = (orgId: any) => {
@@ -293,15 +284,13 @@ export default function Admin() {
         setDeleteRowModal(!deleteRowModal)
     }*/
 
-    const putAuth = (name: string, isGoogleAuth: boolean) => {
+    const putAuth = (isGoogleAuth: boolean) => {
         const Header = {
             Accept: 'application/json',
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('Token'),
-            org: localStorage.getItem('org')
         }
         const Body = {
-            name: name,
             is_google_auth: isGoogleAuth
         }
  
@@ -317,8 +306,8 @@ export default function Admin() {
 
     const handleToggleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const newGoogleAuth = e.target.checked;
-        setOrgData((prevData: OrgData) => ({ ...prevData, google_authentication: newGoogleAuth }));
-        putAuth(orgData.name, newGoogleAuth);
+        setAuthData((prevData: AuthData) => ({ ...prevData, google_authentication: newGoogleAuth }));
+        putAuth(newGoogleAuth);
     };
 
     // const [selectedRows, setSelectedRows] = useState([]);
@@ -406,7 +395,7 @@ export default function Admin() {
     return (
         <Box sx={{ mt: '60px' }}>
             <CustomToolbar>
-                <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {/* <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Select
                         value={tab === 'active' ? activeRecordsPerPage : inactiveRecordsPerPage}
                         onChange={(e: any) => handleRecordsPerPage(e)}
@@ -449,7 +438,7 @@ export default function Admin() {
                     >
                         Add User
                     </Button>
-                </Stack>
+                </Stack> */}
             </CustomToolbar>
             <Container sx={{ width: '100%', maxWidth: '100%', minWidth: '100%' }}>
                 <Box sx={{ width: '100%', minWidth: '100%', m: '15px 0px 0px 0px' }}>
@@ -471,12 +460,12 @@ export default function Admin() {
                                     {/* Display organization name and toggle switch directly */}
                                     <TableRow>
                                         <TableCell colSpan={8}>
-                                            {orgData.name}
+                                            Google Authentication
                                         </TableCell>
                                         <TableCell>
                                             <FormControlLabel
-                                                control={<Switch checked={orgData.google_authentication} onChange={handleToggleChange} />}
-                                                label="Google Authentication"
+                                                control={<Switch checked={authData.google_authentication} onChange={handleToggleChange} />}
+                                                label=""
                                             />
                                         </TableCell>
                                     </TableRow>
