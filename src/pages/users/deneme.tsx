@@ -70,10 +70,10 @@ export default function UserDetails() {
 
   const handleToggleChange = (key: keyof response) => async (event: ChangeEvent<HTMLInputElement>) => {
     if (!userDetails) return;
-  
+
     const updatedUserDetails = { ...userDetails, [key]: event.target.checked };
     setUserDetails(updatedUserDetails);
-  
+
     const dataToUpdate = { [key]: event.target.checked };
     const headers = {
       Accept: 'application/json',
@@ -81,26 +81,22 @@ export default function UserDetails() {
       Authorization: localStorage.getItem('Token') || '',
       org: localStorage.getItem('org') || '',
     };
-  
+
+    console.log('Sending data to server:', dataToUpdate);
+
     try {
-      const res = await fetchData(`${ProfileUrl}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
-      console.log('Response from server:', res);
-  
-      if (!res.error && res.data && res.data.profile_obj) {
-        const updatedDetails = {
-          ...userDetails,
-          ...res.data.profile_obj.user_details, 
-        };
-        setUserDetails(updatedDetails);
-        console.log('Update successful');
+      const res = await fetchData(`${UserUrl}/${state.userId}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
+      console.log('Server response:', res);
+      if (!res.error) {
+        setUserDetails({ ...updatedUserDetails, ...res.data });
       } else {
-        console.log('Update failed');
+        console.log('Update failed:', res.message);
       }
     } catch (error) {
       console.error('Error updating user details:', error);
     }
   };
-  
+
   
   //   useEffect(() => {
   // navigate(-1)
