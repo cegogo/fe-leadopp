@@ -83,7 +83,7 @@ export default function UserDetails() {
     };
   
     try {
-      const res = await fetchData(`${ProfileUrl}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
+      const res = await fetchData(`${ProfileUrl}/${state.userId}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
       console.log('Response from server:', res);
   
       if (!res.error && res.data && res.data.profile_obj) {
@@ -93,8 +93,6 @@ export default function UserDetails() {
         };
         setUserDetails(updatedDetails);
         console.log('Update successful');
-      } else {
-        console.log('Update failed');
       }
     } catch (error) {
       console.error('Error updating user details:', error);
