@@ -1,15 +1,16 @@
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import React, { useEffect, useState } from 'react';
-import { Card, TextField, Button, Typography, Avatar, CircularProgress, Box, Stack } from '@mui/material';
+import { Card, Button, Typography, Avatar, CircularProgress, Box, Stack } from '@mui/material';
 import { CustomToolbar } from '../../styles/CssStyled';
+import ChangePassword from '../auth/ChangePassword';
 
 interface UserDetails {
     email: string;
     is_active: boolean;
     profile_pic: string | null;
     first_name: string;
-    last_name:  string;
-    job_title: string;  
+    last_name: string;
+    job_title: string;
 }
 
 interface Address {
@@ -164,33 +165,8 @@ export function UserProfile() {
                             </Box>
                         </Box>
                     </Card>
-
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        <Card sx={{ mt: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '33%' }}>
-                            <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>Password</Typography>
-                            <Box sx={{ mb: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}></Box>
-                            <TextField
-                                label="Current Password"
-                                variant="outlined"
-                                fullWidth
-                                sx={{ mb: '10px' }}
-                            />
-                            <TextField
-                                label="New Password"
-                                variant="outlined"
-                                fullWidth
-                                sx={{ mb: '10px' }}
-                            />
-                            <TextField
-                                label="Confirm Password"
-                                variant="outlined"
-                                fullWidth
-                                sx={{ mb: '20px' }}
-                            />
-                            <Button variant="contained" sx={{ color: 'black', backgroundColor: '#c7dde5' }}>
-                                Save
-                            </Button>
-                        </Card>
+                        <ChangePassword />
 
                         <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
                             <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>My teams</Typography>
