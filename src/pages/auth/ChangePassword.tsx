@@ -36,7 +36,8 @@ const ChangePassword = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.detail || 'Failed to change password.');
+                console.log(data)
+                throw new Error(data.new_password || data.old_password || 'Failed to change password.');
             }
 
             console.log('Password changed successfully:', data);

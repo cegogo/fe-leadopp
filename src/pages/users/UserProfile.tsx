@@ -166,6 +166,7 @@ export function UserProfile() {
                         </Box>
                     </Card>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        
                         <ChangePassword />
 
                         <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
