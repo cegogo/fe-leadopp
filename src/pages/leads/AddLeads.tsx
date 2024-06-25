@@ -149,6 +149,8 @@ export function AddLeads() {
   const { state } = useLocation();
   const { quill, quillRef } = useQuill();
   const initialContentRef = useRef(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const autocompleteRef = useRef<any>(null);
   const [error, setError] = useState(false);
@@ -300,18 +302,19 @@ export function AddLeads() {
     };
 
     fetchData(`${LeadUrl}/`, 'POST', JSON.stringify(data), Header)
-      .then((res: any) => {
-        // console.log('Form data:', res);
+      .then((res) => {
         if (!res.error) {
+          setSuccessMessage('Lead added successfully!');
           resetForm();
           navigate('/app/leads');
-        }
-        if (res.error) {
-          setError(true);
-          setErrors(res?.errors);
+        } else {
+          setErrors(res.errors || {});
+          setErrorMessage('Failed to add lead. Please check your inputs.');
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setErrorMessage('An error occurred while submitting the form.');
+      });
   };
 
   const resetForm = () => {
