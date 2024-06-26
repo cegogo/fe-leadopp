@@ -87,7 +87,7 @@ export default function Sidebar(props: any) {
 
     const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
-    const adminNavList = ['admin', 'users'];
+    const adminNavList = ['admin'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };

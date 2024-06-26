@@ -26,6 +26,8 @@ import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../../styles/style.css'
 
+import { CategoryList } from './constants'
+
 // interface FormErrors {
 //   [key: string]: string;
 // }
@@ -39,6 +41,7 @@ type FormErrors = {
   secondary_email?: string[];
   mobile_number?: string[];
   secondary_number?: string[];
+  website?: string[];
   department?: string[];
   country?: string[];
   language?: string[];
@@ -52,6 +55,7 @@ type FormErrors = {
   linked_in_url?: string[];
   facebook_url?: string[];
   twitter_username?: string[];
+  category?: string[];
 };
 
 // interface FormData {
@@ -70,7 +74,6 @@ function EditContact() {
   const [hasInitialFocus, setHasInitialFocus] = useState(false);
 
   const [reset, setReset] = useState(false)
-  const [error, setError] = useState(false)
   const [formData, setFormData] = useState({
     salutation: '',
     first_name: '',
@@ -79,6 +82,7 @@ function EditContact() {
     secondary_email: '',
     mobile_number: '',
     secondary_number: '',
+    website: '',
     date_of_birth: '',
     organization: '',
     title: '',
@@ -94,10 +98,12 @@ function EditContact() {
     description: '',
     linked_in_url: '',
     facebook_url: '',
-    twitter_username: ''
+    twitter_username: '',
+    category: 'Lead'
   })
   const [errors, setErrors] = useState<FormErrors>({});
   const [countrySelectOpen, setCountrySelectOpen] = useState(false)
+  const [categorySelectOpen, setCategorySelectOpen] = useState(false)
 
   useEffect(() => {
     // Scroll to the top of the page when the component mounts
@@ -172,14 +178,6 @@ function EditContact() {
     submitForm();
   };
 
-  const isValidEmail = (email: any) => {
-    return /^\S+@\S+\.\S+$/.test(email);
-  };
-
-  const isValidPhoneNumber = (phoneNumber: any) => {
-    return /^\+91\d{10}$/.test(phoneNumber);
-  };
-
   const submitForm = () => {
     const Header = {
       Accept: 'application/json',
@@ -198,6 +196,7 @@ function EditContact() {
       secondary_email: formData.secondary_email,
       mobile_number: formData.mobile_number,
       secondary_number: formData.secondary_number,
+      website: formData.website,
       department: formData.department,
       country: formData.country,
       language: formData.language,
@@ -209,20 +208,20 @@ function EditContact() {
       description: formData.description,
       linked_in_url: formData.linked_in_url,
       facebook_url: formData.facebook_url,
-      twitter_username: formData.twitter_username
+      twitter_username: formData.twitter_username,
+      category: formData.category
     }
     // console.log(data, 'edit')
     fetchData(`${ContactUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
-        console.log('Form data:', res);
+        // console.log('Form data:', res);
         if (!res.error) {
           backbtnHandle()
           // setResponceError(data.error)
-          // navigate('/contacts')
+          navigate('/app/contacts')
           // resetForm()
         }
         if (res.error) {
-          setError(true)
           setErrors(res?.errors?.contact_errors)
         }
       })
@@ -380,7 +379,7 @@ function EditContact() {
                     <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Mobile Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 10 digits">
                           <RequiredTextField
                             name='mobile_number'
                             value={formData.mobile_number}
@@ -395,8 +394,8 @@ function EditContact() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Secondary Number</div>
-                        <Tooltip title="Number must starts with +91">
-                          <RequiredTextField
+                        <Tooltip title="Number must be +(country code) and 10 digits">
+                          <TextField
                             required
                             name='secondary_number'
                             value={formData.secondary_number}
@@ -424,13 +423,46 @@ function EditContact() {
                         />
                       </div>
                       <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Do Not Call</div>
+                        <div className='fieldTitle'>Don't call</div>
                         <AntSwitch
                           name='do_not_call'
                           checked={formData.do_not_call}
                           onChange={handleChange}
                           sx={{ mt: '1%' }}
                         />
+                        <div className="fieldTitle">Category</div>
+                      <FormControl sx={{ width: '50%' }}>
+                        <Select
+                          name="category"
+                          value={formData.category}
+                          open={categorySelectOpen}
+                          onClick={() => setCategorySelectOpen(!categorySelectOpen)}
+                          IconComponent={() => (
+                            <div
+                              onClick={() =>
+                                setCategorySelectOpen(!categorySelectOpen)
+                              }
+                              className="select-icon-background"
+                            >
+                              {categorySelectOpen ? (
+                                <FiChevronUp className="select-icon" />
+                              ) : (
+                                <FiChevronDown className="select-icon" />
+                              )}
+                            </div>
+                          )}
+                          className={'select'}
+                          onChange={handleChange}
+                          error={!!errors?.category?.[0]}
+                        >
+                          {CategoryList.map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
+                      </FormControl>
                       </div>
                     </div>
                   </Box>
@@ -618,13 +650,8 @@ function EditContact() {
                 </AccordionSummary>
                 <Divider className='divider' />
                 <AccordionDetails>
-                  <Box
-                    sx={{ width: '100%', color: '#1A3353', mb: 1 }}
-                    component='form'
-                    noValidate
-                    autoComplete='off'
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                  <Box sx={{ width: '100%', color: '#1A3353', mb: 1 }} component='form' noValidate autoComplete='off'>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
                       <div style={{ width: '40%', display: 'flex', flexDirection: 'row' }}>
                         <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Linkedin Url</div>
                         <TextField
@@ -650,14 +677,11 @@ function EditContact() {
                         />
                       </div>
                     </div>
-                    <div style={{ marginTop: '20px' }}>
-                      <div style={{
-                        width: '40%', display: 'flex', flexDirection: 'row'
-                        , marginLeft: '5%'
-                      }}>
-                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter Username</div>
-                        <RequiredTextField
-                          required
+
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter-username</div>
+                        <TextField
                           name='twitter_username'
                           value={formData.twitter_username}
                           onChange={handleChange}
@@ -665,6 +689,18 @@ function EditContact() {
                           size='small'
                           error={!!errors?.twitter_username?.[0]}
                           helperText={errors?.twitter_username?.[0] ? errors?.twitter_username[0] : ''}
+                        />
+                      </div>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Website Url</div>
+                        <TextField
+                          name='website'
+                          value={formData.website}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.website?.[0]}
+                          helperText={errors?.website?.[0] ? errors?.website[0] : ''}
                         />
                       </div>
                     </div>
