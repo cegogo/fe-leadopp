@@ -8,7 +8,7 @@ interface EditUserProfileProps {
 }
 
 const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const [formData, setFormData] = useState({
         email: '',
         first_name: '',
@@ -20,16 +20,15 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         state: '',
         postcode: '',
         country: '',
-        mobile_number:'',
+        mobile_number: '',
     });
-    const [loading, setLoading] = useState(true); // Estado para manejar la carga inicial
-    const [error, setError] = useState<string | null>(null); // Estado para manejar errores
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // Función para cargar los datos del usuario basado en 'id'
         const fetchUserProfile = async () => {
-            const token = localStorage.getItem('Token'); // Obtén el token del localStorage
-            const org = localStorage.getItem('org'); // Obtén el org del localStorage
+            const token = localStorage.getItem('Token');
+            const org = localStorage.getItem('org');
 
             if (!token || !org) {
                 setError('Missing token or organization ID in localStorage');
@@ -38,7 +37,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             }
 
             try {
-                const response = await fetch(`${SERVER}${ProfileUrl}/`, {
+                const response = await fetch(`${SERVER}${ProfileUrl}`, {
                     method: 'GET',
                     headers: {
                         'accept': 'application/json',
@@ -79,17 +78,19 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         e.preventDefault();
 
         const token = localStorage.getItem('Token');
+        const org = localStorage.getItem('org');
 
-        if (!token) {
-            setError('Missing token in localStorage');
+        if (!token || !org) {
+            setError('Missing token or organization ID in localStorage');
             return;
         }
 
         try {
-            const response = await fetch(`${SERVER}${SERVER}${ProfileUrl}/${id}`, {
+            const response = await fetch(`${SERVER}${ProfileUrl}/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'org': org,
                     'Authorization': token,
                 },
                 body: JSON.stringify(formData),
@@ -99,19 +100,18 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                 throw new Error(`Error updating profile: ${response.statusText}`);
             }
 
-            // Lógica adicional después de la actualización exitosa (como navegar a otra página)
-            onUpdate(); // Llama a la función onUpdate para indicar que se ha actualizado el perfil correctamente
+            onUpdate();
         } catch (error: any) {
             setError(error.message);
         }
     };
 
     if (loading) {
-        return <CircularProgress />; // Muestra un indicador de carga mientras se obtienen los datos del usuario
+        return <CircularProgress />;
     }
 
     if (error) {
-        return <Typography color="error">{error}</Typography>; // Muestra un mensaje de error si ocurre algún problema
+        return <Typography color="error">{error}</Typography>;
     }
 
     return (
