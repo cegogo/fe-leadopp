@@ -62,15 +62,22 @@ const headCells: readonly HeadCell[] = [
         numeric: true,
         disablePadding: false,
         label: 'Email Address'
-    }, {
+    }, 
+    {
         id: 'mobile_number',
         numeric: true,
         disablePadding: false,
         label: 'Phone Number'
     },
     {
-        id: '',
-        numeric: true,
+        id: 'organization',
+        numeric: false,
+        disablePadding: false,
+        label: 'Organization'
+    },
+    {
+        id: 'category',
+        numeric: false,
         disablePadding: false,
         label: 'Category'
     }
@@ -368,6 +375,7 @@ export default function Contacts() {
                                                                 onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
                                                             <TableCell className='tableCell'>{item.primary_email}</TableCell>
                                                             <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
+                                                            <TableCell className='tableCell'>{item.organization ? item.organization : '---'}</TableCell>
                                                             <TableCell className='tableCell'>
                                                                 {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
                                                                 <Button

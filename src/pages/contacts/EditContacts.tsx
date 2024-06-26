@@ -395,7 +395,7 @@ function EditContact() {
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Secondary Number</div>
                         <Tooltip title="Number must be +(country code) and 10 digits">
-                          <RequiredTextField
+                          <TextField
                             required
                             name='secondary_number'
                             value={formData.secondary_number}
