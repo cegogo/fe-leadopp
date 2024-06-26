@@ -56,8 +56,7 @@ export default function Sidebar(props: any) {
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
-
-
+    
 
     useEffect(() => {
         toggleScreen();
@@ -214,7 +213,7 @@ export default function Sidebar(props: any) {
                                     </StyledListItemButton>
                                 </ListItem>
 
-                                <ListItem disablePadding>
+                               <ListItem disablePadding>
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
@@ -331,12 +330,11 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
                             <Route path='/app/admin' element={<Admin />} />
-                            <Route path='/app/users' element={<Users />} />
-                            <Route path='/app/users/add-users' element={<AddUsers />} />
-                            <Route path='/app/users/edit-user' element={<EditUser />} />
-                            <Route path='/app/users/user-details' element={<UserDetails />} />
+                            {/* <Route path='/app/users' element={<Users />} /> */}
+                            <Route path='/app/admin/add-users' element={<AddUsers />} />
+                            <Route path='/app/admin/edit-user' element={<EditUser />} />
+                            <Route path='/app/admin/user-details' element={<UserDetails />} />
                             <Route path='/app/profile' element={<UserProfile />} />
-
                         </Routes>
                     </Box>
                 </MyContext.Provider>

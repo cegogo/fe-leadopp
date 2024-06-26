@@ -72,7 +72,7 @@ const headCells: readonly HeadCell[] = [
         numeric: true,
         disablePadding: false,
         label: 'Email Address'
-    }, 
+    },
     {
         id: 'mobile_number',
         numeric: true,
@@ -114,6 +114,7 @@ export default function Contacts() {
     const [recordsPerPage, setRecordsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     // useEffect(() => {
     //     getContacts()
@@ -203,7 +204,7 @@ export default function Contacts() {
                     getContacts()
                 }
             })
-            .catch(() => {})
+            .catch(() => { })
     }
 
     const handlePreviousPage = () => {
@@ -275,14 +276,24 @@ export default function Contacts() {
     // console.log(contactList, 'cccc')
     // console.log(context, 'cc');
 
-    const filteredContactList = selectedCategory
-        ? contactList.filter(contact => contact.category === selectedCategory)
-        : contactList;
+    //Function to filter contact list with searchbar entree and categories
+    const filteredContactList = contactList.filter(contact => {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+            (selectedCategory ? contact.category === selectedCategory : true) &&
+            (contact.first_name.toLowerCase().includes(searchLower) ||
+             contact.last_name.toLowerCase().includes(searchLower) ||
+             contact.primary_email.toLowerCase().includes(searchLower) ||
+             (contact.mobile_number && contact.mobile_number.toLowerCase().includes(searchLower)) ||
+             (contact.organization && contact.organization.toLowerCase().includes(searchLower)) ||
+             contact.category.toLowerCase().includes(searchLower))
+        );
+    });
 
     return (
         <Box sx={{ mt: '60px' }}>
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
-                 {/* <Tabs defaultValue={value} onChange={handleChangeTab} sx={{ mt: '27px' }}>
+                {/* <Tabs defaultValue={value} onChange={handleChangeTab} sx={{ mt: '27px' }}>
                     <CustomTab value="Open" label="Open"
                         sx={{
                             backgroundColor: value === 'Open' ? '#F0F7FF' : '#223d60',
@@ -297,6 +308,13 @@ export default function Contacts() {
                     ></CustomTab>
                 </Tabs> */}
                 <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <InputBase
+                        value={searchQuery}
+                        className={`custom-select`}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search in contacts..."
+                        sx={{ marginRight: 2, padding: '0 10px', backgroundColor: '#fff', borderRadius: '4px', height: '40px', minWidth: '250px' }}
+                    />
                     <Select
                         value={recordsPerPage}
                         // onChange={(e: any) => setRecordsPerPage(e.target.value)}
@@ -427,15 +445,15 @@ export default function Contacts() {
                 </Box>
             </Container>
             {
-            <DeleteModal
-                onClose={deleteRowModalClose}
-                open={deleteRowModal}
-                id={selectedId}
-                modalDialog={modalDialog}
-                modalTitle={modalTitle}
-                DeleteItem={DeleteItem}
-            />
-            // <DialogModal
+                <DeleteModal
+                    onClose={deleteRowModalClose}
+                    open={deleteRowModal}
+                    id={selectedId}
+                    modalDialog={modalDialog}
+                    modalTitle={modalTitle}
+                    DeleteItem={DeleteItem}
+                />
+                // <DialogModal
                 //     contact={contact}
                 //     isDelete={isDelete}
                 //     modalDialog={modalDialog}
