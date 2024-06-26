@@ -12,6 +12,7 @@ import { FaAd, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import { fetchData } from '../../components/FetchData';
 import { UsersUrl, UserUrl, AdminUrl, OrgUrl } from '../../services/ApiUrls';
 import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssStyled';
+import Users from '../users/Users';
 
 interface HeadCell {
     disablePadding: boolean;
@@ -484,6 +485,7 @@ export default function Admin() {
                 modalTitle={modalTitle}
                 DeleteItem={DeleteItem}
             />
+        <Users />
         </Box>
     );
     

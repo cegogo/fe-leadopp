@@ -88,12 +88,12 @@ export default function UserDetails() {
   //   }, [])
 
   const backbtnHandle = () => {
-    navigate('/app/users');
+    navigate('/app/admin');
   };
 
   const editHandle = () => {
     // navigate('/contacts/edit-contacts', { state: { value: contactDetails, address: newAddress } })
-    navigate('/app/users/edit-user', {
+    navigate('/app/admin/edit-user', {
       state: {
         value: {
           email: userDetails?.user_details?.email,
@@ -116,9 +116,9 @@ export default function UserDetails() {
     });
   };
 
-  const module = 'Users';
+  const module = 'Admin';
   const crntPage = 'User Detail';
-  const backBtn = 'Back To Users';
+  const backBtn = 'Back To Admin';
   // console.log(userDetails, 'user');
 
   return (
