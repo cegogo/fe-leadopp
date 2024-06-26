@@ -3,6 +3,7 @@ export const SERVER = "http://localhost:8000/api/"
 export const LoginUrl = 'auth/login'
 export const RegisterUrl = 'auth/register'
 export const ForgotPasswordUrl = 'auth/forgot-password'
+export const ChangePasswordUrl = 'auth/change-password'
 
 export const AuthUrl = 'auth/google'
 // org

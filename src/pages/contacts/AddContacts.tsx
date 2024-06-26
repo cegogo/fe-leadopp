@@ -26,6 +26,8 @@ import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../../styles/style.css'
 
+import { CategoryList } from './constants'
+
 // interface FormErrors {
 //   [key: string]: string;
 // }
@@ -53,6 +55,7 @@ type FormErrors = {
   linked_in_url?: string[];
   facebook_url?: string[];
   twitter_username?: string[];
+  category?: string[];
 };
 
 // interface FormData {
@@ -96,18 +99,21 @@ function AddContacts() {
     description: '',
     linked_in_url: '',
     facebook_url: '',
-    twitter_username: ''
+    twitter_username: '',
+    category: 'Lead'
   })
   const [errors, setErrors] = useState<FormErrors>({});
   const [countrySelectOpen, setCountrySelectOpen] = useState(false)
 
-  const [validationErrors, setValidationErrors] = useState({
-    first_name: '',
-    last_name: '',
-    primary_email: '',
-    mobile_number: '',
-    secondary_number: ''
-  });
+  const [categorySelectOpen, setCategorySelectOpen] = useState(false)
+
+  // const [validationErrors, setValidationErrors] = useState({
+  //   first_name: '',
+  //   last_name: '',
+  //   primary_email: '',
+  //   mobile_number: '',
+  //   secondary_number: ''
+  // });
 
   useEffect(() => {
     if (quill) {
@@ -169,13 +175,13 @@ function AddContacts() {
     // }
   };
 
-  const isValidEmail = (email: any) => {
-    return /^\S+@\S+\.\S+$/.test(email);
-  };
+  // const isValidEmail = (email: any) => {
+  //   return /^\S+@\S+\.\S+$/.test(email);
+  // };
 
-  const isValidPhoneNumber = (phoneNumber: any) => {
-    return /^\+91\d{10}$/.test(phoneNumber);
-  };
+  // const isValidPhoneNumber = (phoneNumber: any) => {
+  //   return /^\+91\d{10}$/.test(phoneNumber);
+  // };
 
   const submitForm = () => {
     const Header = {
@@ -195,7 +201,7 @@ function AddContacts() {
       secondary_email: formData.secondary_email,
       mobile_number: formData.mobile_number,
       secondary_number: formData.secondary_number,
-      website : formData.website,
+      website: formData.website,
       department: formData.department,
       country: formData.country,
       language: formData.language,
@@ -208,7 +214,8 @@ function AddContacts() {
       description: formData.description,
       linked_in_url: formData.linked_in_url,
       facebook_url: formData.facebook_url,
-      twitter_username: formData.twitter_username
+      twitter_username: formData.twitter_username,
+      category: formData.category
     }
     fetchData(`${ContactUrl}/`, 'POST', JSON.stringify(data), Header)
       .then((res: any) => {
@@ -241,7 +248,7 @@ function AddContacts() {
       title: '',
       language: '',
       do_not_call: false,
-      website:'',
+      website: '',
       department: '',
       address_line: '',
       street: '',
@@ -252,7 +259,8 @@ function AddContacts() {
       description: '',
       linked_in_url: '',
       facebook_url: '',
-      twitter_username: ''
+      twitter_username: '',
+      category: 'Lead'
     });
     setErrors({});
   }
@@ -405,7 +413,7 @@ function AddContacts() {
                     <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Mobile Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must be +(country code) and 9 digits">
                           <RequiredTextField
                             name='mobile_number'
                             value={formData.mobile_number}
@@ -420,8 +428,8 @@ function AddContacts() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Secondary Number</div>
-                        <Tooltip title="Number must starts with +91">
-                          <RequiredTextField
+                        <Tooltip title="Number must be +(country code) and 9 digits">
+                          <TextField
                             required
                             name='secondary_number'
                             value={formData.secondary_number}
@@ -448,7 +456,7 @@ function AddContacts() {
                           helperText={errors?.language?.[0] ? errors?.language[0] : ''}
                         />
                       </div>
-                      
+
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Do Not Call</div>
                         {/* <FormControlLabel
@@ -459,7 +467,7 @@ function AddContacts() {
                             sx={{ mt: '1%' }}
                           />}
                         /> */}
-                        
+
                         <AntSwitch
                           name='do_not_call'
                           checked={formData.do_not_call}
@@ -467,6 +475,39 @@ function AddContacts() {
                           onChange={(e: any) => { setFormData((prevData) => ({ ...prevData, do_not_call: e.target.checked })) }}
                           sx={{ mt: '1%' }}
                         />
+                        <div className="fieldTitle">Category</div>
+                        <FormControl sx={{ width: '50%' }}>
+                          <Select
+                            name="category"
+                            value={formData.category}
+                            open={categorySelectOpen}
+                            onClick={() => setCategorySelectOpen(!categorySelectOpen)}
+                            IconComponent={() => (
+                              <div
+                                onClick={() =>
+                                  setCategorySelectOpen(!categorySelectOpen)
+                                }
+                                className="select-icon-background"
+                              >
+                                {categorySelectOpen ? (
+                                  <FiChevronUp className="select-icon" />
+                                ) : (
+                                  <FiChevronDown className="select-icon" />
+                                )}
+                              </div>
+                            )}
+                            className={'select'}
+                            onChange={handleChange}
+                            error={!!errors?.category?.[0]}
+                          >
+                            {CategoryList.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
+                        </FormControl>
                       </div>
                     </div>
                   </Box>
@@ -670,68 +711,68 @@ function AddContacts() {
                 </AccordionDetails>
               </Accordion>
             </div>
-           {/* Socials */}
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '20px' }}>
-          <Accordion defaultExpanded style={{ width: '98%' }}>
-            <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
-              <Typography className='accordion-header'>Socials</Typography>
-            </AccordionSummary>
-            <Divider className='divider' />
-            <AccordionDetails>
-              <Box sx={{ width: '100%', color: '#1A3353', mb: 1 }} component='form' noValidate autoComplete='off'>
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
-                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
-                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Linkedin Url</div>
-                    <TextField
-                      name='linked_in_url'
-                      value={formData.linked_in_url}
-                      onChange={handleChange}
-                      style={{ width: '70%' }}
-                      size='small'
-                      error={!!errors?.linked_in_url?.[0]}
-                      helperText={errors?.linked_in_url?.[0] ? errors?.linked_in_url[0] : ''}
-                    />
-                  </div>
-                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
-                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Facebook Url</div>
-                    <TextField
-                      name='facebook_url'
-                      value={formData.facebook_url}
-                      onChange={handleChange}
-                      style={{ width: '70%' }}
-                      size='small'
-                      error={!!errors?.facebook_url?.[0]}
-                      helperText={errors?.facebook_url?.[0] ? errors?.facebook_url[0] : ''}
-                    />
-                  </div>
-                </div>
+            {/* Socials */}
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '20px' }}>
+              <Accordion defaultExpanded style={{ width: '98%' }}>
+                <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
+                  <Typography className='accordion-header'>Socials</Typography>
+                </AccordionSummary>
+                <Divider className='divider' />
+                <AccordionDetails>
+                  <Box sx={{ width: '100%', color: '#1A3353', mb: 1 }} component='form' noValidate autoComplete='off'>
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Linkedin Url</div>
+                        <TextField
+                          name='linked_in_url'
+                          value={formData.linked_in_url}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.linked_in_url?.[0]}
+                          helperText={errors?.linked_in_url?.[0] ? errors?.linked_in_url[0] : ''}
+                        />
+                      </div>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '20px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Facebook Url</div>
+                        <TextField
+                          name='facebook_url'
+                          value={formData.facebook_url}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.facebook_url?.[0]}
+                          helperText={errors?.facebook_url?.[0] ? errors?.facebook_url[0] : ''}
+                        />
+                      </div>
+                    </div>
 
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
-                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
-                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter-username</div>
-                    <TextField
-                      name='twitter_username'
-                      value={formData.twitter_username}
-                      onChange={handleChange}
-                      style={{ width: '70%' }}
-                      size='small'
-                      error={!!errors?.twitter_username?.[0]}
-                      helperText={errors?.twitter_username?.[0] ? errors?.twitter_username[0] : ''}
-                    />
-                  </div>
-                  <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
-                    <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Website Url</div>
-                    <TextField
-                      name='website'
-                      value={formData.website}
-                      onChange={handleChange}
-                      style={{ width: '70%' }}
-                      size='small'
-                      error={!!errors?.website?.[0]}
-                      helperText={errors?.website?.[0] ? errors?.website[0] : ''}
-                    />
-                  </div>
-                </div>                 
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: '20px' }}>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Twitter-username</div>
+                        <TextField
+                          name='twitter_username'
+                          value={formData.twitter_username}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.twitter_username?.[0]}
+                          helperText={errors?.twitter_username?.[0] ? errors?.twitter_username[0] : ''}
+                        />
+                      </div>
+                      <div style={{ width: '40%', display: 'flex', flexDirection: 'row', marginBottom: '10px' }}>
+                        <div style={{ marginRight: '10px', fontSize: '13px', width: '22%', textAlign: 'right', fontWeight: 'bold' }}>Website Url</div>
+                        <TextField
+                          name='website'
+                          value={formData.website}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size='small'
+                          error={!!errors?.website?.[0]}
+                          helperText={errors?.website?.[0] ? errors?.website[0] : ''}
+                        />
+                      </div>
+                    </div>
                   </Box>
                 </AccordionDetails>
               </Accordion>
