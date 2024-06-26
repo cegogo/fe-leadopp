@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   Card,
   Link,
@@ -163,6 +163,13 @@ export default function ContactDetails() {
   const backBtn = 'Back To Contacts';
   // console.log(state, 'contact');
 
+  const websiteUrl = contactDetails?.website;
+  const formattedUrl =
+    websiteUrl &&
+    (websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://'))
+      ? websiteUrl
+      : `http://${websiteUrl}`;
+
   return (
     <Box sx={{ mt: '60px' }}>
       <div>
@@ -303,8 +310,10 @@ export default function ContactDetails() {
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Organization Name</div>
-                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/} 
-                  <div className="title3">{contactDetails?.organization|| '----'}</div> 
+                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/}
+                  <div className="title3">
+                    {contactDetails?.organization || '----'}
+                  </div>
                 </div>
               </div>
               <div
@@ -371,8 +380,26 @@ export default function ContactDetails() {
                 <div style={{ width: '32%' }}>
                   <div className="title2">website</div>
                   <div className="title3">
-                    {contactDetails?.website ? (
-                      <Link>{contactDetails?.website}</Link>
+                    {websiteUrl ? (
+                      <a
+                        href={formattedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: '#1E90FF',
+                          textDecoration: 'underline',
+                          transition:
+                            'color 0.3s ease-out, background-color 0.3s ease-out',
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.color = 'darkblue')
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.color = 'blue')
+                        }
+                      >
+                        {websiteUrl}
+                      </a>
                     ) : (
                       '----'
                     )}
