@@ -217,7 +217,7 @@ export default function Sidebar(props: any) {
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
-                                        navigate('/app/users/profile');
+                                        navigate('/app/profile');
 
                                     }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
