@@ -1,11 +1,10 @@
-import { SERVER, ProfileUrl } from '../../services/ApiUrls';
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Stack, Card } from '@mui/material';
-import { COUNTRIES } from '../../components/Data';
-import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
-import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { CustomToolbar } from '../../styles/CssStyled';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField } from '@mui/material';
+import { FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { SERVER, ProfileUrl } from '../../services/ApiUrls';
+import { COUNTRIES } from '../../components/Data';
 
 interface EditUserProfileProps {
     onUpdate: () => void;
@@ -29,6 +28,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [countrySelectOpen, setCountrySelectOpen] = useState(false);
+
     const handleChange = (e: any) => {
         const { name, value, type } = e.target;
         if (type === 'file') {
@@ -83,15 +83,12 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             } finally {
                 setLoading(false);
             }
-
         };
 
         fetchUserProfile();
     }, [id]);
 
-    const handleFormSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
+    const submitForm = async () => {
         const token = localStorage.getItem('Token');
         const org = localStorage.getItem('org');
 
@@ -120,6 +117,11 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         }
     };
 
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        submitForm();
+    };
+
     if (loading) {
         return <CircularProgress />;
     }
@@ -133,147 +135,211 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
                 <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Button
-                        variant='contained'
-                        className={'add-button'}
+                        variant="contained"
+                        className="add-button"
                         component={Link}
-                        to={`/app/profile/`}
+                        to="/app/profile/"
                     >
                         Back
                     </Button>
                 </Stack>
             </CustomToolbar>
 
-            <Box sx={{ mt: '10px', p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Box sx={{ width: '100%' }}></Box>
-                <Card sx={{ borderRadius: '7px' }}>
-                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0' }}>Edit profile</Typography>
-                    </Box>
-                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <form onSubmit={handleFormSubmit}>
-                        <FormGroup>
-                            <FormControl>
-                                <InputLabel>First Name</InputLabel>
-                                <Input
-                                    value={formData.first_name}
-                                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Last Name</InputLabel>
-                                <Input
-                                    value={formData.last_name}
-                                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Job Title</InputLabel>
-                                <Input
-                                    value={formData.job_title}
-                                    onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Email</InputLabel>
-                                <Input
-                                    type="email"
-                                    value={formData.email}
-                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Mobile Number</InputLabel>
-                                <Input
-                                    value={formData.mobile_number}
-                                    onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Adress Line</InputLabel>
-                                <Input
-                                    value={formData.address_line}
-                                    onChange={(e) => setFormData({ ...formData, address_line: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Street</InputLabel>
-                                <Input
-                                    value={formData.street}
-                                    onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>City</InputLabel>
-                                <Input
-                                    value={formData.city}
-                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>State</InputLabel>
-                                <Input
-                                    value={formData.state}
-                                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>Postcode</InputLabel>
-                                <Input
-                                    value={formData.postcode}
-                                    onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl>
-                                <InputLabel>City</InputLabel>
-                                <Input
-                                    value={formData.city}
-                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                                />
-                            </FormControl>
-                            <FormControl sx={{ width: '70%' }}>
-                                <Select
-                                    name="country"
-                                    value={formData.country}
-                                    open={countrySelectOpen}
-                                    onClick={() => setCountrySelectOpen(!countrySelectOpen)}
-                                    IconComponent={() => (
-                                        <div
-                                            onClick={() =>
-                                                setCountrySelectOpen(!countrySelectOpen)
-                                            }
-                                            className="select-icon-background"
-                                        >
-                                            {countrySelectOpen ? (
-                                                <FiChevronUp className="select-icon" />
-                                            ) : (
-                                                <FiChevronDown className="select-icon" />
-                                            )}
-                                        </div>
-                                    )}
-                                    className={'select'}
-                                    onChange={handleChange}
+            <Box sx={{ mt: '30px' }}>
+                <form onSubmit={handleFormSubmit}>
+                    <div style={{ padding: '10px' }}>
+                        <div className="leadContainer">
+                            <Accordion defaultExpanded style={{ width: '98%' }}>
+                                <AccordionSummary
+                                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                                 >
-
-                                    {COUNTRIES.map((option) => (
-                                        <MenuItem
-                                            key={option.code}
-                                            value={option.code}
-                                        >
-                                            {option.name}
-
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                            <Button type="submit" variant="contained" color="primary">
-                                Save Changes
-                            </Button>
-                        </FormGroup>
-                    </form>
+                                    <Typography className="accordion-header">
+                                        User Information
+                                    </Typography>
+                                </AccordionSummary>
+                                <Divider className="divider" />
+                                <AccordionDetails>
+                                    <Box
+                                        sx={{ width: '98%', color: '#1A3353', mb: 1 }}
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">First Name</div>
+                                                <TextField
+                                                    name="first_name"
+                                                    value={formData.first_name}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Last Name</div>
+                                                <TextField
+                                                    name="last_name"
+                                                    value={formData.last_name}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                            <div className="fieldTitle">Mobile Number</div>
+                                                <TextField
+                                                    name="mobile_number"
+                                                    value={formData.mobile_number}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Email</div>
+                                                <TextField
+                                                    name="email"
+                                                    type="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                            <div className="fieldTitle">Job Title</div>
+                                                <TextField
+                                                    /*disabled*/
+                                                    name="job_title"
+                                                    value={formData.job_title}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                        </div>
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+                        </div>
+                        {/* Address Details */}
+                        <div className="leadContainer">
+                            <Accordion defaultExpanded style={{ width: '98%' }}>
+                                <AccordionSummary
+                                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
+                                >
+                                    <Typography className="accordion-header">Address</Typography>
+                                </AccordionSummary>
+                                <Divider className="divider" />
+                                <AccordionDetails>
+                                    <Box
+                                        sx={{ width: '98%', color: '#1A3353', mb: 1 }}
+                                        component="form"
+                                        noValidate
+                                        autoComplete="off"
+                                    >
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Address Line</div>
+                                                <TextField
+                                                    name="address_line"
+                                                    value={formData.address_line}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Street</div>
+                                                <TextField
+                                                    name="street"
+                                                    value={formData.street}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">City</div>
+                                                <TextField
+                                                    required
+                                                    name="city"
+                                                    value={formData.city}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">State</div>
+                                                <TextField
+                                                    name="state"
+                                                    value={formData.state}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Postcode</div>
+                                                <TextField
+                                                    required
+                                                    name="postcode"
+                                                    value={formData.postcode}
+                                                    onChange={handleChange}
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Country</div>
+                                                <FormControl sx={{ width: '70%' }}>
+                                                    <Select
+                                                        name="country"
+                                                        value={formData.country}
+                                                        open={countrySelectOpen}
+                                                        onClick={() => setCountrySelectOpen(!countrySelectOpen)}
+                                                        IconComponent={() => (
+                                                            <div
+                                                                onClick={() => setCountrySelectOpen(!countrySelectOpen)}
+                                                                className="select-icon-background"
+                                                            >
+                                                                {countrySelectOpen ? <FiChevronUp className="select-icon" /> : <FiChevronDown className="select-icon" />}
+                                                            </div>
+                                                        )}
+                                                        onChange={handleChange}
+                                                    >
+                                                        {COUNTRIES.map((option) => (
+                                                            <MenuItem key={option.code} value={option.code}>
+                                                                {option.name}
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </div>
+                                        </div>
+                                    </Box>
+                                </AccordionDetails>
+                            </Accordion>
+                        </div>
+                    </div>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}>
+                        <Button type="submit" variant="contained" color="primary">
+                            Save Changes
+                        </Button>
                     </Box>
-                    </Card>
+                </form>
             </Box>
-        </Box >
+        </Box>
     );
 };
 
