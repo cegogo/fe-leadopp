@@ -65,6 +65,7 @@ export default function Login() {
             fetchData(`${AuthUrl}/`, 'POST', JSON.stringify(apiToken), head)
                 .then((res) => {
                     localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                    localStorage.setItem('current_user_id', `${res.user_id}`); // added current user ID
                     setToken(true);
                 })
                 .catch((error) => {
@@ -85,6 +86,7 @@ export default function Login() {
             .then((res) => {
                 if (res.access_token) {
                     localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                    localStorage.setItem('current_user_id', `${res.user_id}`); // added current user ID
                     navigate('/app');
                 } else {
                     setError('Invalid email or password');
