@@ -37,7 +37,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             }
 
             try {
-                const response = await fetch(`${SERVER}${ProfileUrl}`, {
+                const response = await fetch(`${SERVER}${ProfileUrl}/`, {
                     method: 'GET',
                     headers: {
                         'accept': 'application/json',
@@ -51,24 +51,26 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                 }
 
                 const data = await response.json();
+
                 setFormData({
-                    email: data.user_details.email,
-                    first_name: data.user_details.first_name,
-                    last_name: data.user_details.last_name,
-                    job_title: data.user_details.job_title,
-                    address_line: data.address.address_line,
-                    street: data.address.street,
-                    city: data.address.city,
-                    state: data.address.state,
-                    postcode: data.address.postcode,
-                    country: data.address.country,
-                    mobile_number: data.phone,
+                    email: data.user_obj.user_details.email,
+                    first_name: data.user_obj.user_details.first_name,
+                    last_name: data.user_obj.user_details.last_name,
+                    job_title: data.user_obj.user_details.job_title,
+                    address_line: data.user_obj.address.address_line,
+                    street: data.user_obj.address.street,
+                    city: data.user_obj.address.city,
+                    state: data.user_obj.address.state,
+                    postcode: data.user_obj.address.postcode,
+                    country: data.user_obj.address.country,
+                    mobile_number: data.user_obj.phone,
                 });
             } catch (error: any) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
+            
         };
 
         fetchUserProfile();
@@ -95,7 +97,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                 },
                 body: JSON.stringify(formData),
             });
-
+            
             if (!response.ok) {
                 throw new Error(`Error updating profile: ${response.statusText}`);
             }
