@@ -189,7 +189,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                         </div>
                                         <div className="fieldContainer">
                                             <div className="fieldSubContainer">
-                                            <div className="fieldTitle">Mobile Number</div>
+                                                <div className="fieldTitle">Mobile Number</div>
                                                 <TextField
                                                     name="mobile_number"
                                                     value={formData.mobile_number}
@@ -212,7 +212,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                         </div>
                                         <div className="fieldContainer">
                                             <div className="fieldSubContainer">
-                                            <div className="fieldTitle">Job Title</div>
+                                                <div className="fieldTitle">Job Title</div>
                                                 <TextField
                                                     /*disabled*/
                                                     name="job_title"
@@ -317,6 +317,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                             </div>
                                                         )}
                                                         onChange={handleChange}
+                                                        sx={{ height: '40px', }}
                                                     >
                                                         {COUNTRIES.map((option) => (
                                                             <MenuItem key={option.code} value={option.code}>
