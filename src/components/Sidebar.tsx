@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-
-
 import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, } from "react-icons/fa";
-
-
-
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
@@ -30,6 +25,7 @@ import { AccountDetails } from '../pages/accounts/AccountDetails';
 import { AddUsers } from '../pages/users/AddUsers';
 import { EditUser } from '../pages/users/EditUser';
 import UserDetails from '../pages/users/UserDetails';
+import { UserProfile } from '../pages/users/UserProfile';
 import { AddOpportunity } from '../pages/opportunities/AddOpportunity';
 import { EditOpportunity } from '../pages/opportunities/EditOpportunity';
 import { OpportunityDetails } from '../pages/opportunities/OpportunityDetails';
@@ -61,7 +57,7 @@ export default function Sidebar(props: any) {
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
 
-    
+
 
     useEffect(() => {
         toggleScreen();
@@ -91,7 +87,7 @@ export default function Sidebar(props: any) {
 
     const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
-    const adminNavList = ['admin', 'users'];
+    const adminNavList = ['admin'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
@@ -218,17 +214,17 @@ export default function Sidebar(props: any) {
                                     </StyledListItemButton>
                                 </ListItem>
 
-                               {/*  <ListItem disablePadding>
+                                <ListItem disablePadding>
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
-                                        navigate('/app/users/edit-user');
+                                        navigate('/app/profile');
 
                                     }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
-                                        <StyledListItemText primary={'Edit Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                        <StyledListItemText primary={'My Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
-                                </ListItem>  */}
+                                </ListItem>
                             </List>
                         </Popover>
                     </Box>
@@ -339,6 +335,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/users/add-users' element={<AddUsers />} />
                             <Route path='/app/users/edit-user' element={<EditUser />} />
                             <Route path='/app/users/user-details' element={<UserDetails />} />
+                            <Route path='/app/profile' element={<UserProfile />} />
 
                         </Routes>
                     </Box>

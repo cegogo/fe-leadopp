@@ -230,7 +230,7 @@ export default function Users() {
   };
 
   const userDetail = (userId: any) => {
-    navigate(`/app/users/user-details`, { state: { userId, detail: true } });
+    navigate(`/app/admin/user-details`, { state: { userId, detail: true } });
   };
   const handleRecordsPerPage = (
     event: React.ChangeEvent<HTMLSelectElement>
@@ -339,7 +339,7 @@ export default function Users() {
 
   const onAddUser = () => {
     if (!loading) {
-      navigate('/app/users/add-users');
+      navigate('/app/admin/add-users');
     }
     // navigate('/users/add-users', {
     //   state: {
@@ -364,7 +364,7 @@ export default function Users() {
       console.log(res, 'res');
       if (!res.error) {
         const data = res?.data?.profile_obj;
-        navigate('/app/users/edit-user', {
+        navigate('/app/admin/edit-user', {
           state: {
             value: {
               email: data?.user_details?.email,

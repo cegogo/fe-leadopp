@@ -163,9 +163,9 @@ export function EditUser() {
 
   const backbtnHandle = () => {
     if (state?.edit) {
-      navigate('/app/users');
+      navigate('/app/admin');
     } else {
-      navigate('/app/users/user-details', {
+      navigate('/app/admin/user-details', {
         state: { userId: state?.id, detail: true },
       });
     }
@@ -247,7 +247,7 @@ export function EditUser() {
         // console.log('editsubmit:', res);
         if (!res.error) {
           resetForm();
-          navigate('/app/users');
+          navigate('/app/admin');
         }
         if (res.error) {
           setError(true);
@@ -283,9 +283,9 @@ export function EditUser() {
     //setReset(true);
     resetForm()
   };
-  const module = 'Users';
+  const module = 'Admin';
   const crntPage = 'Edit User';
-  const backBtn = state?.edit ? 'Back To Users' : 'Back To UserDetails';
+  const backBtn = state?.edit ? 'Back To Admin' : 'Back To UserDetails';
 
   const inputStyles = {
     display: 'none',
