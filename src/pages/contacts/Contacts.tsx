@@ -14,9 +14,19 @@ import { DeleteModal } from '../../components/DeleteModal';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
-import { useMyContext } from '../../context/Context';
+//import { useMyContext } from '../../context/Context';
 
 import { CATEGORY_OPTIONS, CategoryList } from './constants'; // Import category constants
+
+interface Contact {
+    id: string;
+    first_name: string;
+    last_name: string;
+    primary_email: string;
+    mobile_number?: string;
+    organization?: string;
+    category: string;
+}
 
 // Function to get category color
 const getCategoryColor = (category: any) => {
@@ -81,31 +91,29 @@ const headCells: readonly HeadCell[] = [
         disablePadding: false,
         label: 'Category'
     }
-]
+];
 
 export default function Contacts() {
-    const navigate = useNavigate()
-    // const context = useMyContext();
+    const navigate = useNavigate();
+    // const context = useMyContext()
 
     const [value, setValue] = useState('Open');
     const [loading, setLoading] = useState(true);
-    const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [contactList, setContactList] = useState([])
-    const [countries, setCountries] = useState([])
-
-    const [deleteRowModal, setDeleteRowModal] = useState(false)
-
-    const [selected, setSelected] = useState<string[]>([]);
-    const [selectedId, setSelectedId] = useState('')
-    const [isSelectedId, setIsSelectedId] = useState([])
-    const [order, setOrder] = useState('asc')
-    const [orderBy, setOrderBy] = useState('first_name')
-
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [contactList, setContactList] = useState<Contact[]>([]);
+    const [countries, setCountries] = useState([]);
+    const [deleteRowModal, setDeleteRowModal] = useState(false);
+    const [selected, setSelected] = useState([]);
+    const [selectedId, setSelectedId] = useState('');
+    const [isSelectedId, setIsSelectedId] = useState([]);
+    const [order, setOrder] = useState('asc');
+    const [orderBy, setOrderBy] = useState('first_name');
     const [selectOpen, setSelectOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [recordsPerPage, setRecordsPerPage] = useState<number>(10);
-    const [totalPages, setTotalPages] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recordsPerPage, setRecordsPerPage] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
     // useEffect(() => {
     //     getContacts()
@@ -131,6 +139,7 @@ export default function Contacts() {
     //         .then((response) => response.json())
     //         .then((data) => { console.log(data, 'data') })
     // }
+
     const getContacts = async () => {
         const Header = {
             Accept: 'application/json',
@@ -187,15 +196,14 @@ export default function Contacts() {
             org: localStorage.getItem('org')
         }
         fetchData(`${ContactUrl}/${selectedId}/`, 'DELETE', null as any, Header)
-            .then((res: any) => {
+            .then((res) => {
                 // console.log('delete:', res);
                 if (!res.error) {
                     deleteRowModalClose()
                     getContacts()
                 }
             })
-            .catch(() => {
-            })
+            .catch(() => {})
     }
 
     const handlePreviousPage = () => {
@@ -266,13 +274,15 @@ export default function Contacts() {
     const recordsList = [[10, '10 Records per page'], [20, '20 Records per page'], [30, '30 Records per page'], [40, '40 Records per page'], [50, '50 Records per page']]
     // console.log(contactList, 'cccc')
     // console.log(context, 'cc');
+
+    const filteredContactList = selectedCategory
+        ? contactList.filter(contact => contact.category === selectedCategory)
+        : contactList;
+
     return (
-        <Box sx={{
-            mt: '60px'
-            // , width: '1376px' 
-        }}>
+        <Box sx={{ mt: '60px' }}>
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
-                {/* <Tabs defaultValue={value} onChange={handleChangeTab} sx={{ mt: '27px' }}>
+                 {/* <Tabs defaultValue={value} onChange={handleChangeTab} sx={{ mt: '27px' }}>
                     <CustomTab value="Open" label="Open"
                         sx={{
                             backgroundColor: value === 'Open' ? '#F0F7FF' : '#223d60',
@@ -309,6 +319,24 @@ export default function Contacts() {
                             </MenuItem>
                         ))}
                     </Select>
+
+                    <Select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        displayEmpty
+                        className={`custom-select`}
+                        sx={{ marginLeft: 2 }}
+                    >
+                        <MenuItem value="">
+                            <em>All Categories</em>
+                        </MenuItem>
+                        {CategoryList.map((category) => (
+                            <MenuItem key={category} value={category}>
+                                {category}
+                            </MenuItem>
+                        ))}
+                    </Select>
+
                     <Box sx={{ borderRadius: '7px', backgroundColor: 'white', height: '40px', minHeight: '40px', maxHeight: '40px', display: 'flex', flexDirection: 'row', alignItems: 'center', mr: 1, p: '0px' }}>
                         <FabLeft onClick={handlePreviousPage} disabled={currentPage === 1}>
                             <FiChevronLeft style={{ height: '15px' }} />
@@ -359,37 +387,32 @@ export default function Contacts() {
                     </TableRow>
                 </TableHead> */}
                                 <TableBody>
-                                    {
-                                        contactList?.length
-
-                                            ? stableSort(contactList, getComparator(order, orderBy))
-                                                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item: any, index: any) => {
-                                                .map((item: any, index: any) => {
-                                                    return (
-                                                        <TableRow
-                                                            tabIndex={-1}
-                                                            key={index}
-                                                            sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)' }}>
-                                                            <TableCell
-                                                                className='tableCell-link'
-                                                                onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
-                                                            <TableCell className='tableCell'>{item.primary_email}</TableCell>
-                                                            <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
-                                                            <TableCell className='tableCell'>{item.organization ? item.organization : '---'}</TableCell>
-                                                            <TableCell className='tableCell'>
-                                                                {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
-                                                                <Button
-                                                                    style={{ backgroundColor: getCategoryColor(item.category), color: 'white' }}
-                                                                    onClick={() => handleCategoryChange(item.id, item.category)}
-                                                                >
-                                                                    {getCategoryLabel(item.category)}
-                                                                </Button>
-                                                            </TableCell>
-                                                            <TableCell className='tableCell'><FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} /></TableCell>
-                                                        </TableRow>
-                                                    )
-                                                })
-                                            : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
+                                    {filteredContactList?.length
+                                        ? stableSort(filteredContactList, getComparator(order, orderBy)).map((item: any, index: any) => (
+                                            // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((item: any, index: any) => {
+                                            <TableRow
+                                                tabIndex={-1}
+                                                key={index}
+                                                sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)' }}>
+                                                <TableCell
+                                                    className='tableCell-link'
+                                                    onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
+                                                <TableCell className='tableCell'>{item.primary_email}</TableCell>
+                                                <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
+                                                <TableCell className='tableCell'>{item.organization ? item.organization : '---'}</TableCell>
+                                                <TableCell className='tableCell'>
+                                                    {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
+                                                    <Button
+                                                        style={{ backgroundColor: getCategoryColor(item.category), color: 'white' }}
+                                                        onClick={() => handleCategoryChange(item.id, item.category)}
+                                                    >
+                                                        {getCategoryLabel(item.category)}
+                                                    </Button>
+                                                </TableCell>
+                                                <TableCell className='tableCell'><FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} /></TableCell>
+                                            </TableRow>
+                                        ))
+                                        : <TableRow> <TableCell colSpan={6} sx={{ border: 0 }}></TableCell></TableRow>
                                     }
                                 </TableBody>
                             </Table>
@@ -404,15 +427,15 @@ export default function Contacts() {
                 </Box>
             </Container>
             {
-                <DeleteModal
-                    onClose={deleteRowModalClose}
-                    open={deleteRowModal}
-                    id={selectedId}
-                    modalDialog={modalDialog}
-                    modalTitle={modalTitle}
-                    DeleteItem={DeleteItem}
-                />
-                // <DialogModal
+            <DeleteModal
+                onClose={deleteRowModalClose}
+                open={deleteRowModal}
+                id={selectedId}
+                modalDialog={modalDialog}
+                modalTitle={modalTitle}
+                DeleteItem={DeleteItem}
+            />
+            // <DialogModal
                 //     contact={contact}
                 //     isDelete={isDelete}
                 //     modalDialog={modalDialog}
