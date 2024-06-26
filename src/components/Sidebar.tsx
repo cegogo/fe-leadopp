@@ -26,6 +26,7 @@ import { AddUsers } from '../pages/users/AddUsers';
 import { EditUser } from '../pages/users/EditUser';
 import UserDetails from '../pages/users/UserDetails';
 import { UserProfile } from '../pages/users/UserProfile';
+import EditUserProfile from '../pages/users/EditUserProfile';
 import { AddOpportunity } from '../pages/opportunities/AddOpportunity';
 import { EditOpportunity } from '../pages/opportunities/EditOpportunity';
 import { OpportunityDetails } from '../pages/opportunities/OpportunityDetails';
@@ -336,6 +337,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/users/edit-user' element={<EditUser />} />
                             <Route path='/app/users/user-details' element={<UserDetails />} />
                             <Route path='/app/profile' element={<UserProfile />} />
+                            <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log}/>} />
 
                         </Routes>
                     </Box>

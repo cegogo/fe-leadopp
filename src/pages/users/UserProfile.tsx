@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Button, Typography, Avatar, CircularProgress, Box, Stack } from '@mui/material';
 import { CustomToolbar } from '../../styles/CssStyled';
 import ChangePassword from '../auth/ChangePassword';
+import { Link } from 'react-router-dom';
 
 interface UserDetails {
     email: string;
@@ -98,7 +99,10 @@ export function UserProfile() {
                     <Button
                         variant='contained'
                         className={'add-button'}
-                    > Edit profile
+                        component={Link}
+                        to={`/app/profile/edit/${userProfile.id}`}
+                    >
+                        Edit profile
                     </Button>
                 </Stack>
             </CustomToolbar>
@@ -166,7 +170,7 @@ export function UserProfile() {
                         </Box>
                     </Card>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                        
+
                         <ChangePassword />
 
                         <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
