@@ -1,7 +1,11 @@
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography } from '@mui/material';
+import { Link, useParams } from 'react-router-dom';
+import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Stack, Card } from '@mui/material';
+import { COUNTRIES } from '../../components/Data';
+import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
+import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
+import { CustomToolbar } from '../../styles/CssStyled';
 
 interface EditUserProfileProps {
     onUpdate: () => void;
@@ -24,6 +28,15 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [countrySelectOpen, setCountrySelectOpen] = useState(false);
+    const handleChange = (e: any) => {
+        const { name, value, type } = e.target;
+        if (type === 'file') {
+            setFormData({ ...formData, [name]: e.target.files?.[0] || null });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
+    };
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -70,7 +83,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             } finally {
                 setLoading(false);
             }
-            
+
         };
 
         fetchUserProfile();
@@ -88,16 +101,15 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         }
 
         try {
-            const response = await fetch(`${SERVER}${ProfileUrl}/${id}`, {
+            const response = await fetch(`${SERVER}${ProfileUrl}/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'org': org,
                     'Authorization': token,
                 },
                 body: JSON.stringify(formData),
             });
-            
+
             if (!response.ok) {
                 throw new Error(`Error updating profile: ${response.statusText}`);
             }
@@ -118,45 +130,150 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
 
     return (
         <Box sx={{ mt: '60px' }}>
-            <Typography variant="h4">Edit Profile</Typography>
-            <form onSubmit={handleFormSubmit}>
-                <FormGroup>
-                    <FormControl>
-                        <InputLabel>Email</InputLabel>
-                        <Input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <InputLabel>First Name</InputLabel>
-                        <Input
-                            value={formData.first_name}
-                            onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <InputLabel>Last Name</InputLabel>
-                        <Input
-                            value={formData.last_name}
-                            onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
-                        />
-                    </FormControl>
-                    <FormControl>
-                        <InputLabel>Job Title</InputLabel>
-                        <Input
-                            value={formData.job_title}
-                            onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                        />
-                    </FormControl>
-                    {/* Agrega más campos según tus necesidades */}
-                    <Button type="submit" variant="contained" color="primary">
-                        Save Changes
+            <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
+                <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Button
+                        variant='contained'
+                        className={'add-button'}
+                        component={Link}
+                        to={`/app/profile/`}
+                    >
+                        Back
                     </Button>
-                </FormGroup>
-            </form>
-        </Box>
+                </Stack>
+            </CustomToolbar>
+
+            <Box sx={{ mt: '10px', p: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Box sx={{ width: '100%' }}></Box>
+                <Card sx={{ borderRadius: '7px' }}>
+                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Typography style={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0' }}>Edit profile</Typography>
+                    </Box>
+                    <Box sx={{ p: '20px', borderBottom: '1px solid lightgray', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <form onSubmit={handleFormSubmit}>
+                        <FormGroup>
+                            <FormControl>
+                                <InputLabel>First Name</InputLabel>
+                                <Input
+                                    value={formData.first_name}
+                                    onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Last Name</InputLabel>
+                                <Input
+                                    value={formData.last_name}
+                                    onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Job Title</InputLabel>
+                                <Input
+                                    value={formData.job_title}
+                                    onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Email</InputLabel>
+                                <Input
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Mobile Number</InputLabel>
+                                <Input
+                                    value={formData.mobile_number}
+                                    onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Adress Line</InputLabel>
+                                <Input
+                                    value={formData.address_line}
+                                    onChange={(e) => setFormData({ ...formData, address_line: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Street</InputLabel>
+                                <Input
+                                    value={formData.street}
+                                    onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>City</InputLabel>
+                                <Input
+                                    value={formData.city}
+                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>State</InputLabel>
+                                <Input
+                                    value={formData.state}
+                                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>Postcode</InputLabel>
+                                <Input
+                                    value={formData.postcode}
+                                    onChange={(e) => setFormData({ ...formData, postcode: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel>City</InputLabel>
+                                <Input
+                                    value={formData.city}
+                                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                                />
+                            </FormControl>
+                            <FormControl sx={{ width: '70%' }}>
+                                <Select
+                                    name="country"
+                                    value={formData.country}
+                                    open={countrySelectOpen}
+                                    onClick={() => setCountrySelectOpen(!countrySelectOpen)}
+                                    IconComponent={() => (
+                                        <div
+                                            onClick={() =>
+                                                setCountrySelectOpen(!countrySelectOpen)
+                                            }
+                                            className="select-icon-background"
+                                        >
+                                            {countrySelectOpen ? (
+                                                <FiChevronUp className="select-icon" />
+                                            ) : (
+                                                <FiChevronDown className="select-icon" />
+                                            )}
+                                        </div>
+                                    )}
+                                    className={'select'}
+                                    onChange={handleChange}
+                                >
+
+                                    {COUNTRIES.map((option) => (
+                                        <MenuItem
+                                            key={option.code}
+                                            value={option.code}
+                                        >
+                                            {option.name}
+
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                            <Button type="submit" variant="contained" color="primary">
+                                Save Changes
+                            </Button>
+                        </FormGroup>
+                    </form>
+                    </Box>
+                    </Card>
+            </Box>
+        </Box >
     );
 };
 
