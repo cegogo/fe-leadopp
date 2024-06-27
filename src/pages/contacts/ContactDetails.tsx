@@ -188,13 +188,6 @@ export default function ContactDetails() {
       ? websiteUrl
       : `http://${websiteUrl}`;
 
-  // Function to handle category change
-  const handleCategoryChange = (contactId: any, newCategory: any) => {
-    // API call to update category
-    // Update contactList state with new category
-  };
-
-
   return (
     <Box sx={{ mt: '60px' }}>
       <div>
@@ -629,8 +622,7 @@ export default function ContactDetails() {
                 </div>
               </div>
               <Button
-                style={{ backgroundColor: getCategoryColor(contactDetails?.category), color: 'white' }}
-                onClick={() => handleCategoryChange(contactDetails?.id, contactDetails?.category)}
+                style={{ backgroundColor: getCategoryColor(contactDetails?.category), color: 'white', cursor: 'default' }}
               >
                 {getCategoryLabel(contactDetails?.category)}
               </Button>

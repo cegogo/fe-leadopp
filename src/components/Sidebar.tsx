@@ -84,17 +84,17 @@ export default function Sidebar(props: any) {
         setScreen(path || 'contacts');
     };
 
-    const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
+    const navList = ['dashboard', 'deals', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
         switch (text) {
-            case 'deals':
-                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'dashboard':
                 return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'deals':
+                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'contacts':
                 return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'accounts':
