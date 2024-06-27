@@ -58,13 +58,13 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         const fetchUserProfile = async () => {
             const token = localStorage.getItem('Token');
             const org = localStorage.getItem('org');
-
+    
             if (!token || !org) {
                 setError('Missing token or organization ID in localStorage');
                 setLoading(false);
                 return;
             }
-
+    
             try {
                 const response = await fetch(`${SERVER}${ProfileUrl}/`, {
                     method: 'GET',
@@ -74,26 +74,29 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                         'Authorization': token,
                     },
                 });
-
+    
                 if (!response.ok) {
                     throw new Error(`Error fetching profile: ${response.statusText}`);
                 }
-
+    
                 const data = await response.json();
-
+    
+                // Safely access address properties with optional chaining and provide default values
+                const address = data.user_obj.address || {};
+    
                 setFormData({
-                    email: data.user_obj.user_details.email,
-                    first_name: data.user_obj.user_details.first_name,
-                    last_name: data.user_obj.user_details.last_name,
-                    job_title: data.user_obj.user_details.job_title,
-                    address_line: data.user_obj.address.address_line,
-                    street: data.user_obj.address.street,
-                    city: data.user_obj.address.city,
-                    state: data.user_obj.address.state,
-                    postcode: data.user_obj.address.postcode,
-                    country: data.user_obj.address.country,
-                    mobile_number: data.user_obj.phone,
-                    profile_pic: data.user_obj.user_details.profile_pic,
+                    email: data.user_obj.user_details.email || '',
+                    first_name: data.user_obj.user_details.first_name || '',
+                    last_name: data.user_obj.user_details.last_name || '',
+                    job_title: data.user_obj.user_details.job_title || '',
+                    address_line: address.address_line || '',
+                    street: address.street || '',
+                    city: address.city || '',
+                    state: address.state || '',
+                    postcode: address.postcode || '',
+                    country: address.country || '',
+                    mobile_number: data.user_obj.phone || '',
+                    profile_pic: data.user_obj.user_details.profile_pic || '',
                 });
             } catch (error: any) {
                 setError(error.message);
@@ -101,7 +104,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                 setLoading(false);
             }
         };
-
+    
         fetchUserProfile();
     }, [id]);
 
@@ -214,7 +217,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">First Name</div>
                                                 <TextField
                                                     name="first_name"
-                                                    value={formData.first_name}
+                                                    value={formData.first_name || '---' }
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -224,7 +227,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Last Name</div>
                                                 <TextField
                                                     name="last_name"
-                                                    value={formData.last_name}
+                                                    value={formData.last_name || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -236,7 +239,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Mobile Number</div>
                                                 <TextField
                                                     name="mobile_number"
-                                                    value={formData.mobile_number}
+                                                    value={formData.mobile_number || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -248,7 +251,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     disabled
                                                     name="email"
                                                     type="email"
-                                                    value={formData.email}
+                                                    value={formData.email || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -269,7 +272,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <TextField
                                                     disabled
                                                     name="job_title"
-                                                    value={formData.job_title}
+                                                    value={formData.job_title || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -301,7 +304,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Address Line</div>
                                                 <TextField
                                                     name="address_line"
-                                                    value={formData.address_line}
+                                                    value={formData.address_line || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -311,7 +314,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Street</div>
                                                 <TextField
                                                     name="street"
-                                                    value={formData.street}
+                                                    value={formData.street || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -324,7 +327,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <TextField
                                                     required
                                                     name="city"
-                                                    value={formData.city}
+                                                    value={formData.city || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -334,7 +337,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">State</div>
                                                 <TextField
                                                     name="state"
-                                                    value={formData.state}
+                                                    value={formData.state || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -347,7 +350,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <TextField
                                                     required
                                                     name="postcode"
-                                                    value={formData.postcode}
+                                                    value={formData.postcode || '---'}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -358,7 +361,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <FormControl sx={{ width: '70%' }}>
                                                     <Select
                                                         name="country"
-                                                        value={formData.country}
+                                                        value={formData.country || '---'}
                                                         open={countrySelectOpen}
                                                         onClick={() => setCountrySelectOpen(!countrySelectOpen)}
                                                         IconComponent={() => (
