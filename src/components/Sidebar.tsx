@@ -26,6 +26,7 @@ import { AddUsers } from '../pages/users/AddUsers';
 import { EditUser } from '../pages/users/EditUser';
 import UserDetails from '../pages/users/UserDetails';
 import { UserProfile } from '../pages/users/UserProfile';
+import EditUserProfile from '../pages/users/EditUserProfile';
 import { AddOpportunity } from '../pages/opportunities/AddOpportunity';
 import { EditOpportunity } from '../pages/opportunities/EditOpportunity';
 import { OpportunityDetails } from '../pages/opportunities/OpportunityDetails';
@@ -38,6 +39,41 @@ import MyContext from '../context/Context';
 import Deals from '../pages/deals/Deals';
 import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
+import { SERVER, ProfileUrl } from '../services/ApiUrls';
+
+
+interface UserDetails {
+    email: string;
+    is_active: boolean;
+    profile_pic: string | null;
+    first_name: string;
+    last_name: string;
+    job_title: string;
+}
+
+interface Address {
+    id: string;
+    created_at: string;
+    updated_at: string;
+    address_line: string;
+    street: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+}
+
+interface UserObj {
+    id: string;
+    user_details: UserDetails;
+    role: string;
+    address: Address;
+    has_marketing_access: boolean;
+    has_sales_access: boolean;
+    phone: string;
+    date_of_joining: string | null;
+    is_active: boolean;
+}
 
 export default function Sidebar(props: any) {
     const navigate = useNavigate()
@@ -48,10 +84,47 @@ export default function Sidebar(props: any) {
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
+    const [userProfile, setUserProfile] = useState<UserObj | null>(null);
+
 
     useEffect(() => {
         toggleScreen();
     }, [navigate]);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const token = localStorage.getItem('Token');
+            const org = localStorage.getItem('org');
+    
+            if (!token || !org) {
+                // Handle missing token or org as needed
+                return;
+            }
+    
+            try {
+                const response = await fetch(`${SERVER}${ProfileUrl}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': token, // Use token directly without 'Bearer'
+                        'org': org, // Include org in headers
+                    },
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Error fetching profile: ${response.statusText}`);
+                }
+    
+                const data = await response.json();
+                setUserProfile(data.user_obj);
+            } catch (error: any) {
+                // Handle error
+            }
+        };
+    
+        fetchUserProfile();
+    }, []);
+
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
@@ -148,7 +221,11 @@ export default function Sidebar(props: any) {
                         alignItems: 'center'
                     }}>
                         <IconButton onClick={handleClick} sx={{ mr: 3 }}>
-                            <Avatar sx={{ height: '27px', width: '27px' }} />
+                            <Avatar
+                                src={userProfile?.user_details?.profile_pic || ''}
+                                alt="Profile Picture"
+                                sx={{ height: '27px', width: '27px' }}
+                            />                            {/* <Avatar sx={{ height: '27px', width: '27px' }} /> */}
                         </IconButton>
                         <Popover
                             anchorOrigin={{
@@ -304,6 +381,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/admin/edit-user' element={<EditUser />} />
                             <Route path='/app/admin/user-details' element={<UserDetails />} />
                             <Route path='/app/profile' element={<UserProfile />} />
+                            <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log} />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>
