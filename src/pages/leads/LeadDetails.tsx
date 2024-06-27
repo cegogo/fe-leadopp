@@ -1,47 +1,15 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import {
-  Card,
-  Link,
-  Button,
-  Avatar,
-  Divider,
-  TextField,
-  Box,
-  MenuItem,
-  Snackbar,
-  Alert,
-  Stack,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Typography,
-  IconButton,
-  Grid,
-  Popover,
-  ListItemIcon,
-} from '@mui/material';
-import {
-  FaEllipsisV,
-  FaPaperclip,
-  FaPlus,
-  FaRegAddressCard,
-  FaStar,
-  FaTimes,
-} from 'react-icons/fa';
+import { Card, Link, Button, Avatar, Divider, TextField, Box, MenuItem, Snackbar,
+  Alert, Stack, List, ListItem, ListItemAvatar, ListItemText, Typography, IconButton, 
+  Grid, Popover, ListItemIcon } from '@mui/material';
+import { FaEllipsisV, FaPaperclip, FaPlus, FaRegAddressCard, FaStar, FaTimes } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LeadUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { Label } from '../../components/Label';
-import {
-  AntSwitch,
-  CustomInputBoxWrapper,
-  CustomSelectField,
-  CustomSelectField1,
-  StyledListItemButton,
-  StyledListItemText,
-} from '../../styles/CssStyled';
+import { AntSwitch, CustomInputBoxWrapper, CustomSelectField, CustomSelectField1,
+  StyledListItemButton, StyledListItemText } from '../../styles/CssStyled';
 import FormateTime from '../../components/FormateTime';
 import { formatFileSize } from '../../components/FormatSize';
 import '../../styles/style.css';

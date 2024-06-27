@@ -35,7 +35,8 @@ import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
-import Deals from '../pages/deals/Deals'
+import Deals from '../pages/deals/Deals';
+import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
 //import {EditProfile} from '../pages/profile/EditProfile';
 
@@ -303,7 +304,8 @@ export default function Sidebar(props: any) {
                 <MyContext.Provider value={{ drawerWidth: drawerWidth, screen: screen }}>
                     <Box sx={{ width: 'auto', ml: drawerWidth === 60 ? '60px' : '200px', overflowX: 'hidden' }}>
                         <Routes>
-                            <Route index element={<Deals />} />
+                            <Route index element={<Dashboard />} />
+                            <Route path='/app/dashboard' element={<Dashboard />} />
                             <Route path='/app/deals' element={<Deals />} />
                             <Route path='/app/leads' element={<Leads />} />
                             <Route path='/app/leads/add-leads' element={<AddLeads />} />
