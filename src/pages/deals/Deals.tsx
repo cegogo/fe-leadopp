@@ -61,9 +61,8 @@ const Deals: React.FC = () => {
         borderRadius: '5px'
     };
 
-    // Function to handle header click
     const handleHeaderClick = (component: string) => {
-        navigate('/app/leads'); // Navigate to the Leads route
+        navigate(`/app/${component}`);
         };
 
     // Function to handle back click to show the columns again
