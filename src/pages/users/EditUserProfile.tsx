@@ -217,7 +217,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">First Name</div>
                                                 <TextField
                                                     name="first_name"
-                                                    value={formData.first_name || '---' }
+                                                    value={formData.first_name}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -227,7 +227,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Last Name</div>
                                                 <TextField
                                                     name="last_name"
-                                                    value={formData.last_name || '---'}
+                                                    value={formData.last_name}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -239,7 +239,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Mobile Number</div>
                                                 <TextField
                                                     name="mobile_number"
-                                                    value={formData.mobile_number || '---'}
+                                                    value={formData.mobile_number}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -251,7 +251,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     disabled
                                                     name="email"
                                                     type="email"
-                                                    value={formData.email || '---'}
+                                                    value={formData.email}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -304,7 +304,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Address Line</div>
                                                 <TextField
                                                     name="address_line"
-                                                    value={formData.address_line || '---'}
+                                                    value={formData.address_line}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -314,7 +314,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">Street</div>
                                                 <TextField
                                                     name="street"
-                                                    value={formData.street || '---'}
+                                                    value={formData.street}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -327,7 +327,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <TextField
                                                     required
                                                     name="city"
-                                                    value={formData.city || '---'}
+                                                    value={formData.city}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -337,7 +337,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <div className="fieldTitle">State</div>
                                                 <TextField
                                                     name="state"
-                                                    value={formData.state || '---'}
+                                                    value={formData.state}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
@@ -350,7 +350,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 <TextField
                                                     required
                                                     name="postcode"
-                                                    value={formData.postcode || '---'}
+                                                    value={formData.postcode}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
