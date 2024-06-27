@@ -1,5 +1,5 @@
 import { CustomToolbar } from '../../styles/CssStyled';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField } from '@mui/material';
 import { FiChevronUp, FiChevronDown, FiCheckCircle, FiChevronLeft } from 'react-icons/fi';
@@ -25,10 +25,13 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         postcode: '',
         country: '',
         mobile_number: '',
+        profile_pic: '',
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [countrySelectOpen, setCountrySelectOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
 
     const handleChange = (e: any) => {
         const { name, value, type } = e.target;
@@ -36,6 +39,18 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             setFormData({ ...formData, [name]: e.target.files?.[0] || null });
         } else {
             setFormData({ ...formData, [name]: value });
+        }
+    };
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] || null;
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setFormData({ ...formData, profile_pic: reader.result as string });
+            };
+            reader.readAsDataURL(file);
+            setSelectedFile(file); // Update selected file state
         }
     };
 
@@ -78,6 +93,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                     postcode: data.user_obj.address.postcode,
                     country: data.user_obj.address.country,
                     mobile_number: data.user_obj.phone,
+                    profile_pic: data.user_obj.user_details.profile_pic,
                 });
             } catch (error: any) {
                 setError(error.message);
@@ -105,13 +121,29 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                     'Content-Type': 'application/json',
                     'Authorization': token,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    user_details: {
+                        first_name: formData.first_name,
+                        last_name: formData.last_name,
+                        profile_pic: formData.profile_pic
+                    },
+                    role: 'ADMIN',
+                    address: {
+                        address_line: formData.address_line,
+                        street: formData.street,
+                        city: formData.city,
+                        state: formData.state,
+                        postcode: formData.postcode,
+                        country: formData.country,
+                    },
+                    phone: formData.mobile_number,
+                    alternate_phone: formData.mobile_number, // Include this if needed
+                }),
             });
 
             if (!response.ok) {
                 throw new Error(`Error updating profile: ${response.statusText}`);
             }
-
             onUpdate();
             navigate('/app/profile/');
         } catch (error: any) {
@@ -213,6 +245,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Email</div>
                                                 <TextField
+                                                    disabled
                                                     name="email"
                                                     type="email"
                                                     value={formData.email}
@@ -225,12 +258,11 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                         <div className="fieldContainer">
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Image</div>
-                                                <TextField
-                                                    disabled
-                                                    placeholder='Please do your thing, Nurdan :)'
-                                                    style={{ width: '70%' }}
-                                                    size="small"
-                                                />
+                                                {/* <InputLabel htmlFor="upload-photo">Upload Photo</InputLabel> */}
+                                                <Input id="upload-photo" name="profile_pic" type="file" onChange={handleFileChange} style={{ display: 'none' }} />
+                                                <Button variant="outlined" component="label" htmlFor="upload-photo">
+                                                    {selectedFile ? 'File Selected' : 'Choose File'}
+                                                </Button>
                                             </div>
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Job Title</div>
