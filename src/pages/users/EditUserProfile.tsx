@@ -2,7 +2,7 @@ import { CustomToolbar } from '../../styles/CssStyled';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField } from '@mui/material';
-import { FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { FiChevronUp, FiChevronDown, FiCheckCircle, FiChevronLeft } from 'react-icons/fi';
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import { COUNTRIES } from '../../components/Data';
 
@@ -135,12 +135,17 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
                 <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <Button
+                        sx={{ background: 'white', marginLeft: '15px', color: 'black' }}
                         variant="contained"
                         className="add-button"
                         component={Link}
                         to="/app/profile/"
                     >
-                        Back
+                        <FiChevronLeft style={{ fontSize: '20px', marginRight: '2px' }} />Back
+                    </Button>
+                    <Button type="submit" variant="contained" className="add-button"
+                        sx={{ marginLeft: '15px' }}>
+                        <FiCheckCircle style={{ fontSize: '25px', marginRight: '8px' }} /> Save Changes
                     </Button>
                 </Stack>
             </CustomToolbar>
@@ -210,11 +215,11 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="fieldContainer">
+                                        <div className="fieldContainer" style={{ justifyContent: 'flex-start', marginLeft: '105px'}}>
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Job Title</div>
                                                 <TextField
-                                                    /*disabled*/
+                                                    disabled
                                                     name="job_title"
                                                     value={formData.job_title}
                                                     onChange={handleChange}
@@ -333,11 +338,6 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                             </Accordion>
                         </div>
                     </div>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}>
-                        <Button type="submit" variant="contained" color="primary">
-                            Save Changes
-                        </Button>
-                    </Box>
                 </form>
             </Box>
         </Box>
