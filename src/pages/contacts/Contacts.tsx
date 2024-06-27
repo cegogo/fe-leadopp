@@ -183,10 +183,9 @@ export default function Contacts() {
         setOrderBy(property)
     }
 
-    // Function to handle category change
-    const handleCategoryChange = (contactId: any, newCategory: any) => {
-        // API call to update category
-        // Update contactList state with new category
+    // Function to handle category choose
+    const handleCategoryChoose = (category: any) => {
+        setSelectedCategory (category);
     };
 
     const DeleteItem = () => {
@@ -422,7 +421,7 @@ export default function Contacts() {
                                                     {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
                                                     <Button
                                                         style={{ backgroundColor: getCategoryColor(item.category), color: 'white' }}
-                                                        onClick={() => handleCategoryChange(item.id, item.category)}
+                                                        onClick={() => handleCategoryChoose(item.category)}
                                                     >
                                                         {getCategoryLabel(item.category)}
                                                     </Button>
