@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   Card,
   Link,
@@ -24,9 +24,23 @@ import { AntSwitch } from '../../styles/CssStyled';
 import { ContactUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 
+import { CATEGORY_OPTIONS } from './constants'; // Import category constants
+
+// Function to get category color
+const getCategoryColor = (category: any) => {
+  const option = CATEGORY_OPTIONS.find(opt => opt.value === category);
+  return option ? option.color : 'defaultColor';
+};
+
+// Function to get category label
+const getCategoryLabel = (category: any) => {
+  const option = CATEGORY_OPTIONS.find(opt => opt.value === category);
+  return option ? option.label : '';
+};
+
 type response = {
   created_by: string;
-  created_on: string;
+  created_at: string;
   created_on_arrow: string;
   date_of_birth: string;
   department: string;
@@ -56,6 +70,7 @@ type response = {
   street: string;
   name: string;
   website: string;
+  category: string;
 };
 
 export const formatDate = (dateString: any) => {
@@ -87,12 +102,13 @@ export default function ContactDetails() {
     };
     fetchData(`${ContactUrl}/${id}/`, 'GET', null as any, Header).then(
       (res) => {
-        console.log(res, 'res');
+        //console.log(res, 'res');
         if (!res.error) {
           setContactDetails(res?.contact_obj);
           setAddressDetails(res?.address_obj);
           //setOrg(res?.org);
-          //console.log (res?.org);
+          //console.log (contactDetails, 'contactDetails');
+          //console.log (addressDetails, 'addressDetails');
         }
       }
     );
@@ -141,7 +157,7 @@ export default function ContactDetails() {
           do_not_call: contactDetails?.do_not_call,
           website: contactDetails?.website,
           department: contactDetails?.department,
-          address: addressDetails?.address_line,
+          address_line: addressDetails?.address_line,
           street: addressDetails?.street,
           city: addressDetails?.city,
           state: addressDetails?.state,
@@ -151,6 +167,7 @@ export default function ContactDetails() {
           linked_in_url: contactDetails?.linked_in_url,
           facebook_url: contactDetails?.facebook_url,
           twitter_username: contactDetails?.twitter_username,
+          category: contactDetails?.category,
         },
         id: state?.contactId?.id,
         countries: state?.countries,
@@ -162,6 +179,14 @@ export default function ContactDetails() {
   const crntPage = 'Contact Detail';
   const backBtn = 'Back To Contacts';
   // console.log(state, 'contact');
+
+
+  const websiteUrl = contactDetails?.website;
+  const formattedUrl =
+    websiteUrl &&
+    (websiteUrl.startsWith('http://') || websiteUrl.startsWith('https://'))
+      ? websiteUrl
+      : `http://${websiteUrl}`;
 
   return (
     <Box sx={{ mt: '60px' }}>
@@ -223,9 +248,9 @@ export default function ContactDetails() {
                       textTransform: 'capitalize',
                     }}
                   >
-                    created on
-                    {formatDate(contactDetails?.created_on)}
-                    &nbsp;by &nbsp;&nbsp;
+                    created on &nbsp;
+                    {formatDate(contactDetails?.created_at)}
+                    {/* &nbsp;by &nbsp;&nbsp;
                     <span
                       style={{
                         display: 'flex',
@@ -243,12 +268,12 @@ export default function ContactDetails() {
                     </span>{' '}
                     &nbsp;&nbsp;
                     {contactDetails?.first_name}
-                    {contactDetails?.last_name}
+                    {contactDetails?.last_name} */}
                   </div>
-                  <div>Last update&nbsp;{contactDetails?.created_on_arrow}</div>
+                  <div>Last update&nbsp;&nbsp;{contactDetails?.created_on_arrow}</div>
                 </div>
               </div>
-              <div
+              {/* <div
                 style={{
                   padding: '20px',
                   display: 'flex',
@@ -268,7 +293,7 @@ export default function ContactDetails() {
                     }}
                   >
                     <div style={{ display: 'flex' }}>
-                      {/* <AvatarGroup
+                     <AvatarGroup
                                                 total={2}
                                                 max={3}
                                             >
@@ -276,11 +301,11 @@ export default function ContactDetails() {
                                                     <Avatar alt={'sdf'}>
                                                     </Avatar>
                                                 </Tooltip>
-                                            </AvatarGroup> */}
+                                            </AvatarGroup>
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div
                 style={{
                   padding: '20px',
@@ -289,6 +314,12 @@ export default function ContactDetails() {
                   justifyContent: 'space-between',
                 }}
               >
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Salutation</div>
+                  <div className="title3">
+                    {contactDetails?.salutation || '----'}
+                  </div>
+                </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">First Name</div>
                   <div className="title3">
@@ -301,10 +332,32 @@ export default function ContactDetails() {
                     {contactDetails?.last_name || '----'}
                   </div>
                 </div>
+              </div>
+              <div
+                style={{
+                  padding: '20px',
+                  marginTop: '15px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <div style={{ width: '32%' }}>
                   <div className="title2">Organization Name</div>
-                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/} 
-                  <div className="title3">{contactDetails?.organization|| '----'}</div> 
+                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/}
+
+                  <div className="title3">{contactDetails?.organization || '----'}</div>
+                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Department</div>
+                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/}
+                  <div className="title3">{contactDetails?.department || '----'}</div>
+                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Title</div>
+                  {/* <div className="title3">{org?.name || '----'}</div> (original code)*/}
+                  <div className="title3">{contactDetails?.title || '----'}</div>
+
                 </div>
               </div>
               <div
@@ -369,10 +422,28 @@ export default function ContactDetails() {
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
-                  <div className="title2">website</div>
+                  <div className="title2">Website</div>
                   <div className="title3">
-                    {contactDetails?.website ? (
-                      <Link>{contactDetails?.website}</Link>
+                    {websiteUrl ? (
+                      <a
+                        href={formattedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: '#1E90FF',
+                          textDecoration: 'underline',
+                          transition:
+                            'color 0.3s ease-out, background-color 0.3s ease-out',
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.color = 'darkblue')
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.color = 'blue')
+                        }
+                      >
+                        {websiteUrl}
+                      </a>
                     ) : (
                       '----'
                     )}
@@ -388,12 +459,12 @@ export default function ContactDetails() {
                   justifyContent: 'space-between',
                 }}
               >
-                <div style={{ width: '32%' }}>
+                {/* <div style={{ width: '32%' }}>
                   <div className="title2">Department</div>
                   <div className="title3">
                     {contactDetails?.department || '----'}
                   </div>
-                </div>
+                </div> */}
                 <div style={{ width: '32%' }}>
                   <div className="title2">Language</div>
                   <div className="title3">
@@ -468,7 +539,7 @@ export default function ContactDetails() {
                   }}
                 >
                   <div style={{ width: '32%' }}>
-                    <div className="title2">postcode</div>
+                    <div className="title2">Postcode</div>
                     <div className="title3">
                       {addressDetails?.postcode || '----'}
                     </div>
@@ -523,6 +594,40 @@ export default function ContactDetails() {
             </Card>
           </Box>
           <Box sx={{ width: '34%' }}>
+            <Card sx={{ borderRadius: '7px', p: '20px', mb: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '16px',
+                      color: '#1a3353f0',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    Category
+                  </div>
+                </div>
+              </div>
+              <Button
+                style={{ backgroundColor: getCategoryColor(contactDetails?.category), color: 'white', cursor: 'default' }}
+              >
+                {getCategoryLabel(contactDetails?.category)}
+              </Button>
+            </Card>
+            
             <Card sx={{ borderRadius: '7px', p: '20px' }}>
               <div
                 style={{

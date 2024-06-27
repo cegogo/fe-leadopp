@@ -36,17 +36,10 @@ import { CaseDetails } from '../pages/cases/CaseDetails';
 import logo from '../assets/images/auth/logo.png';
 import { StyledListItemButton, StyledListItemText } from '../styles/CssStyled';
 import MyContext from '../context/Context';
-import Deals from '../pages/deals/Deals'
+import Deals from '../pages/deals/Deals';
+import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
 import { SERVER, ProfileUrl } from '../services/ApiUrls';
-//import {EditProfile} from '../pages/profile/EditProfile';
-
-
-// declare global {
-//     interface Window {
-//         drawer: any;
-//     }
-// }
 
 
 interface UserDetails {
@@ -98,7 +91,6 @@ export default function Sidebar(props: any) {
         toggleScreen();
     }, [navigate]);
 
-
     useEffect(() => {
         const fetchUserProfile = async () => {
             const token = localStorage.getItem('Token');
@@ -134,38 +126,22 @@ export default function Sidebar(props: any) {
     }, []);
 
 
-    // useEffect(() => {
-    // navigate('/leads')
-    // if (localStorage.getItem('Token') && localStorage.getItem('org')) {
-    //     // setScreen('contacts')
-    //     navigate('/contacts')
-    // }
-    // if (!localStorage.getItem('Token')) {
-    //     navigate('/login')
-    // }
-    // if (!localStorage.getItem('org')) {
-    //     navigate('/organization')
-    // }
-    // toggleScreen()
-    // }, [])
-
-
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
         setScreen(path || 'contacts');
     };
 
-    const navList = ['deals', 'dashboard', 'contacts', 'accounts', 'companies', 'cases'];
+    const navList = ['dashboard', 'deals', 'contacts', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
-    const adminNavList = ['admin', 'users'];
+    const adminNavList = ['admin'];
 
     const navIcons = (text: any, screen: any): React.ReactNode => {
         const iconStyle = { fontSize: '30px' };
         switch (text) {
-            case 'deals':
-                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'dashboard':
                 return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'deals':
+                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'contacts':
                 return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'accounts':
@@ -195,12 +171,6 @@ export default function Sidebar(props: any) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-    /**
-     * Clears the browser's local storage, session storage, and cookies.
-     * This function is used to remove all cached data and user-specific information
-     * from the browser, typically when the user logs out or the application needs
-     * to reset the user's session.
-     */
     const clearCache = () => {
         // Clear local storage
         localStorage.clear();
@@ -288,7 +258,7 @@ export default function Sidebar(props: any) {
                                     </StyledListItemButton>
                                 </ListItem>
 
-                                <ListItem disablePadding>
+                               <ListItem disablePadding>
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
@@ -378,7 +348,8 @@ export default function Sidebar(props: any) {
                 <MyContext.Provider value={{ drawerWidth: drawerWidth, screen: screen }}>
                     <Box sx={{ width: 'auto', ml: drawerWidth === 60 ? '60px' : '200px', overflowX: 'hidden' }}>
                         <Routes>
-                            <Route index element={<Deals />} />
+                            <Route index element={<Dashboard />} />
+                            <Route path='/app/dashboard' element={<Dashboard />} />
                             <Route path='/app/deals' element={<Deals />} />
                             <Route path='/app/leads' element={<Leads />} />
                             <Route path='/app/leads/add-leads' element={<AddLeads />} />
@@ -405,13 +376,12 @@ export default function Sidebar(props: any) {
                             <Route path='/app/cases/edit-case' element={<EditCase />} />
                             <Route path='/app/cases/case-details' element={<CaseDetails />} />
                             <Route path='/app/admin' element={<Admin />} />
-                            <Route path='/app/users' element={<Users />} />
-                            <Route path='/app/users/add-users' element={<AddUsers />} />
-                            <Route path='/app/users/edit-user' element={<EditUser />} />
-                            <Route path='/app/users/user-details' element={<UserDetails />} />
+                            {/* <Route path='/app/users' element={<Users />} /> */}
+                            <Route path='/app/admin/add-users' element={<AddUsers />} />
+                            <Route path='/app/admin/edit-user' element={<EditUser />} />
+                            <Route path='/app/admin/user-details' element={<UserDetails />} />
                             <Route path='/app/profile' element={<UserProfile />} />
                             <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log} />} />
-
                         </Routes>
                     </Box>
                 </MyContext.Provider>
