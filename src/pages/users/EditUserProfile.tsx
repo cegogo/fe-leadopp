@@ -145,15 +145,20 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                     >
                         <FiChevronLeft style={{ fontSize: '20px', marginRight: '2px' }} />Back
                     </Button>
-                    <Button type="submit" variant="contained" className="add-button"
-                        sx={{ marginLeft: '15px' }}>
+                    <Button
+                        type="submit"
+                        form="edit-profile-form"
+                        variant="contained"
+                        className="add-button"
+                        sx={{ marginLeft: '15px' }}
+                    >
                         <FiCheckCircle style={{ fontSize: '25px', marginRight: '8px' }} /> Save Changes
                     </Button>
                 </Stack>
             </CustomToolbar>
 
             <Box sx={{ mt: '30px' }}>
-                <form onSubmit={handleFormSubmit}>
+                <form id="edit-profile-form" onSubmit={handleFormSubmit}>
                     <div style={{ padding: '10px' }}>
                         <div className="leadContainer">
                             <Accordion defaultExpanded style={{ width: '98%' }}>
