@@ -1,6 +1,6 @@
-import React, { SyntheticEvent, useEffect, useState, ChangeEvent  } from 'react'
+import React, { SyntheticEvent, useEffect, useState, ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, Stack, Tab, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow, Tabs, Toolbar, Typography, Paper, TableCell, IconButton, Checkbox, Tooltip, TableSortLabel, alpha, Select, MenuItem, Container, FormControlLabel, Switch } from '@mui/material'
+import { Box, Button, Card, Stack, Tab, Table, TableBody, TableContainer, TableHead, TablePagination, TableRow, Tabs, Toolbar, Typography, Paper, TableCell, IconButton, AccordionDetails, Accordion, AccordionSummary, Divider, Checkbox, Tooltip, TableSortLabel, alpha, Select, MenuItem, Container, FormControlLabel, Switch } from '@mui/material'
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
 import { getComparator, stableSort } from '../../components/Sorting';
 import { DeleteModal } from '../../components/DeleteModal'; import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
@@ -80,7 +80,7 @@ export default function Admin() {
     const [values, setValues] = useState(10)
     const [dense] = useState(false)
     const [rowsPerPage, setRowsPerPage] = useState(10)
-    const [authData, setAuthData] = useState<AuthData>({  google_authentication: false });
+    const [authData, setAuthData] = useState<AuthData>({ google_authentication: false });
     const [deleteItemId, setDeleteItemId] = useState('')
     const [loader, setLoader] = useState(true)
     const [isDelete, setIsDelete] = useState(false)
@@ -110,7 +110,7 @@ export default function Admin() {
     const [inactiveTotalPages, setInactiveTotalPages] = useState<number>(0);
     const [inactiveLoading, setInactiveLoading] = useState(true);
 
-    interface AuthData {        
+    interface AuthData {
         google_authentication: boolean;
     }
 
@@ -129,31 +129,31 @@ export default function Admin() {
     useEffect(() => {
 
 
-            const getAuth = async () => {
-                const Header = {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
+        const getAuth = async () => {
+            const Header = {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
 
-                }
-                try {
-                    await fetchData(`${AdminUrl}/`, 'GET', null as any, Header)
-                        .then((res: any) => {
-                            if (!res.error) {
-                                console.log(res)
-                                setLoading(false)
-                                setAuthData(
-                                    {                                        
-                                        google_authentication: res.is_google_auth,
-                                    }
-                                )
-                            }
-                        })
-                }
-                catch (error) {
-                    console.error('Error fetching data:', error);
-                }
             }
-            getAuth();
+            try {
+                await fetchData(`${AdminUrl}/`, 'GET', null as any, Header)
+                    .then((res: any) => {
+                        if (!res.error) {
+                            console.log(res)
+                            setLoading(false)
+                            setAuthData(
+                                {
+                                    google_authentication: res.is_google_auth,
+                                }
+                            )
+                        }
+                    })
+            }
+            catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        getAuth();
 
     }, []);
 
@@ -166,9 +166,9 @@ export default function Admin() {
             setActiveRecordsPerPage(parseInt(event.target.value));
             setActiveCurrentPage(1);
         } else {
-        setInactiveLoading(true)
-        setInactiveRecordsPerPage(parseInt(event.target.value));
-        setInactiveCurrentPage(1);
+            setInactiveLoading(true)
+            setInactiveRecordsPerPage(parseInt(event.target.value));
+            setInactiveCurrentPage(1);
         }
 
     };
@@ -177,8 +177,8 @@ export default function Admin() {
             setActiveLoading(true)
             setActiveCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
         } else {
-        setInactiveLoading(true)
-        setInactiveCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+            setInactiveLoading(true)
+            setInactiveCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
         }
     };
 
@@ -187,8 +187,8 @@ export default function Admin() {
             setActiveLoading(true)
             setActiveCurrentPage((prevPage) => Math.min(prevPage + 1, activeTotalPages));
         } else {
-        setInactiveLoading(true)
-        setInactiveCurrentPage((prevPage) => Math.min(prevPage + 1, inactiveTotalPages));
+            setInactiveLoading(true)
+            setInactiveCurrentPage((prevPage) => Math.min(prevPage + 1, inactiveTotalPages));
         }
     };
     const handleRequestSort = (event: any, property: any) => {
@@ -294,7 +294,7 @@ export default function Admin() {
         const Body = {
             is_google_auth: isGoogleAuth
         }
- 
+
         fetchData(`${AdminUrl}/`, 'PUT', JSON.stringify(Body), Header)
             .then((res) => {
                 console.log(res, 'res');
@@ -336,7 +336,7 @@ export default function Admin() {
             'Content-Type': 'application/json',
             Authorization: localStorage.getItem('Token'),
             org: localStorage.getItem('org')
-          }
+        }
         fetchData(`${UserUrl}/${selectedId}/`, 'DELETE', null as any, Header)
             .then((res: any) => {
                 console.log('delete:', res);
@@ -485,9 +485,19 @@ export default function Admin() {
                 modalTitle={modalTitle}
                 DeleteItem={DeleteItem}
             />
-        <Users />
+            <Accordion defaultExpanded style={{ width: '100%' }}>
+                <AccordionSummary
+                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
+                >
+                    <Typography className="accordion-header">
+                        Users control pannel
+                    </Typography>
+                </AccordionSummary>
+                <Divider className="divider" />
+                    <Users />
+            </Accordion>
         </Box>
     );
-    
+
 };
 
