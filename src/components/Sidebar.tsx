@@ -38,15 +38,6 @@ import MyContext from '../context/Context';
 import Deals from '../pages/deals/Deals';
 import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
-//import {EditProfile} from '../pages/profile/EditProfile';
-
-
-// declare global {
-//     interface Window {
-//         drawer: any;
-//     }
-// }
-
 
 export default function Sidebar(props: any) {
     const navigate = useNavigate()
@@ -57,28 +48,10 @@ export default function Sidebar(props: any) {
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
-    
 
     useEffect(() => {
         toggleScreen();
     }, [navigate]);
-
-
-    // useEffect(() => {
-    // navigate('/leads')
-    // if (localStorage.getItem('Token') && localStorage.getItem('org')) {
-    //     // setScreen('contacts')
-    //     navigate('/contacts')
-    // }
-    // if (!localStorage.getItem('Token')) {
-    //     navigate('/login')
-    // }
-    // if (!localStorage.getItem('org')) {
-    //     navigate('/organization')
-    // }
-    // toggleScreen()
-    // }, [])
-
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
@@ -125,12 +98,6 @@ export default function Sidebar(props: any) {
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
 
-    /**
-     * Clears the browser's local storage, session storage, and cookies.
-     * This function is used to remove all cached data and user-specific information
-     * from the browser, typically when the user logs out or the application needs
-     * to reset the user's session.
-     */
     const clearCache = () => {
         // Clear local storage
         localStorage.clear();

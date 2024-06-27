@@ -81,7 +81,7 @@ export default function OrganizationModal(props: any) {
         if (selectedOrg) {
             localStorage.setItem('org', id);
             localStorage.setItem('role', selectedOrg.role); // Store the role in local storage
-            navigate('/app/leads');
+            navigate('/app/dashboard');
             onHandleClose();
         }
     }
