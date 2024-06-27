@@ -1,6 +1,6 @@
 import { CustomToolbar } from '../../styles/CssStyled';
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField } from '@mui/material';
 import { FiChevronUp, FiChevronDown, FiCheckCircle, FiChevronLeft } from 'react-icons/fi';
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
@@ -12,6 +12,7 @@ interface EditUserProfileProps {
 
 const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         first_name: '',
@@ -112,6 +113,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             }
 
             onUpdate();
+            navigate('/app/profile/');
         } catch (error: any) {
             setError(error.message);
         }
@@ -215,7 +217,16 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="fieldContainer" style={{ justifyContent: 'flex-start', marginLeft: '105px'}}>
+                                        <div className="fieldContainer">
+                                            <div className="fieldSubContainer">
+                                                <div className="fieldTitle">Image</div>
+                                                <TextField
+                                                    disabled
+                                                    placeholder='Please do your thing, Nurdan :)'
+                                                    style={{ width: '70%' }}
+                                                    size="small"
+                                                />
+                                            </div>
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Job Title</div>
                                                 <TextField

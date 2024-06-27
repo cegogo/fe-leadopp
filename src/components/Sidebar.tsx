@@ -57,8 +57,7 @@ export default function Sidebar(props: any) {
     const [userDetail, setUserDetail] = useState('')
     const [organizationModal, setOrganizationModal] = useState(false)
     const organizationModalClose = () => { setOrganizationModal(false) }
-
-
+    
 
     useEffect(() => {
         toggleScreen();
