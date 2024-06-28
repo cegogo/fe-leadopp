@@ -6,7 +6,6 @@ import Organization from '../organization/Organization'
 
 export const Home = (props: any) => {
   const navigate = useNavigate()
-  const [open, setOpen] = useState(true)
   const [org, setOrg] = useState(false)
 
   useEffect(() => {

@@ -5,26 +5,6 @@ import { Home } from './pages/home/Home';
 
 function App() {
 
-  useEffect(() => {
-    const clearCache = () => {
-      // Clear local storage
-      localStorage.clear();
-      // Clear session storage
-      sessionStorage.clear();
-      // Clear cookies
-      document.cookie.split(";").forEach((c) => {
-        document.cookie = c
-          .replace(/^ +/, "")
-          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-      });
-    };
-        window.addEventListener('beforeunload', clearCache);
-
-        return () => {
-          window.removeEventListener('beforeunload', clearCache);
-        };
-      }, []);
-
   return (
     <>
       <Router>

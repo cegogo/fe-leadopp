@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useState, useEffect, } from 'react';
 import { Box, Button, Tabs } from '@mui/material'
 import Leads from '../leads/Leads';
-import { LeadUrl } from '../../services/ApiUrls';
+import { LeadUrl, OpportunityUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import Opportunities from '../opportunities/Opportunities';
 import Card from './Card';
@@ -15,6 +15,7 @@ const Deals: React.FC = () => {
     const navigate = useNavigate()
     const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
     const [leads, setLeads] = useState<any[]>([]);
+    const [opportunities, setOpportunities] = useState<any[]>([]);
     const [contacts, setContacts] = useState([])
     const [status, setStatus] = useState([])
     const [source, setSource] = useState([])
@@ -126,6 +127,26 @@ const getLeads = async () => {
   }
 }
 
+const getOpportunity = async () => {
+  const Header = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: localStorage.getItem('Token') || '', 
+    org: localStorage.getItem('org') || '', 
+  };
+
+  try {
+    const res = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
+    if (!res.error) {
+      setOpportunities(res?.opportunities?.opportunities)
+    }
+    setLoading(false); // Set loading to false after data is fetched
+  } catch (error) {
+    console.error('Error fetching opportunity data:', error);
+    setLoading(false); // Set loading to false even if there's an error
+  }
+}
+
     return (
         <Box sx={{
             mt: '60px',
@@ -165,7 +186,11 @@ const getLeads = async () => {
                                 <Card key={lead?.id} title={lead?.title} content={`Value: $${lead?.opportunity_amount}\nAssignee: ${lead?.assigned_to?.name}`} />
                             ))
                         ) : (
+                          <div>
                             <p>No leads available</p>
+                            <Card title="Lead" content="Lead details here..." />
+                            <Card title="Lead" content="Lead details here..." />
+                          </div>
                         )}
                     </div>
                     <div style={columnStyle}>
@@ -175,9 +200,18 @@ const getLeads = async () => {
                     </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                    </div>
+                        {opportunities.length > 0 ? (
+                            opportunities.map((opportunity) => (
+                                <Card key={opportunity?.id} title={opportunity?.title} content={`Value: $${opportunity?.opportunity_amount}\nAssignee: ${opportunity?.assigned_to?.name}`} />
+                            ))
+                        ) : (
+                          <div>
+                            <p>No opportunities available</p>
+                            <Card title="Opportunity" content="Opportunity details here..." />
+                            <Card title="Opportunity" content="Opportunity details here..." />
+                        </div>
+                        )}
+                      </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#0471A6' }} onClick={() => handleHeaderClick('Qualified')}>Qualified</div>
                         <Card title="Qualified" content="Qualified details here..." />
