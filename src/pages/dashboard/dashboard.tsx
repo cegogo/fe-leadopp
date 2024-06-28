@@ -119,8 +119,8 @@ const Dashboard: React.FC = () => {
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={leadsData}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="title" />
-                            <YAxis />
+                            <XAxis dataKey="account_name" />
+                            <YAxis domain={[0, 100000]} />
                             <Tooltip />
                             <Bar dataKey="opportunity_amount" fill="#8884d8" />
                         </BarChart>
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
                     <Typography variant="h5" gutterBottom>My Deals</Typography>
                     {assignedLeads.map((lead) => (
                         <Box key={lead.id} sx={{ padding: '10px 0' }}>
-                            <Typography variant="body1"><strong>Name:</strong> {lead.title}</Typography>
+                            <Typography variant="body1"><strong>Name:</strong> {lead.account_name}</Typography>
                             <Typography variant="body2"><strong>Value:</strong> ${lead.opportunity_amount}</Typography>
                             <Typography variant="body2"><strong>Assignee:</strong> {lead.assigned_to?.name}</Typography>
                         </Box>
