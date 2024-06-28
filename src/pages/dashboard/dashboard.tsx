@@ -15,7 +15,6 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         fetchLeadsData();
         fetchTeamMembers();
-        fetchAssignedLeads();
     }, []);
 
     const fetchLeadsData = async () => {
@@ -37,16 +36,6 @@ const Dashboard: React.FC = () => {
             console.error('Error fetching data:', error);
             setLoading(false);
         }
-    };
-
-    const fetchAssignedLeads = async () => {
-        // Fetch leads assigned to the current user
-        // Replace with your actual API call
-        setAssignedLeads([
-            // Sample data
-            { id: 1, title: 'Assigned Lead 1', opportunity_amount: 5000, assigned_to: { name: 'User A' } },
-            { id: 2, title: 'Assigned Lead 2', opportunity_amount: 3000, assigned_to: { name: 'User B' } },
-        ]);
     };
 
     const fetchTeamMembers = async () => {
@@ -142,11 +131,11 @@ const Dashboard: React.FC = () => {
             <Card style={cardStyle}>
                 <CardContent>
                     <Typography variant="h5" gutterBottom>My Deals</Typography>
-                    {assignedLeads.map((lead) => (
+                    {newLeads.map((lead) => (
                         <Box key={lead.id} sx={{ padding: '10px 0' }}>
-                            <Typography variant="body1"><strong>Name:</strong> {lead.account_name}</Typography>
-                            <Typography variant="body2"><strong>Value:</strong> ${lead.opportunity_amount}</Typography>
-                            <Typography variant="body2"><strong>Assignee:</strong> {lead.assigned_to?.name}</Typography>
+                            <Typography variant="body1"><strong>Name:</strong> {lead?.account_name}</Typography>
+                            <Typography variant="body2"><strong>Value:</strong> ${lead?.opportunity_amount}</Typography>
+                            <Typography variant="body2"><strong>Assignee:</strong> {lead?.assigned_to?.name}</Typography>
                         </Box>
                     ))}
                 </CardContent>

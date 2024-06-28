@@ -213,17 +213,12 @@ const getOpportunity = async () => {
                         <Card title="Meeting" content="Meeting details here..." />
                     </div>
                     <div style={columnStyle}>
-                      <div
-                        style={{ ...headerStyleBase, backgroundColor: '#3685B5' }}
-                        onClick={() => handleHeaderClick('Opportunities')}
-                      >
-                        Opportunity
-                      </div>
+                      <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
                       {opportunities.length > 0 ? (
                         opportunities.map((opportunity) => (
                           <Card
                           key={opportunity.id}
-                          title={opportunity.account_name}
+                          title={opportunity.name}
                           content={`Value: $${opportunity?.amount}\nStage: ${opportunity?.stage}`}
                         />
                         ))
