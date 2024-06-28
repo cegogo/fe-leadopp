@@ -100,7 +100,6 @@ const Deals: React.FC = () => {
         return null;
     };
 
-    // Fetch leads data when the component mounts
     useEffect(() => {
         getLeads();
         }, []);
@@ -132,6 +131,9 @@ const getLeads = async () => {
     setLoading(false); // Set loading to false even if there's an error
   }
 }
+useEffect(() => {
+  getOpportunity();
+  }, []);
 
 const getOpportunity = async () => {
   const Header = {
@@ -142,21 +144,29 @@ const getOpportunity = async () => {
   };
 
   try {
-    const res = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
-    if (!res.error) {
-      setOpportunities(res?.opportunities?.opportunities)
+    const resop = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
+    if (!resop.error) {
+      setOpportunities(resop?.opportunities)
+      setContacts(resop?.contacts_list)
+      setAccount(resop?.accounts_list)
+      setCurrency(resop?.currency)
+      setLeadSource(resop?.lead_source)
+      setStage(resop?.stage)
+      setTags(resop?.tags)
+      setTeams(resop?.teams)
+      setUsers(resop?.users)
+      setCountries(resop?.countries)
     }
-    setLoading(false); // Set loading to false after data is fetched
+    setLoading(false);
   } catch (error) {
     console.error('Error fetching opportunity data:', error);
-    setLoading(false); // Set loading to false even if there's an error
+    setLoading(false);
   }
 }
 
     return (
         <Box sx={{
             mt: '60px',
-            // width: '1370px' 
           }}>
         <CustomToolbar>
         <Tabs sx={{ mt: '26px' }}>
@@ -203,18 +213,26 @@ const getOpportunity = async () => {
                         <Card title="Meeting" content="Meeting details here..." />
                     </div>
                     <div style={columnStyle}>
-                        <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
-                        {opportunities.length > 0 ? (
-                            opportunities.map((opportunity) => (
-                                <Card key={opportunity?.id} title={opportunity?.name} content={`Value: $${opportunity?.amount}\nStage: ${opportunity?.stage}`} />
-                            ))
-                        ) : (
-                          <div>
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                        </div>
-                        )}
+                      <div
+                        style={{ ...headerStyleBase, backgroundColor: '#3685B5' }}
+                        onClick={() => handleHeaderClick('Opportunities')}
+                      >
+                        Opportunity
                       </div>
+                      {opportunities.length > 0 ? (
+                        opportunities.map((opportunity) => (
+                          <Card
+                          key={opportunity.id}
+                          title={opportunity.account_name}
+                          content={`Value: $${opportunity?.amount}\nStage: ${opportunity?.stage}`}
+                        />
+                        ))
+                      ) : (
+                        <div>
+                          <p>No opportunities available</p>
+                        </div>
+                      )}
+                    </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#0471A6' }} onClick={() => handleHeaderClick('Qualified')}>Qualified</div>
                         <Card title="Qualified" content="Qualified details here..." />
