@@ -904,7 +904,7 @@ export function AddLeads() {
                       </div>
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Phone Number</div>
-                        <Tooltip title="Number must starts with +91">
+                        <Tooltip title="Number must starts with +31">
                           <TextField
                             name="phone"
                             value={formData.phone}
