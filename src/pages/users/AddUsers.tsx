@@ -102,7 +102,7 @@ export function AddUsers() {
   };
 
   const backbtnHandle = () => {
-    navigate('/app/users');
+    navigate('/app/admin');
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -224,7 +224,7 @@ const [countries, setCountries] = useState([]);
           // navigate('/contacts')profile_errors
 
           resetForm();
-          navigate('/app/users');
+          navigate('/app/admin');
         }
         if (res.error) {
           // profile_errors
@@ -259,9 +259,9 @@ const [countries, setCountries] = useState([]);
   const onCancel = () => {
     resetForm();
   };
-  const module = 'Users';
+  const module = 'Admin';
   const crntPage = 'Add Users';
-  const backBtn = 'Back To Users';
+  const backBtn = 'Back To Admin';
 
   // console.log(formData.profile_pic, 'formData.profile_pic')
   return (

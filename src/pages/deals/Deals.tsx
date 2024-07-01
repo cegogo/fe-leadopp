@@ -1,10 +1,29 @@
-import React, { useState } from 'react';
+import React, { SyntheticEvent, useState, useEffect, } from 'react';
+import { Box, Button, Tabs } from '@mui/material'
 import Leads from '../leads/Leads';
+import { LeadUrl, OpportunityUrl } from '../../services/ApiUrls';
+import { fetchData } from '../../components/FetchData';
 import Opportunities from '../opportunities/Opportunities';
 import Card from './Card';
+import { CustomTab, CustomToolbar } from '../../styles/CssStyled';
+import '../../styles/style.css'
+import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
+import { useNavigate } from 'react-router-dom';
 
 const Deals: React.FC = () => {
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
     const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+    const [leads, setLeads] = useState<any[]>([]);
+    const [opportunities, setOpportunities] = useState<any[]>([]);
+    const [contacts, setContacts] = useState([])
+    const [status, setStatus] = useState([])
+    const [source, setSource] = useState([])
+    const [companies, setCompanies] = useState([])
+    const [tags, setTags] = useState([])
+    const [users, setUsers] = useState([])
+    const [countries, setCountries] = useState([])
+    const [industries, setIndustries] = useState([])
     
     // Define inline styles as JavaScript objects
     const containerStyle: React.CSSProperties = {
@@ -43,15 +62,26 @@ const Deals: React.FC = () => {
         borderRadius: '5px'
     };
 
-    // Function to handle header click
     const handleHeaderClick = (component: string) => {
-        setSelectedComponent(component);
-    };
+        navigate(`/app/${component}`);
+        };
 
     // Function to handle back click to show the columns again
     const handleBackClick = () => {
         setSelectedComponent(null);
     };
+
+    const onAddHandle = () => {
+        if (!loading) {
+          navigate('/app/leads/add-leads', {
+            state: {
+              detail: false,
+              contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || []
+              // status: leads.status, source: leads.source, industry: leads.industries, users: leads.users, tags: leads.tags, contacts: leads.contacts 
+            }
+          })
+        }
+      }
 
     // Function to render the selected component
     const renderComponent = () => {
@@ -64,10 +94,85 @@ const Deals: React.FC = () => {
         return null;
     };
 
+    // Fetch leads data when the component mounts
+    useEffect(() => {
+        getLeads();
+        }, []);
+        
+const getLeads = async () => {
+  const Header = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: localStorage.getItem('Token') || '', 
+    org: localStorage.getItem('org') || '', 
+  };
+
+  try {
+    const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
+    if (!res.error) {
+      setLeads(res?.open_leads?.open_leads)
+      setContacts(res?.contacts)
+      setStatus(res?.status)
+      setSource(res?.source)
+      setCompanies(res?.companies)
+      setTags(res?.tags)
+      setUsers(res?.users)
+      setCountries(res?.countries)
+      setIndustries(res?.industries)
+    }
+    setLoading(false); // Set loading to false after data is fetched
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    setLoading(false); // Set loading to false even if there's an error
+  }
+}
+
+const getOpportunity = async () => {
+  const Header = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: localStorage.getItem('Token') || '', 
+    org: localStorage.getItem('org') || '', 
+  };
+
+  try {
+    const res = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
+    if (!res.error) {
+      setOpportunities(res?.opportunities?.opportunities)
+    }
+    setLoading(false); // Set loading to false after data is fetched
+  } catch (error) {
+    console.error('Error fetching opportunity data:', error);
+    setLoading(false); // Set loading to false even if there's an error
+  }
+}
+
     return (
+        <Box sx={{
+            mt: '60px',
+            // width: '1370px' 
+          }}>
+        <CustomToolbar>
+        <Tabs sx={{ mt: '26px' }}>
+          <CustomTab value="open" label="Open"
+            sx={{
+              backgroundColor: 'white',
+              color: 'darkblue',
+            }} />
+        </Tabs>
+        <Button
+            variant='contained'
+            startIcon={<FiPlus className='plus-icon' />}
+            onClick={onAddHandle}
+            className={'add-button'}
+          >
+            Add Lead
+          </Button>
+      </CustomToolbar>
+
         <div style={containerStyle}>
             {selectedComponent ? (
-                <div style={displayAreaStyle}>
+                <div>
                     <button onClick={handleBackClick}>Back</button>
                     <h2>{selectedComponent}</h2>
                     {renderComponent()}
@@ -76,8 +181,17 @@ const Deals: React.FC = () => {
                 <div style={columnsStyle}>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }} onClick={() => handleHeaderClick('Leads')}>Leads</div>
-                        <Card title="Lead" content="Lead details here..." />
-                        <Card title="Lead" content="Lead details here..." />
+                        {leads.length > 0 ? (
+                            leads.map((lead) => (
+                                <Card key={lead?.id} title={lead?.title} content={`Value: $${lead?.opportunity_amount}\nAssignee: ${lead?.assigned_to?.name}`} />
+                            ))
+                        ) : (
+                          <div>
+                            <p>No leads available</p>
+                            <Card title="Lead" content="Lead details here..." />
+                            <Card title="Lead" content="Lead details here..." />
+                          </div>
+                        )}
                     </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }} onClick={() => handleHeaderClick('Meeting')}>Meeting</div>
@@ -86,9 +200,18 @@ const Deals: React.FC = () => {
                     </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                        <Card title="Opportunity" content="Opportunity details here..." />
-                    </div>
+                        {opportunities.length > 0 ? (
+                            opportunities.map((opportunity) => (
+                                <Card key={opportunity?.id} title={opportunity?.title} content={`Value: $${opportunity?.opportunity_amount}\nAssignee: ${opportunity?.assigned_to?.name}`} />
+                            ))
+                        ) : (
+                          <div>
+                            <p>No opportunities available</p>
+                            <Card title="Opportunity" content="Opportunity details here..." />
+                            <Card title="Opportunity" content="Opportunity details here..." />
+                        </div>
+                        )}
+                      </div>
                     <div style={columnStyle}>
                         <div style={{ ...headerStyleBase, backgroundColor: '#0471A6' }} onClick={() => handleHeaderClick('Qualified')}>Qualified</div>
                         <Card title="Qualified" content="Qualified details here..." />
@@ -107,6 +230,7 @@ const Deals: React.FC = () => {
                 </div>
             )}
         </div>
+        </Box>
     );
 }
 

@@ -35,7 +35,7 @@ export default function Login() {
 
     useEffect(() => {
         if (localStorage.getItem('Token')) {
-            navigate('/app');
+            navigate('/app/deals');
         }
 
         // Check if users exist in the database
@@ -87,7 +87,7 @@ export default function Login() {
                 if (res.access_token) {
                     localStorage.setItem('Token', `Bearer ${res.access_token}`);
                     localStorage.setItem('current_user_id', `${res.user_id}`); // added current user ID
-                    navigate('/app');
+                    navigate('/app/deals');
                 } else {
                     setError('Invalid email or password');
                 }
@@ -115,7 +115,7 @@ export default function Login() {
                             if (loginRes.access_token) {
                                 localStorage.setItem('Token', `Bearer ${loginRes.access_token}`);
                                 localStorage.setItem('current_user_id', `${res.user_id}`) // added current user ID
-                                navigate('/app');
+                                navigate('/app/deals');
                             } else {
                                 setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
                             }

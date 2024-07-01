@@ -10,13 +10,6 @@ function App() {
     <>
       <Router>
         <Routes>
-          {/* <Route
-            path='/'
-            element={
-              isLoggedIn ? (hasSelectedCompany ? (<Home />) : (<Navigate to='/company' />)) : (<Login />)
-            }
-          /> */}
-          {/* <Route path='*' element={isLoggedIn ? <Home /> : <Login />} /> */}
           <Route path="*" element={<Home />} />
           <Route path="/app" element={<Home />} />
           <Route path='/login' element={<Login />} />
