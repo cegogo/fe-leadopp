@@ -9,6 +9,10 @@ import {
   Typography,
   Select,
   MenuItem,
+  Box,
+  Grid,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { SelectChangeEvent } from '@mui/material'
@@ -75,6 +79,7 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
             inviter: localStorage.getItem('current_user_id'),
             invitee_email: teammates[i].email
           }
+          console.log(Body);
   
           fetchData(`${InvitationUrl}`, 'POST', JSON.stringify(Body), Header)
             .then((res: any) => {
@@ -99,40 +104,49 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
   };
 
   return (
-    <div className='invitationForm'>
-      <h2>Invite Teammates</h2>
-      {teammates.map((teammate, index) => (
-        <div key={index}>
-          <TextField
-            label="Email Address"
-            onChange={(event) => teammate.email = event.target.value}
-            size='small'
-            sx={{ minWidth: '80px', width: '20%', margin: '2px' }}
-          />
-          <Select
-            labelId={`role-select-label-${index}`}
-            id={`role-select-${index}`}
-            value={teammate.roles}
-            label="Select Role"
-            onChange={(event) => handleRoleChange(index, event)}
-            size='small'
-            sx={{ width: '10%', maxWidth: '100px', minWidth: '50px', margin: '2px' }}
-          >
-            {availableRoles.map((role) => (
-              <MenuItem key={role.value} value={role.value}>
-                {role.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
-      ))}
-      <IconButton onClick={handleAddTeammate}>
-        <AddIcon />
-      </IconButton>
-      <Button variant="contained" onClick={handleSendInvitations} disabled={teammates.length === 0}>
-        Send Invitations
-      </Button>
-    </div>
+    <Box sx={{ mt: '60px', mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
+      <Box sx={{ mt: '60px', maxWidth: '600px', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left'}}>
+        <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Add your teammates</Typography>
+        {teammates.map((teammate, index) => (
+          <Grid container spacing={2} alignItems={"center"} key={index} sx={{ mb: 2 }}>
+            <Grid item xs={ 8 }>
+              <TextField
+                label="Teammate's Email"
+                onChange={(event) => teammate.email = event.target.value}
+                size='small'
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <FormControl fullWidth size="small">
+                <InputLabel id={`role-select-label-${index}`}>Role</InputLabel>
+                <Select
+                  labelId={`role-select-label-${index}`}
+                  id={`role-select-${index}`}
+                  value={teammate.roles}
+                  label="Role"
+                  onChange={(event) => handleRoleChange(index, event)}
+                >
+                  {availableRoles.map((role) => (
+                    <MenuItem key={role.value} value={role.value}>
+                      {role.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        ))}
+        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ mb:2 }}>
+          <Button variant="text" onClick={handleAddTeammate} startIcon={<AddIcon />} color='primary' sx={{ textTransform: 'none', fontWeight: 'bold'}}>
+            Add another
+          </Button>
+        </Box>
+        <Button variant="contained" onClick={handleSendInvitations} disabled={teammates.length === 0} fullWidth>
+          Send Invitations
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
