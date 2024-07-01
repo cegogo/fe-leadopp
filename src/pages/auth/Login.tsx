@@ -65,6 +65,7 @@ export default function Login() {
             fetchData(`${AuthUrl}/`, 'POST', JSON.stringify(apiToken), head)
                 .then((res) => {
                     localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                    localStorage.setItem('current_user_id', `${res.user_id}`); // added current user ID
                     setToken(true);
                 })
                 .catch((error) => {
@@ -85,6 +86,7 @@ export default function Login() {
             .then((res) => {
                 if (res.access_token) {
                     localStorage.setItem('Token', `Bearer ${res.access_token}`);
+                    localStorage.setItem('current_user_id', `${res.user_id}`); // added current user ID
                     navigate('/app/deals');
                 } else {
                     setError('Invalid email or password');
@@ -112,6 +114,7 @@ export default function Login() {
                         .then((loginRes) => {
                             if (loginRes.access_token) {
                                 localStorage.setItem('Token', `Bearer ${loginRes.access_token}`);
+                                localStorage.setItem('current_user_id', `${res.user_id}`) // added current user ID
                                 navigate('/app/deals');
                             } else {
                                 setSignUpError('Sign-up successful, but auto-login failed. Please try to log in manually.');
