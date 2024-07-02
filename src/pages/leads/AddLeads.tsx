@@ -126,11 +126,11 @@ export function AddLeads() {
   const [industrySelectOpen, setIndustrySelectOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<FormData>({
-    title: '',
-    first_name: '',
-    last_name: '',
-    account_name: '',
-    phone: '',
+    title: 'Role',
+    first_name: 'Team',
+    last_name: 'Member',
+    account_name: 'Lead name',
+    phone: '+31645818731',
     email: '',
     lead_attachment: null,
     opportunity_amount: '',
@@ -149,7 +149,7 @@ export function AddLeads() {
     country: '',
     tags: [],
     company: '',
-    probability: 1,
+    probability: 50,
     industry: 'ADVERTISING',
     skype_ID: '',
     file: null,
@@ -218,6 +218,7 @@ export function AddLeads() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submitForm();
+    resetForm()
   };
   const submitForm = () => {
     const data = {
@@ -267,14 +268,14 @@ export function AddLeads() {
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      first_name: '',
-      last_name: '',
-      account_name: '',
-      phone: '',
+      title: 'Role',
+      first_name: 'Team',
+      last_name: 'Member',
+      account_name: 'Lead name',
+      phone: '+31645818731',
       email: '',
       lead_attachment: null,
-      opportunity_amount: '',
+      opportunity_amount: '5000',
       website: '',
       description: '',
       teams: '',
@@ -290,7 +291,7 @@ export function AddLeads() {
       country: '',
       tags: [],
       company: '',
-      probability: 1,
+      probability: 50,
       industry: 'ADVERTISING',
       skype_ID: '',
       file: null,
@@ -1148,13 +1149,13 @@ export function AddLeads() {
                       </Button>
                       <Button
                         className="header-button"
-  onClick={() => {
-    setFormData({
-      ...formData,
-      description: quillRef.current.firstChild.innerHTML,
-    });
-    resetForm()
-  }}
+                          onClick={() => {
+                            setFormData({
+                              ...formData,
+                              description: quillRef.current.firstChild.innerHTML,
+                            });
+                            resetForm()
+                          }}
                         variant="contained"
                         size="small"
                         startIcon={

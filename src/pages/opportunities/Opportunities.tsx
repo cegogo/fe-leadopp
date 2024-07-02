@@ -15,7 +15,6 @@ import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { EnhancedTableHead } from '../../components/EnchancedTableHead';
 
-
 interface HeadCell {
   disablePadding: boolean;
   id: any;
@@ -23,12 +22,6 @@ interface HeadCell {
   numeric: boolean;
 }
 const headCells: readonly HeadCell[] = [
-  // {
-  //   id: '',
-  //   numeric: false,
-  //   disablePadding: false,
-  //   label: ''
-  // },
   {
     id: 'name',
     numeric: false,
@@ -136,15 +129,9 @@ export default function Opportunities(props: any) {
     try {
       const offset = (currentPage - 1) * recordsPerPage;
       await fetchData(`${OpportunityUrl}/?offset=${offset}&limit=${recordsPerPage}`, 'GET', null as any, Header)
-        // fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header)
         .then((res) => {
-          // console.log(res, 'Opportunity')
           if (!res.error) {
             setOpportunities(res?.opportunities)
-            // setOpenOpportunities(res?.open_leads?.open_leads)
-            // setOpenOpportunitiesCount(res?.open_leads?.leads_count)
-            // setClosedOpportunities(res?.close_leads?.close_leads)
-            // setClosedOpportunitiesCount(res?.close_leads?.leads_count)
             setTotalPages(Math.ceil(res?.opportunities_count / recordsPerPage));
             setContacts(res?.contacts_list)
             setAccount(res?.accounts_list)
@@ -242,33 +229,7 @@ export default function Opportunities(props: any) {
     setRecordsPerPage(parseInt(event.target.value));
     setCurrentPage(1);
   };
-  // const handleSelectAllClick = () => {
-  //   if (tab === 'open') {
-  //     if (selected.length === openOpportunities.length) {
-  //       setSelected([]);
-  //       setSelectedId([]);
-  //       setIsSelectedId([]);
-  //     } else {
-  //       const newSelectedIds = openOpportunities.map((opportunities) => opportunities?.id);
-  //       setSelected(newSelectedIds);
-  //       setSelectedId(newSelectedIds);
-  //       setIsSelectedId(newSelectedIds.map(() => true));
-  //     }
-  //   } else {
-  //     if (selected.length === closedOpportunities.length) {
-  //       setSelected([]);
-  //       setSelectedId([]);
-  //       setIsSelectedId([]);
-  //     } else {
-  //       const newSelectedIds = closedOpportunities.map((opportunities) => opportunities?.id);
-  //       setSelected(newSelectedIds);
-  //       setSelectedId(newSelectedIds);
-  //       setIsSelectedId(newSelectedIds.map(() => true));
-  //     }
-  //   }
-
-  // };
-
+  
   const handleRowSelect = (accountId: string) => {
     const selectedIndex = selected.indexOf(accountId);
     const newSelected: string[] = [...selected];
@@ -297,21 +258,6 @@ export default function Opportunities(props: any) {
   return (
     <Box sx={{ mt: '60px' }}>
       <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
-        {/* <Tabs defaultValue={tab} onChange={handleChangeTab} sx={{ mt: '26px' }}>
-          <CustomTab value="open" label="Open"
-            sx={{
-              backgroundColor: tab === 'open' ? '#F0F7FF' : '#284871',
-              color: tab === 'open' ? '#3f51b5' : 'white',
-            }} />
-          <CustomTab value="closed" label="Closed"
-            sx={{
-              backgroundColor: tab === 'closed' ? '#F0F7FF' : '#284871',
-              color: tab === 'closed' ? '#3f51b5' : 'white',
-              ml: '5px',
-            }}
-          />
-        </Tabs> */}
-
         <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Select
             value={recordsPerPage}
@@ -361,36 +307,14 @@ export default function Opportunities(props: any) {
       <Container sx={{ width: '100%', maxWidth: '100%', minWidth: '100%' }}>
         <Box sx={{ width: '100%', minWidth: '100%', m: '15px 0px 0px 0px' }}>
           <Paper sx={{ width: 'cal(100%-15px)', mb: 2, p: '0px 15px 15px 15px' }}>
-            {/* <Toolbar sx={{ pl: { sm: 2 }, pr: { xs: 1, sm: 1 } }}>
-                            <Tooltip title='Delete'>
-                                <Button
-                                    variant='outlined'
-                                    onClick={() => !!(selectedId?.length !== 0) && handleDelete(selectedId)}
-                                    startIcon={<FaTrashAlt color='red' style={{ width: '12px' }} />}
-                                    size='small'
-                                    color='error'
-                                    sx={{ fontWeight: 'bold', textTransform: 'capitalize', color: 'red', borderColor: 'darkgrey' }}
-                                >
-                                    Delete
-                                </Button>
-                            </Tooltip>
-                            {selected.length > 0 ? (
-                                <Typography sx={{ flex: '1 1 100%', margin: '5px' }} color='inherit' variant='subtitle1' component='div'>
-                                    {selected.length} selected
-                                </Typography>
-                            ) : (
-                                ''
-                            )}
-                        </Toolbar> */}
+
             <TableContainer>
               <Table>
                 <EnhancedTableHead
                   numSelected={selected.length}
                   order={order}
                   orderBy={orderBy}
-                  // onSelectAllClick={handleSelectAllClick}
                   onRequestSort={handleRequestSort}
-                  // rowCount={tab === 'open' ? openOpportunities?.length : closedOpportunities?.length}
                   rowCount={opportunities?.length}
                   numSelectedId={selectedId}
                   isSelectedId={isSelectedId}
@@ -409,20 +333,6 @@ export default function Opportunities(props: any) {
                             key={index}
                             sx={{ border: 0, '&:nth-of-type(even)': { backgroundColor: 'whitesmoke' }, color: 'rgb(26, 51, 83)', textTransform: 'capitalize' }}
                           >
-                            {/* <TableCell
-                                                                    padding='checkbox'
-                                                                    sx={{ border: 0, color: 'inherit' }}
-                                                                    align='left'
-                                                                >
-                                                                    <Checkbox
-                                                                        checked={isSelectedId[rowIndex] || false}
-                                                                        onChange={() => handleRowSelect(item.id)}
-                                                                        inputProps={{
-                                                                            'aria-labelledby': labelId,
-                                                                        }}
-                                                                        sx={{ border: 0, color: 'inherit' }}
-                                                                    />
-                                                                </TableCell> */}
                             <TableCell
                               className='tableCell-link'
                               onClick={() => opportunityDetail(item.id)}
@@ -434,9 +344,6 @@ export default function Opportunities(props: any) {
                             </TableCell>
                             <TableCell className='tableCell'>
                               {item?.assigned_to ? <Avatar src={item?.assigned_to} alt={item?.assigned_to} /> : '----'}
-                              {/* <Stack style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                                  <Avatar src={item?.lead?.created_by?.profile_pic} alt={item?.lead?.created_by?.email} /><Stack sx={{ ml: 1 }}>{item?.lead?.account_name ? item?.lead?.account_name : '---'}</Stack>
-                                </Stack> */}
                             </TableCell>
                             <TableCell className='tableCell'>
                               {item?.stage ? item?.stage : '---'}
@@ -451,12 +358,6 @@ export default function Opportunities(props: any) {
                               {item?.lead_source ? item?.lead_source : '---'}
                             </TableCell>
                             <TableCell className='tableCell'>
-                              {/* <IconButton>
-                                                                        <FaEdit
-                                                                            onClick={() => EditItem(item?.id)}
-                                                                            style={{ fill: '#1A3353', cursor: 'pointer', width: '18px' }}
-                                                                        />
-                                                                    </IconButton> */}
                               <IconButton>
                                 <FaTrashAlt
                                   onClick={() => deleteRow(item?.id)}
@@ -468,18 +369,6 @@ export default function Opportunities(props: any) {
                       })
                       : <TableRow> <TableCell colSpan={8} sx={{ border: 0 }}></TableCell></TableRow>
                   }
-                  {/* {
-                    emptyRows > 0 && (
-                        <TableRow
-                            style={{
-                                height: (dense ? 33 : 53) * emptyRows
-                            }}
-                        >
-                            <TableCell colSpan={6} />
-                        </TableRow>
-                    )
-                  }
- */}
                 </TableBody>
               </Table>
             </TableContainer>

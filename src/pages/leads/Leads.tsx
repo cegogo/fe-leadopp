@@ -388,7 +388,7 @@ export default function Leads(props: any) {
                   <Box className='lead-box1'>
                     <Stack className='lead-row1'>
                       <div style={{ color: '#1A3353', fontSize: '1rem', fontWeight: '500', cursor: 'pointer' }} onClick={() => selectLeadList(item?.id)}>
-                        {item?.title}
+                        {item?.account_name}
                       </div>
                       <div onClick={() => deleteLead(item?.id)}>
                         <FaTrashAlt style={{ cursor: 'pointer', color: 'gray' }} />
@@ -397,7 +397,7 @@ export default function Leads(props: any) {
                     <Stack className='lead-row2'>
                       <div className='lead-row2-col1'>
                         <div style={{ color: 'gray', fontSize: '16px', textTransform: 'capitalize' }}>
-                          {item?.country || ''} - source <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.source || '--'}</span> - status <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.status || '--'}</span>
+                          {item?.country || ''} - source <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.source || '--'}</span> - status <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.status || '--'}</span> - value <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.opportunity_amount || '--'}</span>
                         </div>
                         <Box sx={{
                           ml: 1
