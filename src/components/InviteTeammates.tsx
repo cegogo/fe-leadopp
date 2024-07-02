@@ -104,8 +104,8 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
   };
 
   return (
-    <Box sx={{ mt: '60px', mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
-      <Box sx={{ mt: '60px', maxWidth: '600px', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left'}}>
+    <Box sx={{ mt: '60px', width: '50%' , mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
+      <Box sx={{ mt: '60px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left'}}>
         <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Add your teammates</Typography>
         {teammates.map((teammate, index) => (
           <Grid container spacing={2} alignItems={"center"} key={index} sx={{ mb: 2 }}>
