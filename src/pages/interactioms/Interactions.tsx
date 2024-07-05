@@ -167,6 +167,22 @@ export default function Interactions() {
         navigate(`/app/contacts/contact-details`, { state: { contactId, detail: true } })
     }
 
+    const selectLeadList = (leadId: any) => {
+        navigate(`/app/leads/lead-details`, { state: { leadId, detail: true } })
+    }
+
+    const formatDate = (dateString: any): string => {
+        const options: Intl.DateTimeFormatOptions = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false,
+        };
+        return new Date(dateString).toLocaleString(undefined, options);
+    }
+
     return (
         <Box sx={{ mt: '60px' }}>
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
@@ -255,16 +271,18 @@ export default function Interactions() {
                                                 <TableCell className='tableCell-link' onClick={() => interactionHandle(item.id)}>
                                                     {typeIcons[item.type] || item.type}&nbsp;{item.type}
                                                 </TableCell>
-                                                <TableCell className='tableCell'>
-                                                    <a href={`/app/leads/lead-details/${item.interact_with.id}`}>{item.interact_with.account_name}</a>
+                                                <TableCell
+                                                    className='tableCell-link'
+                                                    onClick={() => selectLeadList(item.interact_with?.id)}>
+                                                    {item.interact_with.account_name}
                                                 </TableCell>
                                                 <TableCell
                                                     className='tableCell-link'
                                                     onClick={() => contactHandle(item.contact)}>
                                                     {`${item.contact.first_name} ${item.contact.last_name}`}
                                                 </TableCell>
-                                                <TableCell className='tableCell'>{item.start_at || '---'}</TableCell>
-                                                <TableCell className='tableCell'>{item.end_at || '---'}</TableCell>
+                                                <TableCell className='tableCell'>{formatDate(item?.start_at)}</TableCell>
+                                                <TableCell className='tableCell'>{formatDate(item?.end_at)}</TableCell>
                                                 <TableCell className='tableCell'>Duration</TableCell>
                                                 <TableCell className='tableCell'>{`${item.user.first_name} ${item.user.last_name}`}</TableCell>
                                                 <TableCell className='tableCell'>
