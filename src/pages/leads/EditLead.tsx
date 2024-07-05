@@ -360,7 +360,7 @@ export function EditLead() {
     // console.log(data, 'edit')
     fetchData(`${LeadUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
-        // console.log('Form data:', res);
+         console.log('Form data:', res);
         if (!res.error) {
           backbtnHandle();
           // setResponceError(data.error)

@@ -126,11 +126,11 @@ export function AddLeads() {
   const [industrySelectOpen, setIndustrySelectOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<FormData>({
-    title: 'Role',
-    first_name: 'Team',
-    last_name: 'Member',
-    account_name: 'Lead name',
-    phone: '+31645818731',
+    title: '',
+    first_name: '',
+    last_name: '',
+    account_name: '',
+    phone: '',
     email: '',
     lead_attachment: null,
     opportunity_amount: '',
@@ -268,14 +268,14 @@ export function AddLeads() {
 
   const resetForm = () => {
     setFormData({
-      title: 'Role',
-      first_name: 'Team',
-      last_name: 'Member',
-      account_name: 'Lead name',
-      phone: '+31645818731',
+      title: '',
+      first_name: '',
+      last_name: '',
+      account_name: '',
+      phone: '',
       email: '',
       lead_attachment: null,
-      opportunity_amount: '5000',
+      opportunity_amount: '',
       website: '',
       description: '',
       teams: '',
