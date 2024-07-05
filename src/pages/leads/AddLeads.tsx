@@ -106,6 +106,14 @@ interface FormData {
   file: string | null;
 }
 
+const LEAD_STATUS = [
+  { value: "assigned", label: "Assigned" },
+  { value: "in process", label: "In Process" },
+  { value: "converted", label: "Converted" },
+  { value: "recycled", label: "Recycled" },
+  { value: "closed", label: "Closed" },
+];
+
 export function AddLeads() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -177,14 +185,14 @@ export function AddLeads() {
     } else if (title === 'tags') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        tags: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
-    }
-    else {
+    } else {
       setFormData({ ...formData, [title]: val });
     }
   };
+  
 
   const handleChange = (e: any) => {
     const { name, value, files, type, checked, id } = e.target;
@@ -465,69 +473,33 @@ export function AddLeads() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl
-                          error={!!errors?.assigned_to?.[0]}
-                          sx={{ width: '70%' }}
-                        >
+                        <FormControl error={!!errors?.assigned_to?.[0]} sx={{ width: '70%' }}>
                           <Autocomplete
                             multiple
                             value={selectedAssignTo}
-                            limitTags={2}
-                            options={state?.users || []}
-                            getOptionLabel={(option: any) =>
-                              state?.users ? option?.user__email : option
-                            }
-                            onChange={(e: any, value: any) =>
-                              handleChange2('assigned_to', value)
-                            }
-                            size="small"
-                            filterSelectedOptions
+                            options={state?.users || []} // Replace with your list of users
+                            getOptionLabel={(option) => option?.user__email || option} // Adjust as per your user data structure
+                            onChange={handleChange2}
                             renderTags={(value, getTagProps) =>
                               value.map((option, index) => (
                                 <Chip
-                                  deleteIcon={
-                                    <FaTimes style={{ width: '9px' }} />
-                                  }
-                                  sx={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                                    height: '18px',
-                                  }}
-                                  variant="outlined"
-                                  label={
-                                    state?.users ? option?.user__email : option
-                                  }
+                                   // Assuming option has an id field
+                                  label={option?.user__email || option} // Adjust as per your user data structure
                                   {...getTagProps({ index })}
                                 />
                               ))
                             }
-                            popupIcon={
-                              <CustomPopupIcon>
-                                <FaPlus className="input-plus-icon" />
-                              </CustomPopupIcon>
-                            }
                             renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                placeholder="Add Users"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  sx: {
-                                    '& .MuiAutocomplete-popupIndicator': {
-                                      '&:hover': { backgroundColor: 'white' },
-                                    },
-                                    '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
-                                      mr: '-8px',
-                                    },
-                                  },
-                                }}
-                              />
-                            )}
-                          />
-                          <FormHelperText>
-                            {errors?.assigned_to?.[0] || ''}
-                          </FormHelperText>
-                        </FormControl>
+                            <TextField
+                              {...params}
+                              variant="outlined"
+                              placeholder="Add Users"
+                              error={!!errors?.assigned_to?.[0]}
+                            />
+                          )}
+                        />
+                        <FormHelperText>{errors?.assigned_to?.[0] || ''}</FormHelperText>
+                      </FormControl>
                       </div>
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Industry</div>
@@ -586,14 +558,12 @@ export function AddLeads() {
                             name="status"
                             value={formData.status}
                             open={statusSelectOpen}
-                            onClick={() =>
-                              setStatusSelectOpen(!statusSelectOpen)
-                            }
+                            onOpen={() => setStatusSelectOpen(true)}
+                            onClose={() => setStatusSelectOpen(false)}
+                            onChange={handleChange}
                             IconComponent={() => (
                               <div
-                                onClick={() =>
-                                  setStatusSelectOpen(!statusSelectOpen)
-                                }
+                                onClick={() => setStatusSelectOpen(!statusSelectOpen)}
                                 className="select-icon-background"
                               >
                                 {statusSelectOpen ? (
@@ -603,21 +573,18 @@ export function AddLeads() {
                                 )}
                               </div>
                             )}
-                            className={'select'}
-                            onChange={handleChange}
-                            error={!!errors?.status?.[0]}
+                            className="select"
+                            error={!!errors?.status}
                           >
-                            {state?.status?.length
-                              ? state?.status.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[1]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
-                              : ''}
-                          </Select>
-                          <FormHelperText>
-                            {errors?.status?.[0] ? errors?.status[0] : ''}
-                          </FormHelperText>
+                            {LEAD_STATUS.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                            </Select>
+                            <FormHelperText>
+                              {errors?.status ? errors.status : ''}
+                            </FormHelperText>
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
