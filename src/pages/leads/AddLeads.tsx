@@ -134,11 +134,11 @@ export function AddLeads() {
   const [industrySelectOpen, setIndustrySelectOpen] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState<FormData>({
-    title: 'Role',
-    first_name: 'Team',
-    last_name: 'Member',
-    account_name: 'Lead name',
-    phone: '+31645818731',
+    title: '',
+    first_name: '',
+    last_name: '',
+    account_name: '',
+    phone: '',
     email: '',
     lead_attachment: null,
     opportunity_amount: '',
@@ -185,14 +185,14 @@ export function AddLeads() {
     } else if (title === 'tags') {
       setFormData({
         ...formData,
-        tags: val.length > 0 ? val.map((item: any) => item.id) : [],
+        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
     } else {
       setFormData({ ...formData, [title]: val });
     }
   };
-  
+
 
   const handleChange = (e: any) => {
     const { name, value, files, type, checked, id } = e.target;
@@ -276,14 +276,14 @@ export function AddLeads() {
 
   const resetForm = () => {
     setFormData({
-      title: 'Role',
-      first_name: 'Team',
-      last_name: 'Member',
-      account_name: 'Lead name',
-      phone: '+31645818731',
+      title: '',
+      first_name: '',
+      last_name: '',
+      account_name: '',
+      phone: '',
       email: '',
       lead_attachment: null,
-      opportunity_amount: '5000',
+      opportunity_amount: '',
       website: '',
       description: '',
       teams: '',
@@ -456,7 +456,7 @@ export function AddLeads() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -477,29 +477,62 @@ export function AddLeads() {
                           <Autocomplete
                             multiple
                             value={selectedAssignTo}
-                            options={state?.users || []} // Replace with your list of users
-                            getOptionLabel={(option) => option?.user__email || option} // Adjust as per your user data structure
-                            onChange={handleChange2}
+                            limitTags={2}
+                            options={state?.users || []}
+                            getOptionLabel={(option: any) =>
+                              state?.users ? option?.user__email : option
+                            }
+                            onChange={(e: any, value: any) =>
+                              handleChange2('assigned_to', value)
+                            }
+                            size="small"
+                            filterSelectedOptions
                             renderTags={(value, getTagProps) =>
                               value.map((option, index) => (
                                 <Chip
-                                   // Assuming option has an id field
-                                  label={option?.user__email || option} // Adjust as per your user data structure
+                                  deleteIcon={
+                                    <FaTimes style={{ width: '9px' }} />
+                                  }
+                                  sx={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                                    height: '18px',
+                                  }}
+                                  variant="outlined"
+                                  label={
+                                    state?.users ? option?.user__email : option
+                                  }
                                   {...getTagProps({ index })}
                                 />
                               ))
                             }
+                            popupIcon={
+                              <CustomPopupIcon>
+                                <FaPlus className="input-plus-icon" />
+                              </CustomPopupIcon>
+                            }
                             renderInput={(params) => (
                             <TextField
-                              {...params}
-                              variant="outlined"
-                              placeholder="Add Users"
-                              error={!!errors?.assigned_to?.[0]}
+                                {...params}
+                                variant="outlined"
+                                placeholder="Add Users"
+                                error={!!errors?.assigned_to?.[0]}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  sx: {
+                                    '& .MuiAutocomplete-popupIndicator': {
+                                      '&:hover': { backgroundColor: 'white' },
+                                    },
+                                    '& .MuiAutocomplete-endAdornment': {
+                                      mt: '0px',
+                                      mr: '-8px',
+                                    },
+                                  },
+                                }}
+                              />
+                            )}                            
                             />
-                          )}
-                        />
-                        <FormHelperText>{errors?.assigned_to?.[0] || ''}</FormHelperText>
-                      </FormControl>
+                          <FormHelperText>{errors?.assigned_to?.[0] || ''}</FormHelperText>
+                        </FormControl>
                       </div>
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Industry</div>
@@ -538,10 +571,10 @@ export function AddLeads() {
                           >
                             {state?.industries?.length
                               ? state?.industries.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[1]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[1]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -581,10 +614,10 @@ export function AddLeads() {
                                 {option.label}
                               </MenuItem>
                             ))}
-                            </Select>
-                            <FormHelperText>
-                              {errors?.status ? errors.status : ''}
-                            </FormHelperText>
+                          </Select>
+                          <FormHelperText>
+                            {errors?.status ? errors.status : ''}
+                          </FormHelperText>
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
@@ -633,10 +666,10 @@ export function AddLeads() {
                           >
                             {state?.source?.length
                               ? state?.source.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[0]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[0]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -748,7 +781,7 @@ export function AddLeads() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -1044,10 +1077,10 @@ export function AddLeads() {
                           >
                             {state?.countries?.length
                               ? state?.countries.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[0]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[0]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -1116,13 +1149,13 @@ export function AddLeads() {
                       </Button>
                       <Button
                         className="header-button"
-                          onClick={() => {
-                            setFormData({
-                              ...formData,
-                              description: quillRef.current.firstChild.innerHTML,
-                            });
-                            resetForm()
-                          }}
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            description: quillRef.current.firstChild.innerHTML,
+                          });
+                          resetForm()
+                        }}
                         variant="contained"
                         size="small"
                         startIcon={
