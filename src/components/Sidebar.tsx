@@ -129,7 +129,7 @@ export default function Sidebar(props: any) {
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
-        setScreen(path || 'contacts');
+        setScreen(path || 'dashboard');
     };
 
     const navList = ['dashboard', 'deals', 'contacts', 'interactions', 'accounts', 'companies', 'cases'];
@@ -158,7 +158,7 @@ export default function Sidebar(props: any) {
             case 'admin':
                 return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             default:
-                return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
+                return <FaChartLine style={{ ...iconStyle, fill: '#3e79f7' }} />
         }
     }
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

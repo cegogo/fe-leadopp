@@ -54,8 +54,8 @@ const headCells: readonly HeadCell[] = [
     { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
     { id: 'interact_with', numeric: false, disablePadding: false, label: 'Lead' },
     { id: 'contact', numeric: false, disablePadding: false, label: 'Contact Person' },
-    { id: 'start_at', numeric: true, disablePadding: false, label: 'Begins At' },
-    { id: 'end_at', numeric: true, disablePadding: false, label: 'Ends At' },
+    { id: 'start_at', numeric: true, disablePadding: false, label: 'Beginning' },
+    { id: 'end_at', numeric: true, disablePadding: false, label: 'Ending' },
     { id: 'duration', numeric: true, disablePadding: false, label: 'Duration' },
     { id: 'user', numeric: false, disablePadding: false, label: 'Owner' }
 ];
