@@ -294,7 +294,7 @@ export default function Interactions() {
                                                 </TableCell>
                                                 <TableCell className='tableCell'>{formatDate(item?.start_at)}</TableCell>
                                                 <TableCell className='tableCell'>{formatDate(item?.end_at)}</TableCell>
-                                                <TableCell className='tableCell'>Duration</TableCell>
+                                                <TableCell className='tableCell'>{item?.duration} sec</TableCell>
                                                 <TableCell className='tableCell'>{`${item.user.first_name} ${item.user.last_name}`}</TableCell>
                                                 <TableCell className='tableCell'>
                                                     <FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} />

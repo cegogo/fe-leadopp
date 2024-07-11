@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   TextField,
@@ -8,26 +8,25 @@ import {
   Typography,
   Box,
   MenuItem,
-  Tooltip,
   Divider,
   FormControl,
   Select,
-  FormHelperText,
   Button,
-  Autocomplete,
-  Chip
-} from '@mui/material'
+} from '@mui/material';
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 import { InteractionsUrl } from '../../services/ApiUrls';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { fetchData, Header } from '../../components/FetchData';
-import { CustomPopupIcon } from '../../styles/CssStyled';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
-import { FaCheckCircle, FaTimesCircle, FaTimes, FaPlus } from 'react-icons/fa';
-import '../../styles/style.css'
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import '../../styles/style.css';
 import { styled } from '@mui/material/styles';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import moment from 'moment';
 
 type FormErrors = {
   user?: string[];
@@ -40,11 +39,11 @@ type FormErrors = {
 };
 
 export default function AddInteractions() {
-  const navigate = useNavigate()
-  const { state } = useLocation()
+  const navigate = useNavigate();
+  const { state } = useLocation();
   const { quill, quillRef } = useQuill();
   const initialContentRef = useRef(null);
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false);
   const [formData, setFormData] = useState({
     user: localStorage.getItem('current_user_id'),
     start_at: '',
@@ -53,17 +52,16 @@ export default function AddInteractions() {
     interact_with: '',
     contact: '',
     description: '',
-  })
+  });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [categorySelectOpen, setCategorySelectOpen] = useState(false)
-  const [selectedContact, setSelectedContact] = useState<any>('')
-  const [selectedLead, setSelectedLead] = useState<any>('')
-  const [leadSelectOpen, setLeadSelectOpen] = useState(false)
-  const [contactSelectOpen, setContactSelectOpen] = useState(false)
+  const [categorySelectOpen, setCategorySelectOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>('');
+  const [selectedLead, setSelectedLead] = useState<any>('');
+  const [leadSelectOpen, setLeadSelectOpen] = useState(false);
+  const [contactSelectOpen, setContactSelectOpen] = useState(false);
 
   useEffect(() => {
     if (quill) {
-      // Save the initial state (HTML content) of the Quill editor
       initialContentRef.current = quillRef.current.firstChild.innerHTML;
     }
   }, [quill]);
@@ -72,16 +70,17 @@ export default function AddInteractions() {
     const { name, value, type, checked } = e.target;
     if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked });
-    }
-    else {
+    } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
+  const handleDateTimeChange = (name: string, date: any) => {
+    setFormData({ ...formData, [name]: date ? moment(date).format('YYYY-MM-DDTHH:mm') : '' });
+  };
 
   const resetQuillToInitialState = () => {
-    // Reset the Quill editor to its initial state
-    setFormData({ ...formData, description: '' })
+    setFormData({ ...formData, description: '' });
     if (quill && initialContentRef.current !== null) {
       quill.clipboard.dangerouslyPasteHTML(initialContentRef.current);
     }
@@ -97,8 +96,8 @@ export default function AddInteractions() {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Authorization: localStorage.getItem('Token'),
-      org: localStorage.getItem('org')
-    }
+      org: localStorage.getItem('org'),
+    };
     const data = {
       user: formData.user,
       start_at: formData.start_at,
@@ -107,31 +106,27 @@ export default function AddInteractions() {
       interact_with: formData.interact_with,
       contact: formData.contact,
       description: formData.description,
-    }
-    console.log(formData, 'data')
+    };
     fetchData(`${InteractionsUrl}/`, 'POST', JSON.stringify(data), Header)
       .then((res: any) => {
-        // console.log('Form data:', res);
         if (!res.error) {
-          // setResponceError(data.error)
-          navigate('/app/interactions')
-          resetForm()
+          navigate('/app/interactions');
+          resetForm();
         }
         if (res.error) {
-          setError(true)
-          setErrors(res?.errors?.interaction_errors)
+          setError(true);
+          setErrors(res?.errors?.interaction_errors);
         }
       })
-      .catch(() => {
-      })
+      .catch(() => { });
   };
 
   const currentUser = () => {
     const currentUserId = localStorage.getItem('current_user_id');
-    const users = state?.users || []; // Ensure state?.users is defined
+    const users = state?.users || [];
     const user = users.find((user: any) => user.id === currentUserId);
-    return user
-  }
+    return user;
+  };
 
   const resetForm = () => {
     setFormData({
@@ -144,49 +139,44 @@ export default function AddInteractions() {
       description: '',
     });
     setErrors({});
-  }
-  const backbtnHandle = () => {
-    navigate('/app/interactions')
-  }
-  const module = 'Interactions'
-  const crntPage = 'Add Interactions'
-  const backBtn = 'Back To Interactions'
+  };
 
-  const CategoryList = ['Call', 'Email', 'Meeting', 'Task']
-  const leadList = [] as any
+  const backbtnHandle = () => {
+    navigate('/app/interactions');
+  };
+
+  const module = 'Interactions';
+  const crntPage = 'Add Interactions';
+  const backBtn = 'Back To Interactions';
+
+  const CategoryList = ['Call', 'Email', 'Meeting', 'Task'];
 
   const onCancel = () => {
-    resetForm()
-  }
+    resetForm();
+  };
 
-  const StyledDateTimePicker = styled(TextField)(({ theme }) => ({
-    marginLeft: theme.spacing(0),
-    marginRight: theme.spacing(0),
-    width: '70%',
-  }));
-
-  // console.log(errors, 'err')
   return (
     <Box sx={{ mt: '60px' }}>
-      <CustomAppBar backbtnHandle={backbtnHandle} module={module} backBtn={backBtn} crntPage={crntPage} onCancel={onCancel} onSubmit={handleSubmit} />
-      <Box sx={{ mt: "120px" }}>
+      <CustomAppBar
+        backbtnHandle={backbtnHandle}
+        module={module}
+        backBtn={backBtn}
+        crntPage={crntPage}
+        onCancel={onCancel}
+        onSubmit={handleSubmit}
+      />
+      <Box sx={{ mt: '120px' }}>
         <form onSubmit={handleSubmit}>
           {/* interaction details */}
           <div style={{ padding: '10px' }}>
             <div className='leadContainer'>
-              <Accordion style={{ width: '98%' }}
-                defaultExpanded
-              >
+              <Accordion style={{ width: '98%' }} defaultExpanded>
                 <AccordionSummary expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}>
                   <Typography className='accordion-header'>Interaction Information</Typography>
                 </AccordionSummary>
                 <Divider className='divider' />
                 <AccordionDetails>
-                  <Box
-                    sx={{ width: '98%', color: '#1A3353', mb: 1 }}
-                    component='form'
-                    autoComplete='off'
-                  >
+                  <Box sx={{ width: '98%', color: '#1A3353', mb: 1 }} component='form' autoComplete='off'>
                     <div className='fieldContainer'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Owner</div>
@@ -202,16 +192,17 @@ export default function AddInteractions() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Started at</div>
-                        <StyledDateTimePicker
-                          name='start_at'
-                          id="datetime-local"
-                          type="datetime-local"
-                          value={formData.start_at}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-gb">
+                          <DateTimePicker
+                            name="start_at"
+                            label="Start Date and Time"
+                            value={formData.start_at ? moment(formData.start_at) : null}
+                            onChange={(date) => handleDateTimeChange('start_at', date)}
+                            sx={{ width: '70%' }}
+                            format="DD-MM-YYYY HH:mm"
+                            ampm={false}
+                          />
+                        </LocalizationProvider>
                       </div>
                     </div>
                     <div className='fieldContainer2'>
@@ -251,16 +242,18 @@ export default function AddInteractions() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Ended at</div>
-                        <StyledDateTimePicker
-                          name='end_at'
-                          id="datetime-local"
-                          type="datetime-local"
-                          value={formData.end_at}
-                          onChange={handleChange}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-gb">
+                          <DateTimePicker
+                            name='end_at'
+                            label="End Date and Time"
+                            value={formData.end_at ? moment(formData.end_at) : null}
+                            onChange={(date) => handleDateTimeChange('end_at', date)}
+                            minDateTime={formData?.start_at ? moment(formData?.start_at) : undefined}
+                            sx={{ width: '70%' }}
+                            format="DD-MM-YYYY HH:mm"
+                            ampm={false}
+                          />
+                        </LocalizationProvider>
                       </div>
                     </div>
                     <div className='fieldContainer2'>
@@ -387,5 +380,5 @@ export default function AddInteractions() {
         </form>
       </Box>
     </Box>
-  )
+  );
 }
