@@ -616,7 +616,7 @@ export function EditLead() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl
+                        <FormControl 
                           error={!!errors?.assigned_to?.[0]}
                           sx={{ width: '70%' }}
                         >
@@ -667,7 +667,7 @@ export function EditLead() {
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                placeholder="Add Users"
+                                placeholder="Add User"
                                 InputProps={{
                                   ...params.InputProps,
                                   sx: {
@@ -1260,7 +1260,7 @@ export function EditLead() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">postcode</div>
+                        <div className="fieldTitle">Postcode</div>
                         <TextField
                           name="postcode"
                           value={formData.postcode}
