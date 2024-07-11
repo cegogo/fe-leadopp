@@ -599,7 +599,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -675,7 +675,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -962,7 +962,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -1132,7 +1132,7 @@ export function EditLead() {
                         />
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">Phone Number</div>
+                        <div className="fieldTitle">Mobile Number</div>
                         <Tooltip title="Number must starts with +91">
                           <TextField
                             name="phone"
