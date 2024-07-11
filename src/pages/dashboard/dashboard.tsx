@@ -11,11 +11,14 @@ const Dashboard: React.FC = () => {
     const [leadsData, setLeadsData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' | undefined }>({ key: 'account_name', direction: undefined });
+    const [userRole, setUserRole] = useState<string>(localStorage.getItem('role') || '');
+    const [userId, setUserId] = useState<string>(localStorage.getItem('current_user_id') || '');
+
 
     useEffect(() => {
         fetchLeadsData();
         fetchTeamMembers();
-    }, []);
+    }, [userRole]);
 
     useEffect(() => {
         if (sortConfig.direction !== undefined) {
@@ -60,8 +63,16 @@ const Dashboard: React.FC = () => {
         try {
             const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
             if (!res.error) {
-                setNewLeads(res?.open_leads?.open_leads?.slice(0, 5)); // Get the newest 5 leads
-                setLeadsData(res?.open_leads?.open_leads); // For chart data
+                if (userRole === 'ADMIN') {
+                    /* console.log(userRole) */
+                    setNewLeads(res?.open_leads?.open_leads?.slice(0, 5)); // Get the newest 5 leads
+                    setLeadsData(res?.open_leads?.open_leads); // For chart data
+                } else {
+                    /* console.log(userRole) */
+                    const userLeads = res?.open_leads?.open_leads?.filter((lead: any) => lead.assigned_to?.id === userId);
+                    setNewLeads(userLeads.slice(0, 5)); // Get the newest 5 leads assigned to the user
+                    setLeadsData(userLeads); // For chart data
+                }
             }
             setLoading(false);
         } catch (error) {
