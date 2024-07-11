@@ -41,6 +41,7 @@ import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
 import { SERVER, ProfileUrl } from '../services/ApiUrls';
 import Interactions from '../pages/interactioms/Interactions';
+import AddInteraction from '../pages/interactioms/AddInteraction';
 
 
 interface UserDetails {
@@ -386,6 +387,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/profile' element={<UserProfile />} />
                             <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log} />} />
                             <Route path='/app/interactions' element={<Interactions />} />
+                            <Route path='/app/interactions/add-interactions' element={<AddInteraction />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>

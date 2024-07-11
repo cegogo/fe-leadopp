@@ -81,6 +81,9 @@ export default function Interactions() {
     const [totalPages, setTotalPages] = useState(0);
     const [selectedType, setSelectedType] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [users, setUsers] = useState([])
+    const [contacts, setContacts] = useState([])
+    const [leads, setLeads] = useState([])
 
     useEffect(() => {
         getInteractions();
@@ -100,7 +103,10 @@ export default function Interactions() {
                 // fetchData(`${ContactUrl}/`, 'GET', null as any, Header)
                 .then((data) => {
                     if (!data.error) {
-                        setInteractionList(data);
+                        setInteractionList(data.interactions.interactions);
+                        setContacts(data?.contacts)
+                        setUsers(data?.users)
+                        setLeads(data?.leads)
                         setTotalPages(Math.ceil(data?.contacts_count / recordsPerPage));
                         setLoading(false)
                     }
@@ -124,7 +130,12 @@ export default function Interactions() {
         setCurrentPage(1);
     };
 
-    const onAddInteraction = () => navigate('/app/interactions/add-interactions');
+    const onAddInteraction = () => navigate('/app/interactions/add-interactions', {
+        state: {
+          detail: false,
+          contacts: contacts || [], leads: leads || [], users: users || []
+        }
+      });
     const interactionHandle = (interactionId: string) => navigate(`/app/interactions/interaction-details`, { state: { interactionId, detail: true } });
 
     const deleteRow = (deleteId: string) => {
