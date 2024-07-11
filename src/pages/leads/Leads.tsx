@@ -162,8 +162,8 @@ export default function Leads(props: any) {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
       await fetchData(`${LeadUrl}/?offset=${tab === "open" ? openOffset : closeOffset}&limit=${tab === "open" ? openRecordsPerPage : closedRecordsPerPage}`, 'GET', null as any, Header)
-        .then((res) => {
-          // console.log(res, 'leads')
+        .then((res: any) => {
+          console.log(res, 'leads')
           if (!res.error) {
             // if (initial) {
             setOpenLeads(res?.open_leads?.open_leads)

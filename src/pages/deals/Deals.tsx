@@ -199,8 +199,11 @@ const getOpportunity = async () => {
                         <div style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }} onClick={() => handleHeaderClick('Leads')}>Leads</div>
                         {leads.length > 0 ? (
                             leads.map((lead) => (
-                                <Card key={lead?.id} title={lead?.account_name} content={`Value: $${lead?.opportunity_amount}\nAssignee: ${lead?.assigned_to?.name}`} />
+                              console.log(lead),
+                                <Card key={lead?.id} title={lead?.account_name} content={`Value: $${lead?.opportunity_amount}\n
+                                Assignee: ${lead?.assigned_to?.[0]?.user_details?.first_name + ' ' + lead?.assigned_to?.[0]?.user_details?.last_name}`} />
                             ))
+                            
                         ) : (
                           <div>
                             <p>No leads available</p>
