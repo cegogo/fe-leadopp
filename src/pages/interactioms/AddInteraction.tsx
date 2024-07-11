@@ -27,6 +27,7 @@ import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle, FaTimes, FaPlus } from 'react-icons/fa';
 import '../../styles/style.css'
+import { styled } from '@mui/material/styles';
 
 type FormErrors = {
   user?: string[];
@@ -98,7 +99,6 @@ export default function AddInteractions() {
       Authorization: localStorage.getItem('Token'),
       org: localStorage.getItem('org')
     }
-    //console.log(formData.description, 'des')
     const data = {
       user: formData.user,
       start_at: formData.start_at,
@@ -108,6 +108,7 @@ export default function AddInteractions() {
       contact: formData.contact,
       description: formData.description,
     }
+    console.log(formData, 'data')
     fetchData(`${InteractionsUrl}/`, 'POST', JSON.stringify(data), Header)
       .then((res: any) => {
         // console.log('Form data:', res);
@@ -158,6 +159,12 @@ export default function AddInteractions() {
     resetForm()
   }
 
+  const StyledDateTimePicker = styled(TextField)(({ theme }) => ({
+    marginLeft: theme.spacing(0),
+    marginRight: theme.spacing(0),
+    width: '70%',
+  }));
+
   // console.log(errors, 'err')
   return (
     <Box sx={{ mt: '60px' }}>
@@ -195,32 +202,19 @@ export default function AddInteractions() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Started at</div>
-                        <TextField
+                        <StyledDateTimePicker
                           name='start_at'
+                          id="datetime-local"
+                          type="datetime-local"
                           value={formData.start_at}
                           onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          required
-                          error={!!errors?.start_at?.[0]}
-                          helperText={errors?.start_at?.[0] ? errors?.start_at[0] : ''}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
                         />
                       </div>
                     </div>
                     <div className='fieldContainer2'>
-                      <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Ended at</div>
-                        <TextField
-                          name='end_at'
-                          value={formData.end_at}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          required
-                          error={!!errors?.end_at?.[0]}
-                          helperText={errors?.end_at?.[0] ? errors?.end_at[0] : ''}
-                        />
-                      </div>
                       <div className='fieldSubContainer'>
                         <div className="fieldTitle">Type</div>
                         <FormControl sx={{ width: '70%' }}>
@@ -255,6 +249,19 @@ export default function AddInteractions() {
                           </Select>
                         </FormControl>
                       </div>
+                      <div className='fieldSubContainer'>
+                        <div className='fieldTitle'>Ended at</div>
+                        <StyledDateTimePicker
+                          name='end_at'
+                          id="datetime-local"
+                          type="datetime-local"
+                          value={formData.end_at}
+                          onChange={handleChange}
+                          InputLabelProps={{
+                            shrink: true,
+                          }}
+                        />
+                      </div>
                     </div>
                     <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
@@ -283,7 +290,7 @@ export default function AddInteractions() {
                             onChange={handleChange}
                           >
                             {state?.leads.map((option: any) => (
-                              <MenuItem key={option.account_name} value={option.account_name}>
+                              <MenuItem key={option.id} value={option.id}>
                                 {option.account_name}
                               </MenuItem>
                             ))}
@@ -316,7 +323,7 @@ export default function AddInteractions() {
                             onChange={handleChange}
                           >
                             {state?.contacts.map((option: any) => (
-                              <MenuItem key={option.first_name} value={option.first_name}>
+                              <MenuItem key={option.id} value={option.id}>
                                 {option.first_name}&nbsp;{option.last_name}
                               </MenuItem>
                             ))}
