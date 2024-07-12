@@ -328,9 +328,9 @@ const Dashboard: React.FC = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell>
-                                                {lead.assigned_to?.[0]?.user_details
-                                                    ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
-                                                    : '---'}
+                                            {lead?.assigned_to?.[0]?.user_details?.first_name && lead?.assigned_to?.[0]?.user_details?.last_name
+                                            ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                                            : lead?.assigned_to?.[0]?.user_details?.email || 'Unassigned'}
                                             </TableCell>
                                         </TableRow>
                                     ))}
