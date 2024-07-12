@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel, LinearProgress, Grid } from '@mui/material';
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    LinearProgress,
+    Grid,
+} from '@mui/material';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { fetchData } from '../../components/FetchData'; // Assuming fetchData is a utility function you've created
-import { LeadUrl } from '../../services/ApiUrls'; // Assuming LeadUrl is your API endpoint for leads
+import { LeadUrl, ProfileUrl, SERVER } from '../../services/ApiUrls'; // Assuming LeadUrl is your API endpoint for leads
 
 const Dashboard: React.FC = () => {
     const [newLeads, setNewLeads] = useState<any[]>([]);
@@ -12,13 +25,51 @@ const Dashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' | undefined }>({ key: 'account_name', direction: undefined });
     const [userRole, setUserRole] = useState<string>(localStorage.getItem('role') || '');
-    const [userId, setUserId] = useState<string>(localStorage.getItem('current_user_id') || '');
+    const [profileId, setProfileId] = useState<string>('');
 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const token = localStorage.getItem('Token');
+            const org = localStorage.getItem('org');
+    
+            if (!token || !org) {
+                setError('Missing token or organization ID in localStorage');
+                setLoading(false);
+                return;
+            }
+    
+            try {
+                const response = await fetch(`${SERVER}${ProfileUrl}/`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': 'application/json',
+                        'org': org,
+                        'Authorization': token,
+                    },
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Error fetching profile: ${response.statusText}`);
+                }
+    
+                const profileData = await response.json();
+                console.log(profileData)
+                setProfileId(profileData.user_obj.id);
+                setUserRole(profileData.user_obj.role);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
 
     useEffect(() => {
         fetchLeadsData();
         fetchTeamMembers();
-    }, [userRole]);
+    }, [userRole, profileId]);
 
     useEffect(() => {
         if (sortConfig.direction !== undefined) {
@@ -29,8 +80,8 @@ const Dashboard: React.FC = () => {
 
                     // Handle nested key for assigned_to.name
                     if (sortConfig.key === 'assigned_to.name') {
-                        aValue = a.assigned_to?.name || '';
-                        bValue = b.assigned_to?.name || '';
+                        aValue = a.assigned_to?.[0]?.user_details?.email || '';
+                        bValue = b.assigned_to?.[0]?.user_details?.email || '';
                     }
 
                     // Convert to numbers for numerical fields
@@ -64,12 +115,11 @@ const Dashboard: React.FC = () => {
             const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
             if (!res.error) {
                 if (userRole === 'ADMIN') {
-                    /* console.log(userRole) */
                     setNewLeads(res?.open_leads?.open_leads?.slice(0, 5)); // Get the newest 5 leads
                     setLeadsData(res?.open_leads?.open_leads); // For chart data
                 } else {
-                    /* console.log(userRole) */
-                    const userLeads = res?.open_leads?.open_leads?.filter((lead: any) => lead.assigned_to?.id === userId);
+                    console.log(userRole)
+                    const userLeads = res?.open_leads?.open_leads?.filter((lead: any) => lead.assigned_to?.[0]?.id === profileId);
                     setNewLeads(userLeads.slice(0, 5)); // Get the newest 5 leads assigned to the user
                     setLeadsData(userLeads); // For chart data
                 }
@@ -195,63 +245,57 @@ const Dashboard: React.FC = () => {
                                                 direction={sortConfig.direction}
                                                 onClick={() => requestSort('account_name')}
                                             >
-                                                Lead Name
+                                                <Typography variant="subtitle1" fontWeight="bold" color="black">
+                                                    Lead Name
+                                                </Typography>
                                             </TableSortLabel>
                                         </TableCell>
                                         <TableCell>
                                             <TableSortLabel
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                              }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
                                                 active={sortConfig.key === 'opportunity_amount'}
                                                 direction={sortConfig.direction}
                                                 onClick={() => requestSort('opportunity_amount')}
                                             >
-                                                Value
+                                                <Typography variant="subtitle1" fontWeight="bold" color="black">
+                                                    Value
+                                                </Typography>
                                             </TableSortLabel>
                                         </TableCell>
                                         <TableCell>
                                             <TableSortLabel
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                              }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
                                                 active={sortConfig.key === 'probability'}
                                                 direction={sortConfig.direction}
                                                 onClick={() => requestSort('probability')}
                                             >
-                                                Probability
+                                                <Typography variant="subtitle1" fontWeight="bold" color="black">
+                                                    Probability
+                                                </Typography>
                                             </TableSortLabel>
                                         </TableCell>
                                         <TableCell>
                                             <TableSortLabel
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                              }}
-                                                active={sortConfig.key === 'status'}
-                                                direction={sortConfig.direction}
-                                                onClick={() => requestSort('status')}
-                                            >
-                                                Status
-                                            </TableSortLabel>
-                                        </TableCell>
-                                        <TableCell>
-                                            <TableSortLabel
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                              }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                }}
                                                 active={sortConfig.key === 'assigned_to.name'}
                                                 direction={sortConfig.direction}
                                                 onClick={() => requestSort('assigned_to.name')}
                                             >
-                                                Assignee
+                                                <Typography variant="subtitle1" fontWeight="bold" color="black" >
+                                                    Assignee
+                                                </Typography>
                                             </TableSortLabel>
                                         </TableCell>
                                     </TableRow>
@@ -260,13 +304,13 @@ const Dashboard: React.FC = () => {
                                     {newLeads.map((lead) => (
                                         <TableRow key={lead.id}>
                                             <TableCell>{lead.account_name}</TableCell>
-                                            <TableCell>€{lead.opportunity_amount}</TableCell>
+                                            <TableCell>{lead.opportunity_amount}</TableCell>
                                             <TableCell>
-                                                <Box sx={{ width: '100%', position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                                                <Box sx={{ width: '100%', position: 'relative', display: 'inline-flex', alignItems: 'center'}}>
                                                     <LinearProgress
                                                         variant="determinate"
                                                         value={lead.probability}
-                                                        style={{ width: '80%', marginRight: '8px', ...progressBarStyle}}
+                                                        style={{ width: '80%', marginRight: '8px', ...progressBarStyle }}
                                                     />
                                                     <Typography
                                                         variant="body2"
@@ -283,12 +327,16 @@ const Dashboard: React.FC = () => {
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
-                                            <TableCell>{lead.status}</TableCell>
-                                            <TableCell>{lead.assigned_to?.name}</TableCell>
+                                            <TableCell>
+                                                {lead.assigned_to?.[0]?.user_details
+                                                    ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                                                    : '---'}
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
+                            {loading && <LinearProgress sx={{ marginTop: '10px' }} style={progressBarStyle} />}
                         </CardContent>
                     </Card>
                 </Grid>
@@ -298,3 +346,7 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+
+function setError(arg0: string) {
+    throw new Error('Function not implemented.');
+}
