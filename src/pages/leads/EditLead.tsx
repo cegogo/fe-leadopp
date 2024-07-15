@@ -599,7 +599,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -616,7 +616,7 @@ export function EditLead() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl
+                        <FormControl 
                           error={!!errors?.assigned_to?.[0]}
                           sx={{ width: '70%' }}
                         >
@@ -667,7 +667,7 @@ export function EditLead() {
                             renderInput={(params) => (
                               <TextField
                                 {...params}
-                                placeholder="Add Users"
+                                placeholder="Add User"
                                 InputProps={{
                                   ...params.InputProps,
                                   sx: {
@@ -675,7 +675,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -962,7 +962,7 @@ export function EditLead() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -1132,7 +1132,7 @@ export function EditLead() {
                         />
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">Phone Number</div>
+                        <div className="fieldTitle">Mobile Number</div>
                         <Tooltip title="Number must starts with +91">
                           <TextField
                             name="phone"
@@ -1260,7 +1260,7 @@ export function EditLead() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">postcode</div>
+                        <div className="fieldTitle">Postcode</div>
                         <TextField
                           name="postcode"
                           value={formData.postcode}

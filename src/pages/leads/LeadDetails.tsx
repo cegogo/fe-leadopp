@@ -486,7 +486,7 @@ function LeadDetails(props: any) {
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
-                  <div className="title2">website</div>
+                  <div className="title2">Website</div>
                   <div className="title3">
                     {leadDetails?.website ? (
                       <Link>{leadDetails?.website}</Link>
@@ -573,9 +573,9 @@ function LeadDetails(props: any) {
                       {leadDetails?.email ? (
                         <Link>
                           {leadDetails?.email}
-                          <FaStar
+                          {/* <FaStar
                             style={{ fontSize: '16px', fill: 'yellow' }}
-                          />
+                          /> */}
                         </Link>
                       ) : (
                         '---'
@@ -585,10 +585,13 @@ function LeadDetails(props: any) {
                   <div style={{ width: '32%' }}>
                     <div className="title2">Mobile Number</div>
                     <div className="title3">
-                      {leadDetails?.phone
-                        ? `${leadDetails?.phone}
-                                                <FaStar style={{ fontSize: '16px', fill: 'yellow' }} /><br />`
-                        : '---'}
+                      {leadDetails?.phone ? (
+                        <div>
+                          {leadDetails?.phone}
+                        </div>
+                      ) : (
+                        '---'
+                      )}
                     </div>
                   </div>
                   <div style={{ width: '32%' }}>

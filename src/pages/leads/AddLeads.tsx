@@ -106,6 +106,14 @@ interface FormData {
   file: string | null;
 }
 
+const LEAD_STATUS = [
+  { value: "assigned", label: "Assigned" },
+  { value: "in process", label: "In Process" },
+  { value: "converted", label: "Converted" },
+  { value: "recycled", label: "Recycled" },
+  { value: "closed", label: "Closed" },
+];
+
 export function AddLeads() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -180,11 +188,11 @@ export function AddLeads() {
         assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
-    }
-    else {
+    } else {
       setFormData({ ...formData, [title]: val });
     }
   };
+
 
   const handleChange = (e: any) => {
     const { name, value, files, type, checked, id } = e.target;
@@ -448,7 +456,7 @@ export function AddLeads() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -465,10 +473,7 @@ export function AddLeads() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl
-                          error={!!errors?.assigned_to?.[0]}
-                          sx={{ width: '70%' }}
-                        >
+                        <FormControl error={!!errors?.assigned_to?.[0]} sx={{ width: '70%' }}>
                           <Autocomplete
                             multiple
                             value={selectedAssignTo}
@@ -506,9 +511,11 @@ export function AddLeads() {
                               </CustomPopupIcon>
                             }
                             renderInput={(params) => (
-                              <TextField
+                            <TextField
                                 {...params}
-                                placeholder="Add Users"
+                                variant="outlined"
+                                placeholder="Add User"
+                                error={!!errors?.assigned_to?.[0]}
                                 InputProps={{
                                   ...params.InputProps,
                                   sx: {
@@ -516,17 +523,15 @@ export function AddLeads() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
                                 }}
                               />
-                            )}
-                          />
-                          <FormHelperText>
-                            {errors?.assigned_to?.[0] || ''}
-                          </FormHelperText>
+                            )}                            
+                            />
+                          <FormHelperText>{errors?.assigned_to?.[0] || ''}</FormHelperText>
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
@@ -566,10 +571,10 @@ export function AddLeads() {
                           >
                             {state?.industries?.length
                               ? state?.industries.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[1]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[1]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -586,14 +591,12 @@ export function AddLeads() {
                             name="status"
                             value={formData.status}
                             open={statusSelectOpen}
-                            onClick={() =>
-                              setStatusSelectOpen(!statusSelectOpen)
-                            }
+                            onOpen={() => setStatusSelectOpen(true)}
+                            onClose={() => setStatusSelectOpen(false)}
+                            onChange={handleChange}
                             IconComponent={() => (
                               <div
-                                onClick={() =>
-                                  setStatusSelectOpen(!statusSelectOpen)
-                                }
+                                onClick={() => setStatusSelectOpen(!statusSelectOpen)}
                                 className="select-icon-background"
                               >
                                 {statusSelectOpen ? (
@@ -603,20 +606,17 @@ export function AddLeads() {
                                 )}
                               </div>
                             )}
-                            className={'select'}
-                            onChange={handleChange}
-                            error={!!errors?.status?.[0]}
+                            className="select"
+                            error={!!errors?.status}
                           >
-                            {state?.status?.length
-                              ? state?.status.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[1]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
-                              : ''}
+                            {LEAD_STATUS.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
                           </Select>
                           <FormHelperText>
-                            {errors?.status?.[0] ? errors?.status[0] : ''}
+                            {errors?.status ? errors.status : ''}
                           </FormHelperText>
                         </FormControl>
                       </div>
@@ -666,10 +666,10 @@ export function AddLeads() {
                           >
                             {state?.source?.length
                               ? state?.source.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[0]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[0]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -781,7 +781,7 @@ export function AddLeads() {
                                       '&:hover': { backgroundColor: 'white' },
                                     },
                                     '& .MuiAutocomplete-endAdornment': {
-                                      mt: '-8px',
+                                      mt: '0px',
                                       mr: '-8px',
                                     },
                                   },
@@ -904,7 +904,7 @@ export function AddLeads() {
                         />
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">Phone Number</div>
+                        <div className="fieldTitle">Mobile Number</div>
                         <Tooltip title="Number must starts with +31">
                           <TextField
                             name="phone"
@@ -1027,7 +1027,7 @@ export function AddLeads() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">postcode</div>
+                        <div className="fieldTitle">Postcode</div>
                         <TextField
                           name="postcode"
                           value={formData.postcode}
@@ -1077,10 +1077,10 @@ export function AddLeads() {
                           >
                             {state?.countries?.length
                               ? state?.countries.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[0]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
+                                <MenuItem key={option[0]} value={option[0]}>
+                                  {option[1]}
+                                </MenuItem>
+                              ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -1149,13 +1149,13 @@ export function AddLeads() {
                       </Button>
                       <Button
                         className="header-button"
-                          onClick={() => {
-                            setFormData({
-                              ...formData,
-                              description: quillRef.current.firstChild.innerHTML,
-                            });
-                            resetForm()
-                          }}
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            description: quillRef.current.firstChild.innerHTML,
+                          });
+                          resetForm()
+                        }}
                         variant="contained"
                         size="small"
                         startIcon={
