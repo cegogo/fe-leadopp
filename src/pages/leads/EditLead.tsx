@@ -357,6 +357,13 @@ export function EditLead() {
       industry: formData.industry,
       skype_ID: formData.skype_ID,
     };
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    }
+    
     // console.log(data, 'edit')
     fetchData(`${LeadUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
