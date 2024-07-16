@@ -514,7 +514,7 @@ export function AddLeads() {
                             <TextField
                                 {...params}
                                 variant="outlined"
-                                placeholder="Add Users"
+                                placeholder="Add User"
                                 error={!!errors?.assigned_to?.[0]}
                                 InputProps={{
                                   ...params.InputProps,
@@ -904,7 +904,7 @@ export function AddLeads() {
                         />
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">Phone Number</div>
+                        <div className="fieldTitle">Mobile Number</div>
                         <Tooltip title="Number must starts with +31">
                           <TextField
                             name="phone"
@@ -1027,7 +1027,7 @@ export function AddLeads() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">postcode</div>
+                        <div className="fieldTitle">Postcode</div>
                         <TextField
                           name="postcode"
                           value={formData.postcode}
