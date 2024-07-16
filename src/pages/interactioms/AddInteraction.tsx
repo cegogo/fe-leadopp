@@ -46,8 +46,8 @@ export default function AddInteractions() {
   const [error, setError] = useState(false);
   const [formData, setFormData] = useState({
     user: localStorage.getItem('current_user_id'),
-    start_at: '',
-    end_at: '',
+    start_at: null,
+    end_at: null,
     type: 'Call',
     interact_with: '',
     contact: '',
@@ -131,8 +131,8 @@ export default function AddInteractions() {
   const resetForm = () => {
     setFormData({
       user: localStorage.getItem('current_user_id'),
-      start_at: '',
-      end_at: '',
+      start_at: null,
+      end_at: null,
       type: 'Call',
       interact_with: '',
       contact: '',

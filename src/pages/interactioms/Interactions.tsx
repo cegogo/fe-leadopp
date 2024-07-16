@@ -194,6 +194,12 @@ export default function Interactions() {
         return new Date(dateString).toLocaleString(undefined, options);
     }
 
+    function formatDuration(durationInSeconds: number): string {
+        const hours = Math.floor(durationInSeconds / 3600);
+        const minutes = Math.floor((durationInSeconds % 3600) / 60);
+        return `${hours > 0 ? `${hours} hours ` : ''}${minutes} minutes`;
+    }
+
     return (
         <Box sx={{ mt: '60px' }}>
             <CustomToolbar sx={{ flexDirection: 'row-reverse' }}>
@@ -292,9 +298,9 @@ export default function Interactions() {
                                                     onClick={() => contactHandle(item.contact)}>
                                                     {`${item.contact.first_name} ${item.contact.last_name}`}
                                                 </TableCell>
-                                                <TableCell className='tableCell'>{formatDate(item?.start_at)}</TableCell>
-                                                <TableCell className='tableCell'>{formatDate(item?.end_at)}</TableCell>
-                                                <TableCell className='tableCell'>{item?.duration} sec</TableCell>
+                                                <TableCell className='tableCell'>{item?.start_at ? formatDate(item?.start_at) : '---'}</TableCell>
+                                                <TableCell className='tableCell'>{item?.end_at ? formatDate(item?.end_at) : '---'}</TableCell>
+                                                <TableCell className='tableCell'>{item?.duration ? formatDuration(item?.duration) : '---'}</TableCell>
                                                 <TableCell className='tableCell'>{`${item.user.first_name} ${item.user.last_name}`}</TableCell>
                                                 <TableCell className='tableCell'>
                                                     <FaTrashAlt style={{ cursor: 'pointer' }} onClick={() => deleteRow(item.id)} />
