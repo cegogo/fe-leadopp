@@ -40,6 +40,7 @@ type FormErrors = {
   state?: string[];
   postcode?: string[];
   country?: string[];
+  expertise?: string[];
   // profile_pic?: string[];
   // has_sales_access?: string[];
   // has_marketing_access?: string[];
@@ -56,6 +57,7 @@ interface FormData {
   state: string;
   postcode: string;
   country: string;
+  expertise: string;
   // profile_pic: string | null,
   // has_sales_access: boolean,
   // has_marketing_access: boolean,
@@ -84,6 +86,7 @@ export function EditUser() {
     state: '',
     postcode: '',
     country: '',
+    expertise: '',
     // profile_pic: null,
     // has_sales_access: false,
     // has_marketing_access: false,
@@ -91,6 +94,7 @@ export function EditUser() {
   });
   const [countries, setCountries] = useState([]);
   const [, setCountry] = useState('');
+  const [expertiseSelectOpen, setExpertiseSelectOpen] = useState(false);
 
   useEffect(() => {
     if (state?.id) {
@@ -102,7 +106,7 @@ export function EditUser() {
     setFormData(state?.value);
   }, [state.id, state?.value]);
 
- const fetchUserData = (id : any) => {
+  const fetchUserData = (id: any) => {
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -125,10 +129,13 @@ export function EditUser() {
             state: profileObj.address.state,
             postcode: profileObj.address.postcode,
             country: profileObj.address.country,
+            expertise: profileObj.expertise,
           };
 
           setFormData(formData);
           setCountries(res.data.countries);
+
+          console.log('fetchUserData success:', formData);
         } else {
           setError(true);
           setProfileErrors(res.errors.profile_errors);
@@ -147,7 +154,7 @@ export function EditUser() {
     return () => {
       setReset(false);
     };
-  }, [reset]); 
+  }, [reset]);
 
   const handleChange = (e: any) => {
     const { name, value, files, type, checked } = e.target;
@@ -159,6 +166,8 @@ export function EditUser() {
     } else {
       setFormData({ ...formData, [name]: value });
     }
+
+    console.log(`handleChange: ${name} => ${value}`);
   };
 
   const backbtnHandle = () => {
@@ -173,6 +182,7 @@ export function EditUser() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submitForm();
+    console.log('Submitting form:', formData);
   };
 
   // const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -224,9 +234,9 @@ export function EditUser() {
       org: localStorage.getItem('org'),
     };
     //debugger;
-    //console.log('Form data:', formData);
+    console.log('Form data:', formData);
     const data = {
-      email: formData.email, 
+      email: formData.email,
       role: formData.role,
       phone: formData.phone,
       alternate_phone: formData.alternate_phone,
@@ -236,6 +246,7 @@ export function EditUser() {
       state: formData.state,
       postcode: formData.postcode,
       country: formData.country,
+      expertise: formData.expertise,
       // profile_pic: formData.profile_pic,
       // has_sales_access: formData.has_sales_access,
       // has_marketing_access: formData.has_marketing_access,
@@ -244,7 +255,7 @@ export function EditUser() {
 
     fetchData(`${UserUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
-        // console.log('editsubmit:', res);
+        console.log('editsubmit:', res);
         if (!res.error) {
           resetForm();
           navigate('/app/admin');
@@ -271,6 +282,7 @@ export function EditUser() {
       state: '',
       postcode: '',
       country: '',
+      expertise: '',
       // profile_pic: null,
       // has_sales_access: false,
       // has_marketing_access: false,
@@ -281,7 +293,7 @@ export function EditUser() {
   };
   const onCancel = () => {
     //setReset(true);
-    resetForm()
+    resetForm();
   };
   const module = 'Admin';
   const crntPage = 'Edit User';
@@ -290,7 +302,7 @@ export function EditUser() {
   const inputStyles = {
     display: 'none',
   };
-  
+
   // console.log(state, 'edit',profileErrors)
   // console.log(formData, 'as', state?.value);
   return (
@@ -377,6 +389,44 @@ export function EditUser() {
                             ))}
                           </Select>
                           {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
+                        </FormControl>
+                      </div>
+                      <div className="fieldSubContainer">
+                        <div className="fieldTitle">Expertise Level</div>
+                        <FormControl sx={{ width: '70%' }}>
+                          <Select
+                            name="expertise"
+                            value={formData.expertise}
+                            open={expertiseSelectOpen}
+                            onClick={() =>
+                              setExpertiseSelectOpen(!expertiseSelectOpen)
+                            }
+                            IconComponent={() => (
+                              <div
+                                onClick={() =>
+                                  setExpertiseSelectOpen(!expertiseSelectOpen)
+                                }
+                                className="select-icon-background"
+                              >
+                                {expertiseSelectOpen ? (
+                                  <FiChevronUp className="select-icon" />
+                                ) : (
+                                  <FiChevronDown className="select-icon" />
+                                )}
+                              </div>
+                            )}
+                            className={'select'}
+                            onChange={handleChange}
+                            error={!!errors?.expertise?.[0]} // Handle errors if needed
+                          >
+                            {['junior', 'medior', 'senior', 'N/A'].map(
+                              (option) => (
+                                <MenuItem key={option} value={option}>
+                                  {option}
+                                </MenuItem>
+                              )
+                            )}
+                          </Select>
                         </FormControl>
                       </div>
                     </div>
