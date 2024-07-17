@@ -24,7 +24,7 @@ import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 import '../../styles/style.css';
 import { LeadUrl } from '../../services/ApiUrls';
-import { fetchData, Header } from '../../components/FetchData';
+import { fetchData } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import {
   FaArrowDown,
@@ -229,6 +229,12 @@ export function AddLeads() {
     resetForm()
   };
   const submitForm = () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    };
     const data = {
       title: formData.title,
       first_name: formData.first_name,
@@ -263,7 +269,7 @@ export function AddLeads() {
         if (!res.error) {
           setSuccessMessage('Lead added successfully!');
           resetForm();
-          navigate('/app/leads');
+          navigate('/app/leads'); /*Review this navigate part*/
         } else {
           setErrors(res.errors || {});
           setErrorMessage('Failed to add lead. Please check your inputs.');
