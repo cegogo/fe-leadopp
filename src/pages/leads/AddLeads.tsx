@@ -1091,7 +1091,6 @@ export function AddLeads() {
                             ...formData,
                             description: quillRef.current.firstChild.innerHTML,
                           });
-                          resetForm()
                         }}
                         variant="contained"
                         size="small"
