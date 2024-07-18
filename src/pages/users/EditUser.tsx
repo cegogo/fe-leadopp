@@ -20,7 +20,7 @@ import {
   FormControl,
   FormHelperText,
 } from '@mui/material';
-import { UserUrl } from '../../services/ApiUrls';
+import { ProfileUrl, UserUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { FaArrowDown, FaTimes, FaUpload } from 'react-icons/fa';
@@ -253,7 +253,12 @@ export function EditUser() {
       // is_organization_admin: formData.is_organization_admin
     };
 
-    fetchData(`${UserUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
+    fetchData(
+      `${ProfileUrl}/${state?.id}/`,
+      'PUT',
+      JSON.stringify(data),
+      Header
+    )
       .then((res: any) => {
         console.log('editsubmit:', res);
         if (!res.error) {
