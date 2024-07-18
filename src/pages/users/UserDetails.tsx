@@ -212,10 +212,21 @@ export default function UserDetails() {
                   borderBottom: '1px solid lightgray',
                   display: 'flex',
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  justifyContent: 'flex-start',
                   alignItems: 'center',
                 }}
               >
+                <div
+                  style={{
+                    marginRight: '20px',
+                  }}
+                >
+                  <div className="title3">
+                    <Avatar alt={'sdf'}>
+                      {userDetails?.user_details?.profile_pic}
+                    </Avatar>
+                  </div>
+                </div>
                 <div
                   style={{
                     fontWeight: 600,
@@ -268,29 +279,22 @@ export default function UserDetails() {
                                     </div>
                                 </div>
                             </div> */}
-              <Card
+              <div
                 style={{
                   padding: '20px',
+                  marginTop: '15px',
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                 }}
               >
-                <div>
-                  <div className="title2">Profile pic</div>
-                  <div className="title3">
-                    <Avatar alt={'sdf'}>
-                      {userDetails?.user_details?.profile_pic}
-                    </Avatar>
-                  </div>
-                </div>
-                <div>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Email</div>
                   <div className="title3">
                     {userDetails?.user_details?.email || '---'}
                   </div>
                 </div>
-                <div>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Role</div>
                   <div
                     style={{
@@ -302,14 +306,13 @@ export default function UserDetails() {
                     {userDetails?.role || '---'}
                   </div>
                 </div>
-                <div>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Is Active</div>
                   <div className="title3">
                     <AntSwitch checked={userDetails?.user_details?.is_active} />
                   </div>
                 </div>
-              </Card>
-              <Card></Card>
+              </div>
               <div
                 style={{
                   padding: '20px',
@@ -319,22 +322,24 @@ export default function UserDetails() {
                   justifyContent: 'space-between',
                 }}
               >
-                <div style={{ width: '45%' }}>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Expertise</div>
                   <div className="title3">
                     {userDetails?.expertise || '---'}
                   </div>
                 </div>
-                <div style={{ width: '45%' }}>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Mobile Number</div>
                   <div className="title3">{userDetails?.phone || '---'}</div>
                 </div>
-                <div style={{ width: '45%' }}>
+                <div style={{ width: '32%' }}>
                   <div className="title2">Date of joining</div>
                   <div className="title3">
                     {userDetails?.date_of_joining || '---'}
                   </div>
                 </div>
+              </div>
+              <div>
                 <div
                   style={{
                     padding: '20px',
@@ -344,7 +349,7 @@ export default function UserDetails() {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <div style={{ width: '34%' }}>
+                  <div style={{ width: '32%' }}>
                     <div className="title2">Sales Manager</div>
                     <div className="title3">
                       <FormControlLabel
@@ -360,7 +365,7 @@ export default function UserDetails() {
                       />
                     </div>
                   </div>
-                  <div style={{ width: '34%' }}>
+                  <div style={{ width: '32%' }}>
                     <div className="title2">Sales Representative</div>
                     <div className="title3">
                       <FormControlLabel
@@ -403,8 +408,9 @@ export default function UserDetails() {
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* <div style={{ width: '32%' }}>
+              {/* <div style={{ width: '32%' }}>
                                     <div className='title2'>Do Not Call</div>
                                     <div className='title3'>
                                         <AntSwitch
@@ -412,7 +418,6 @@ export default function UserDetails() {
                                             inputProps={{ 'aria-label': 'ant design' }} />
                                     </div>
                                 </div> */}
-              </div>
               {/* Address details */}
               <div style={{ marginTop: '15px' }}>
                 <div
