@@ -205,12 +205,21 @@ export function AddLeads() {
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: any) => {
     const file = event.target.files?.[0] || null;
     if (file) {
+      setFormData((prevData) => ({
+        ...prevData,
+        lead_attachment: file.name,
+        file: prevData.file,
+      }));
+
       const reader = new FileReader();
       reader.onload = () => {
-        setFormData({ ...formData, file: reader.result as string });
+        setFormData((prevData) => ({
+          ...prevData,
+          file: reader.result as string,
+        }));
       };
       reader.readAsDataURL(file);
     }
