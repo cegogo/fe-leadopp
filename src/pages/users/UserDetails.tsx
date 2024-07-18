@@ -61,6 +61,16 @@ export const formatDate = (dateString: any) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const expertiseDisplayName = (expertise: string) => {
+  const expertiseMap: { [key: string]: string } = {
+    junior: 'Junior',
+    medior: 'Medior',
+    senior: 'Senior',
+    'N/A': 'N/A',
+  };
+  return expertiseMap[expertise] || expertise;
+};
+
 export default function UserDetails() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -325,7 +335,7 @@ export default function UserDetails() {
                 <div style={{ width: '32%' }}>
                   <div className="title2">Expertise</div>
                   <div className="title3">
-                    {userDetails?.expertise || '---'}
+                    {expertiseDisplayName(userDetails?.expertise || '')}
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
