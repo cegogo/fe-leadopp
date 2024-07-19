@@ -40,8 +40,10 @@ import Deals from '../pages/deals/Deals';
 import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
 import { SERVER, ProfileUrl } from '../services/ApiUrls';
-import Interactions from '../pages/interactioms/Interactions';
-import AddInteraction from '../pages/interactioms/AddInteraction';
+import Interactions from '../pages/interactions/Interactions';
+import AddInteraction from '../pages/interactions/AddInteraction';
+import InteractionDetails from '../pages/interactions/InteractionDetail';
+import EditInteraction from '../pages/interactions/EditInteraction';
 
 
 interface UserDetails {
@@ -388,6 +390,8 @@ export default function Sidebar(props: any) {
                             <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log} />} />
                             <Route path='/app/interactions' element={<Interactions />} />
                             <Route path='/app/interactions/add-interactions' element={<AddInteraction />} />
+                            <Route path='/app/interactions/edit-interaction' element={<EditInteraction />} />
+                            <Route path='/app/interactions/interaction-details' element={<InteractionDetails />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>

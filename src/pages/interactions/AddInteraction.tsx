@@ -17,12 +17,11 @@ import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 import { InteractionsUrl } from '../../services/ApiUrls';
 import { CustomAppBar } from '../../components/CustomAppBar';
-import { fetchData, Header } from '../../components/FetchData';
+import { fetchData } from '../../components/FetchData';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../../styles/style.css';
-import { styled } from '@mui/material/styles';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -76,7 +75,7 @@ export default function AddInteractions() {
   };
 
   const handleDateTimeChange = (name: string, date: any) => {
-    setFormData({ ...formData, [name]: date ? moment(date).format('YYYY-MM-DDTHH:mm') : '' });
+    setFormData({ ...formData, [name]: date ? moment(date).toISOString() : '' });
   };
 
   const resetQuillToInitialState = () => {
@@ -192,7 +191,7 @@ export default function AddInteractions() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Started at</div>
-                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-gb">
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="nl-NL">
                           <DateTimePicker
                             name="start_at"
                             label="Start Date and Time"
@@ -242,7 +241,7 @@ export default function AddInteractions() {
                       </div>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Ended at</div>
-                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="en-gb">
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="nl-NL">
                           <DateTimePicker
                             name='end_at'
                             label="End Date and Time"

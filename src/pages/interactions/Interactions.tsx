@@ -132,11 +132,16 @@ export default function Interactions() {
 
     const onAddInteraction = () => navigate('/app/interactions/add-interactions', {
         state: {
-          detail: false,
-          contacts: contacts || [], leads: leads || [], users: users || []
+            detail: false,
+            contacts: contacts || [], leads: leads || [], users: users || []
         }
-      });
-    const interactionHandle = (interactionId: string) => navigate(`/app/interactions/interaction-details`, { state: { interactionId, detail: true } });
+    });
+    const interactionHandle = (interactionId: string) => navigate(`/app/interactions/interaction-details`, {
+        state: {
+            interactionId, detail: true,
+            contacts: contacts || [], leads: leads || [], users: users || []
+        }
+    });
 
     const deleteRow = (deleteId: string) => {
         setDeleteRowModal(true);
