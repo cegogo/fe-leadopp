@@ -629,8 +629,8 @@ export function EditLead() {
                         >
                           <Autocomplete
                             // ref={autocompleteRef}
-                            multiple
-                            value={selectedAssignTo}
+                            multiple                          
+                            value={formData.assigned_to || ''}
                             // name='contacts'
                             limitTags={2}
                             options={state?.users || []}

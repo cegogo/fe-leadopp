@@ -245,7 +245,7 @@ function LeadDetails(props: any) {
         status,
         industries,
         users,
-        contacts,
+        contacts:state.contacts || [],
         teams,
         comments,
       },
