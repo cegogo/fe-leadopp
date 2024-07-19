@@ -30,7 +30,7 @@ type response = {
   user_details: {
     email: string;
     is_active: boolean;
-    profile_pic: string;
+    profile_pic: string | null;
   };
   role: string;
   expertise: string;
@@ -231,11 +231,10 @@ export default function UserDetails() {
                     marginRight: '20px',
                   }}
                 >
-                  <div className="title3">
-                    <Avatar alt={'sdf'}>
-                      {userDetails?.user_details?.profile_pic}
-                    </Avatar>
-                  </div>
+                  <Avatar
+                    alt="Profile Picture"
+                    src={userDetails?.user_details?.profile_pic || ''}
+                  />
                 </div>
                 <div
                   style={{

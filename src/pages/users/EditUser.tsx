@@ -263,7 +263,9 @@ export function EditUser() {
         console.log('editsubmit:', res);
         if (!res.error) {
           resetForm();
-          navigate('/app/admin');
+          navigate('/app/admin/user-details', {
+            state: { userId: state?.id, detail: true },
+          });
         }
         if (res.error) {
           setError(true);
