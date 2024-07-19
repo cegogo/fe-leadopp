@@ -125,7 +125,7 @@ export function AddLeads() {
   const autocompleteRef = useRef<any>(null);
   const [error, setError] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
-  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>([]);
+  const [selectedAssignTo, setSelectedAssignTo] = useState<any>(null);
   const [selectedTags, setSelectedTags] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<any[]>([]);
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
@@ -179,7 +179,7 @@ export function AddLeads() {
     } else if (title === 'assigned_to') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        assigned_to: val ? [val.id] : [],
       });
       setSelectedAssignTo(val);
     } else if (title === 'tags') {
@@ -212,7 +212,7 @@ export function AddLeads() {
         lead_attachment: file.name,
         file: prevData.file,
       }));
-
+  
       const reader = new FileReader();
       reader.onload = () => {
         setFormData((prevData) => ({
@@ -491,9 +491,7 @@ export function AddLeads() {
                         <div className="fieldTitle">Assign To</div>
                         <FormControl error={!!errors?.assigned_to?.[0]} sx={{ width: '70%' }}>
                           <Autocomplete
-                            multiple
                             value={selectedAssignTo}
-                            limitTags={1}
                             options={state?.users || []}
                             getOptionLabel={(option: any) =>
                               state?.users ? option?.user__email : option
