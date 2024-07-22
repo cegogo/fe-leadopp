@@ -1,7 +1,7 @@
 import { CustomToolbar } from '../../styles/CssStyled';
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField, Tooltip } from '@mui/material';
 import { FiChevronUp, FiChevronDown, FiCheckCircle, FiChevronLeft } from 'react-icons/fi';
 import { SERVER, ProfileUrl } from '../../services/ApiUrls';
 import { COUNTRIES } from '../../components/Data';
@@ -9,6 +9,22 @@ import { COUNTRIES } from '../../components/Data';
 interface EditUserProfileProps {
     onUpdate: () => void;
 }
+
+type FormErrors = {
+    email?: string[];
+    first_name?: string[];
+    last_name?: string[];
+    job_title?: string[];
+    address_line?: string[];
+    street?: string[];
+    city?: string[];
+    state?: string[];
+    postcode?: string[];
+    country?: string[];
+    mobile_number?: string[];
+    profile_pic?: string[];
+
+  };
 
 const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     const { id } = useParams<{ id: string }>();
@@ -29,6 +45,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<FormErrors>({});
     const [countrySelectOpen, setCountrySelectOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -151,6 +168,7 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
             navigate('/app/profile/');
         } catch (error: any) {
             setError(error.message);
+            setErrors(errors || {});
         }
     };
 
@@ -237,13 +255,19 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                         <div className="fieldContainer">
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Mobile Number</div>
+                                                <Tooltip title="Number must start with +31">
                                                 <TextField
                                                     name="mobile_number"
                                                     value={formData.mobile_number}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    helperText={
+                                                        errors?.mobile_number?.[0] ? errors?.mobile_number[0] : ''
+                                                      }
+                                                      error={!!errors?.mobile_number?.[0]}
                                                 />
+                                                </Tooltip>
                                             </div>
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Email</div>
