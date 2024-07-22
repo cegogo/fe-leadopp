@@ -1,4 +1,4 @@
-import { CustomToolbar } from '../../styles/CssStyled';
+import { CustomToolbar, RequiredTextField } from '../../styles/CssStyled';
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Box, Button, CircularProgress, FormControl, FormGroup, InputLabel, Input, Typography, Select, MenuItem, Card, Stack, Accordion, AccordionSummary, Divider, AccordionDetails, TextField, Tooltip } from '@mui/material';
@@ -23,8 +23,7 @@ type FormErrors = {
     country?: string[];
     mobile_number?: string[];
     profile_pic?: string[];
-
-  };
+};
 
 const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     const { id } = useParams<{ id: string }>();
@@ -48,7 +47,6 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
     const [errors, setErrors] = useState<FormErrors>({});
     const [countrySelectOpen, setCountrySelectOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
 
     const handleChange = (e: any) => {
         const { name, value, type } = e.target;
@@ -75,13 +73,13 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
         const fetchUserProfile = async () => {
             const token = localStorage.getItem('Token');
             const org = localStorage.getItem('org');
-    
+
             if (!token || !org) {
                 setError('Missing token or organization ID in localStorage');
                 setLoading(false);
                 return;
             }
-    
+
             try {
                 const response = await fetch(`${SERVER}${ProfileUrl}/`, {
                     method: 'GET',
@@ -91,16 +89,16 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                         'Authorization': token,
                     },
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`Error fetching profile: ${response.statusText}`);
                 }
-    
+
                 const data = await response.json();
-    
+
                 // Safely access address properties with optional chaining and provide default values
                 const address = data.user_obj.address || {};
-    
+
                 setFormData({
                     email: data.user_obj.user_details.email || '',
                     first_name: data.user_obj.user_details.first_name || '',
@@ -121,19 +119,19 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                 setLoading(false);
             }
         };
-    
+
         fetchUserProfile();
     }, [id]);
 
     const submitForm = async () => {
         const token = localStorage.getItem('Token');
         const org = localStorage.getItem('org');
-
+    
         if (!token || !org) {
             setError('Missing token or organization ID in localStorage');
             return;
         }
-
+    
         try {
             const response = await fetch(`${SERVER}${ProfileUrl}/${id}/`, {
                 method: 'PUT',
@@ -145,9 +143,9 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                     user_details: {
                         first_name: formData.first_name,
                         last_name: formData.last_name,
-                        profile_pic: formData.profile_pic
+                        profile_pic: formData.profile_pic,
                     },
-                    role: 'ADMIN',
+                    /* role: 'ADMIN', */ /*IT CHANGES THE USER ROLE TO ADMIN WHEN UPDATING*/
                     address: {
                         address_line: formData.address_line,
                         street: formData.street,
@@ -160,15 +158,26 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                     alternate_phone: formData.mobile_number, // Include this if needed
                 }),
             });
-
+    
             if (!response.ok) {
-                throw new Error(`Error updating profile: ${response.statusText}`);
+                const data = await response.json();
+                if (data.errors) {
+                    // Map phone error to mobile_number
+                    const newErrors: FormErrors = {
+                        ... data.errors,
+                        mobile_number : data.errors.phone
+                    }; 
+                    setErrors(newErrors);
+                } else {
+                    setError('Failed to update profile. Please check your inputs.');
+                }
+                return;
             }
+    
             onUpdate();
             navigate('/app/profile/');
         } catch (error: any) {
-            setError(error.message);
-            setErrors(errors || {});
+            setError('Error updating profile.');
         }
     };
 
@@ -239,6 +248,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.first_name}
+                                                    helperText={errors.first_name ? errors.first_name.join(', ') : ''}
                                                 />
                                             </div>
                                             <div className="fieldSubContainer">
@@ -249,6 +260,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.last_name}
+                                                    helperText={errors.last_name ? errors.last_name.join(', ') : ''}
                                                 />
                                             </div>
                                         </div>
@@ -256,16 +269,14 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                             <div className="fieldSubContainer">
                                                 <div className="fieldTitle">Mobile Number</div>
                                                 <Tooltip title="Number must start with +31">
-                                                <TextField
+                                                <RequiredTextField
                                                     name="mobile_number"
                                                     value={formData.mobile_number}
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
-                                                    helperText={
-                                                        errors?.mobile_number?.[0] ? errors?.mobile_number[0] : ''
-                                                      }
-                                                      error={!!errors?.mobile_number?.[0]}
+                                                    error={!!errors.mobile_number}
+                                                    helperText={errors.mobile_number ? errors.mobile_number.join(', ') : ''}
                                                 />
                                                 </Tooltip>
                                             </div>
@@ -279,6 +290,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.email}
+                                                    helperText={errors.email ? errors.email.join(', ') : ''}
                                                 />
                                             </div>
                                         </div>
@@ -300,6 +313,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.job_title}
+                                                    helperText={errors.job_title ? errors.job_title.join(', ') : ''}
                                                 />
                                             </div>
                                         </div>
@@ -332,6 +347,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.address_line}
+                                                    helperText={errors.address_line ? errors.address_line.join(', ') : ''}
                                                 />
                                             </div>
                                             <div className="fieldSubContainer">
@@ -342,6 +359,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.street}
+                                                    helperText={errors.street ? errors.street.join(', ') : ''}
                                                 />
                                             </div>
                                         </div>
@@ -355,6 +374,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.city}
+                                                    helperText={errors.city ? errors.city.join(', ') : ''}
                                                 />
                                             </div>
                                             <div className="fieldSubContainer">
@@ -365,6 +386,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.state}
+                                                    helperText={errors.state ? errors.state.join(', ') : ''}
                                                 />
                                             </div>
                                         </div>
@@ -378,6 +401,8 @@ const EditUserProfile: React.FC<EditUserProfileProps> = ({ onUpdate }) => {
                                                     onChange={handleChange}
                                                     style={{ width: '70%' }}
                                                     size="small"
+                                                    error={!!errors.postcode}
+                                                    helperText={errors.postcode ? errors.postcode.join(', ') : ''}
                                                 />
                                             </div>
                                             <div className="fieldSubContainer">
