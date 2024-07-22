@@ -121,11 +121,11 @@ export function AddLeads() {
   const initialContentRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
+  
   const autocompleteRef = useRef<any>(null);
   const [error, setError] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
-  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>([]);
+  const [selectedAssignTo, setSelectedAssignTo] = useState<any>(null);
   const [selectedTags, setSelectedTags] = useState<any[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<any[]>([]);
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
@@ -179,13 +179,13 @@ export function AddLeads() {
     } else if (title === 'assigned_to') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        assigned_to: val ? [val.id] : [],
       });
       setSelectedAssignTo(val);
     } else if (title === 'tags') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        tags: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
     } else {
@@ -193,11 +193,10 @@ export function AddLeads() {
     }
   };
 
-
   const handleChange = (e: any) => {
     const { name, value, files, type, checked, id } = e.target;
     if (type === 'file') {
-      setFormData({ ...formData, [name]: e.target.files?.[0] || null });
+      setFormData({ ...formData, [name]: files?.[0] || null });
     } else if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked });
     } else {
@@ -213,7 +212,7 @@ export function AddLeads() {
         lead_attachment: file.name,
         file: prevData.file,
       }));
-
+  
       const reader = new FileReader();
       reader.onload = () => {
         setFormData((prevData) => ({
@@ -235,8 +234,8 @@ export function AddLeads() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     submitForm();
-    resetForm()
   };
+
   const submitForm = () => {
     const Header = {
       Accept: 'application/json',
@@ -277,9 +276,9 @@ export function AddLeads() {
       .then((res) => {
         if (!res.error) {
           setSuccessMessage('Lead added successfully!');
-          resetForm();
-          navigate('/app/leads'); /*Review this navigate part*/
+          navigate('/app/leads');
         } else {
+          setError(true);
           setErrors(res.errors || {});
           setErrorMessage('Failed to add lead. Please check your inputs.');
         }
@@ -324,6 +323,7 @@ export function AddLeads() {
     setSelectedAssignTo([]);
     setSelectedTags([]);
   };
+
   const onCancel = () => {
     resetForm();
   };
@@ -369,8 +369,9 @@ export function AddLeads() {
                     <div className="fieldContainer">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Lead Name</div>
-                        <TextField
+                        <RequiredTextField
                           name="account_name"
+                          required
                           value={formData.account_name}
                           onChange={handleChange}
                           style={{ width: '70%' }}
@@ -490,9 +491,7 @@ export function AddLeads() {
                         <div className="fieldTitle">Assign To</div>
                         <FormControl error={!!errors?.assigned_to?.[0]} sx={{ width: '70%' }}>
                           <Autocomplete
-                            multiple
                             value={selectedAssignTo}
-                            limitTags={2}
                             options={state?.users || []}
                             getOptionLabel={(option: any) =>
                               state?.users ? option?.user__email : option
@@ -783,7 +782,7 @@ export function AddLeads() {
                 <AccordionSummary
                   expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                 >
-                  <Typography className="accordion-header">Contact</Typography>
+                  <Typography className="accordion-header">Prospect</Typography>
                 </AccordionSummary>
                 <Divider className="divider" />
                 <AccordionDetails>
@@ -1091,7 +1090,6 @@ export function AddLeads() {
                             ...formData,
                             description: quillRef.current.firstChild.innerHTML,
                           });
-                          resetForm()
                         }}
                         variant="contained"
                         size="small"

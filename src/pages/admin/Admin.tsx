@@ -14,6 +14,7 @@ import { UsersUrl, UserUrl, AdminUrl, OrgUrl } from '../../services/ApiUrls';
 import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssStyled';
 import Users from '../users/Users';
 import InviteTeammates from '../../components/InviteTeammates'
+import AddTeam from '../teams/AddTeams';
 
 interface HeadCell {
     disablePadding: boolean;
@@ -442,6 +443,17 @@ export default function Admin() {
                     </Button>
                 </Stack> */}
             </CustomToolbar>
+            <Accordion defaultExpanded style={{ width: '100%' }}>
+                <AccordionSummary
+                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
+                >
+                    <Typography className="accordion-header">
+                        Teams control pannel
+                    </Typography>
+                </AccordionSummary>
+                <Divider className="divider" />
+                <AddTeam />
+            </Accordion>
             <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex' }}>
                 <InviteTeammates />
                 <Box sx={{ mt: '60px', mx: '24px', mr: '24px', width: '48%', height: '100%' }}>
