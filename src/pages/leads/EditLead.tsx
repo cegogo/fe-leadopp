@@ -816,17 +816,35 @@ export function EditLead() {
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">SkypeID</div>
+                        <div className="fieldTitle">Probability</div>
                         <TextField
-                          name="skype_ID"
-                          value={formData.skype_ID}
+                          name="probability"
+                          value={formData.probability}
                           onChange={handleChange}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  disableFocusRipple
+                                  disableTouchRipple
+                                  sx={{
+                                    backgroundColor: '#d3d3d34a',
+                                    width: '45px',
+                                    borderRadius: '0px',
+                                    mr: '-12px',
+                                  }}
+                                >
+                                  <FaPercent style={{ width: '12px' }} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                           style={{ width: '70%' }}
                           size="small"
                           helperText={
-                            errors?.skype_ID?.[0] ? errors?.skype_ID[0] : ''
+                            errors?.probability?.[0] ? errors?.probability[0] : ''
                           }
-                          error={!!errors?.skype_ID?.[0]}
+                          error={!!errors?.probability?.[0]}
                         />
                       </div>
                     </div>
@@ -924,108 +942,8 @@ export function EditLead() {
                           }
                           error={!!errors?.lead_attachment?.[0]}
                         />
-                      </div>
-                    </div>
-                    <div className="fieldContainer2">
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Tags</div>
-                        <FormControl
-                          error={!!errors?.tags?.[0]}
-                          sx={{ width: '70%' }}
-                        >
-                          <Autocomplete
-                            // ref={autocompleteRef}
-                            value={selectedTags}
-                            multiple
-                            limitTags={5}
-                            options={state?.tags || []}
-                            // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
-                            getOptionLabel={(option: any) => option}
-                            onChange={(e: any, value: any) =>
-                              handleChange2('tags', value)
-                            }
-                            size="small"
-                            filterSelectedOptions
-                            renderTags={(value, getTagProps) =>
-                              value.map((option, index) => (
-                                <Chip
-                                  deleteIcon={
-                                    <FaTimes style={{ width: '9px' }} />
-                                  }
-                                  sx={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                                    height: '18px',
-                                  }}
-                                  variant="outlined"
-                                  label={option}
-                                  {...getTagProps({ index })}
-                                />
-                              ))
-                            }
-                            popupIcon={
-                              <CustomPopupIcon>
-                                <FaPlus className="input-plus-icon" />
-                              </CustomPopupIcon>
-                            }
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                placeholder="Add Tags"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  sx: {
-                                    '& .MuiAutocomplete-popupIndicator': {
-                                      '&:hover': { backgroundColor: 'white' },
-                                    },
-                                    '& .MuiAutocomplete-endAdornment': {
-                                      mt: '0px',
-                                      mr: '-8px',
-                                    },
-                                  },
-                                }}
-                              />
-                            )}
-                          />
-                          <FormHelperText>
-                            {errors?.tags?.[0] || ''}
-                          </FormHelperText>
-                        </FormControl>
-                      </div>
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Probability</div>
-                        <TextField
-                          name="probability"
-                          value={formData.probability}
-                          onChange={handleChange}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  disableFocusRipple
-                                  disableTouchRipple
-                                  sx={{
-                                    backgroundColor: '#d3d3d34a',
-                                    width: '45px',
-                                    borderRadius: '0px',
-                                    mr: '-12px',
-                                  }}
-                                >
-                                  <FaPercent style={{ width: '12px' }} />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                          style={{ width: '70%' }}
-                          size="small"
-                          helperText={
-                            errors?.probability?.[0]
-                              ? errors?.probability[0]
-                              : ''
-                          }
-                          error={!!errors?.probability?.[0]}
-                        />
-                      </div>
-                    </div>
+                      </div> 
+                    </div>                   
                     {/* <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'> Close Date</div>
@@ -1090,7 +1008,7 @@ export function EditLead() {
                 <AccordionSummary
                   expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                 >
-                  <Typography className="accordion-header">Contact</Typography>
+                  <Typography className="accordion-header">Prospect</Typography>
                 </AccordionSummary>
                 <Divider className="divider" />
                 <AccordionDetails>
