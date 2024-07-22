@@ -24,7 +24,7 @@ import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 import '../../styles/style.css';
 import { LeadUrl } from '../../services/ApiUrls';
-import { fetchData, Header } from '../../components/FetchData';
+import { fetchData } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import {
   FaArrowDown,
@@ -205,12 +205,21 @@ export function AddLeads() {
     }
   };
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: any) => {
     const file = event.target.files?.[0] || null;
     if (file) {
+      setFormData((prevData) => ({
+        ...prevData,
+        lead_attachment: file.name,
+        file: prevData.file,
+      }));
+
       const reader = new FileReader();
       reader.onload = () => {
-        setFormData({ ...formData, file: reader.result as string });
+        setFormData((prevData) => ({
+          ...prevData,
+          file: reader.result as string,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -229,6 +238,12 @@ export function AddLeads() {
     resetForm()
   };
   const submitForm = () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    };
     const data = {
       title: formData.title,
       first_name: formData.first_name,
@@ -263,7 +278,7 @@ export function AddLeads() {
         if (!res.error) {
           setSuccessMessage('Lead added successfully!');
           resetForm();
-          navigate('/app/leads');
+          navigate('/app/leads'); /*Review this navigate part*/
         } else {
           setErrors(res.errors || {});
           setErrorMessage('Failed to add lead. Please check your inputs.');
@@ -621,17 +636,37 @@ export function AddLeads() {
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">SkypeID</div>
+                      <div className="fieldTitle">Probability</div>
                         <TextField
-                          name="skype_ID"
-                          value={formData.skype_ID}
+                          name="probability"
+                          value={formData.probability}
                           onChange={handleChange}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  disableFocusRipple
+                                  disableTouchRipple
+                                  sx={{
+                                    backgroundColor: '#d3d3d34a',
+                                    width: '45px',
+                                    borderRadius: '0px',
+                                    mr: '-12px',
+                                  }}
+                                >
+                                  <FaPercent style={{ width: '12px' }} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                           style={{ width: '70%' }}
                           size="small"
                           helperText={
-                            errors?.skype_ID?.[0] ? errors?.skype_ID[0] : ''
+                            errors?.probability?.[0]
+                              ? errors?.probability[0]
+                              : ''
                           }
-                          error={!!errors?.skype_ID?.[0]}
+                          error={!!errors?.probability?.[0]}
                         />
                       </div>
                     </div>
@@ -728,104 +763,6 @@ export function AddLeads() {
                               : ''
                           }
                           error={!!errors?.lead_attachment?.[0]}
-                        />
-                      </div>
-                    </div>
-                    <div className="fieldContainer2">
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Tags</div>
-                        <FormControl
-                          error={!!errors?.tags?.[0]}
-                          sx={{ width: '70%' }}
-                        >
-                          <Autocomplete
-                            value={selectedTags}
-                            multiple
-                            limitTags={5}
-                            options={state?.tags || []}
-                            getOptionLabel={(option: any) => option}
-                            onChange={(e: any, value: any) =>
-                              handleChange2('tags', value)
-                            }
-                            size="small"
-                            filterSelectedOptions
-                            renderTags={(value, getTagProps) =>
-                              value.map((option, index) => (
-                                <Chip
-                                  deleteIcon={
-                                    <FaTimes style={{ width: '9px' }} />
-                                  }
-                                  sx={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                                    height: '18px',
-                                  }}
-                                  variant="outlined"
-                                  label={option}
-                                  {...getTagProps({ index })}
-                                />
-                              ))
-                            }
-                            popupIcon={
-                              <CustomPopupIcon>
-                                <FaPlus className="input-plus-icon" />
-                              </CustomPopupIcon>
-                            }
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                placeholder="Add Tags"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  sx: {
-                                    '& .MuiAutocomplete-popupIndicator': {
-                                      '&:hover': { backgroundColor: 'white' },
-                                    },
-                                    '& .MuiAutocomplete-endAdornment': {
-                                      mt: '0px',
-                                      mr: '-8px',
-                                    },
-                                  },
-                                }}
-                              />
-                            )}
-                          />
-                          <FormHelperText>
-                            {errors?.tags?.[0] || ''}
-                          </FormHelperText>
-                        </FormControl>
-                      </div>
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Probability</div>
-                        <TextField
-                          name="probability"
-                          value={formData.probability}
-                          onChange={handleChange}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  disableFocusRipple
-                                  disableTouchRipple
-                                  sx={{
-                                    backgroundColor: '#d3d3d34a',
-                                    width: '45px',
-                                    borderRadius: '0px',
-                                    mr: '-12px',
-                                  }}
-                                >
-                                  <FaPercent style={{ width: '12px' }} />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                          style={{ width: '70%' }}
-                          size="small"
-                          helperText={
-                            errors?.probability?.[0]
-                              ? errors?.probability[0]
-                              : ''
-                          }
-                          error={!!errors?.probability?.[0]}
                         />
                       </div>
                     </div>
