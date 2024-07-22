@@ -443,7 +443,6 @@ export default function Admin() {
                     </Button>
                 </Stack> */}
             </CustomToolbar>
-            <InviteTeammates/>
             <Accordion defaultExpanded style={{ width: '100%' }}>
                 <AccordionSummary
                     expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
@@ -455,9 +454,9 @@ export default function Admin() {
                 <Divider className="divider" />
                 <AddTeam />
             </Accordion>
-            
-            <Container sx={{ width: '100%', maxWidth: '100%', minWidth: '100%' }}>
-                <Box sx={{ width: '100%', minWidth: '100%', m: '15px 0px 0px 0px' }}>
+            <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex' }}>
+                <InviteTeammates />
+                <Box sx={{ mt: '60px', mx: '24px', mr: '24px', width: '48%', height: '100%' }}>
                     <Paper sx={{ width: 'calc(100%-15px)', mb: 2, p: '0px 15px 15px 15px' }}>
                         <TableContainer>
                             <Table>
@@ -509,8 +508,8 @@ export default function Admin() {
                     </Typography>
                 </AccordionSummary>
                 <Divider className="divider" />
-                    <Users />
-            </Accordion>           
+                <Users />
+            </Accordion>
         </Box>
     );
 
