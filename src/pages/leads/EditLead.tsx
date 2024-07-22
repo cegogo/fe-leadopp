@@ -158,7 +158,10 @@ export function EditLead() {
   const [reset, setReset] = useState(false);
   const [error, setError] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
-  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>([] || '');
+  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>(() => {
+    const savedData = localStorage.getItem('selectedAssignTo');
+    return savedData ? JSON.parse(savedData) : [];
+  });  
   const [selectedTags, setSelectedTags] = useState<any[]>([] || '');
   const [selectedCountry, setSelectedCountry] = useState<any[]>([] || '');
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
@@ -240,6 +243,9 @@ export function EditLead() {
     }
   }, [quill, formData.description]);
 
+  useEffect(() => {
+    localStorage.setItem('selectedAssignTo', JSON.stringify(selectedAssignTo));
+  }, [selectedAssignTo]);
   // useEffect(() => {
   //     if (quill && initialContentRef.current === null) {
   //       // Save the initial state (HTML content) of the Quill editor only if not already saved
@@ -630,10 +636,13 @@ export function EditLead() {
                           <Autocomplete
                             // ref={autocompleteRef}
                             multiple                          
-                            value={formData.assigned_to || ''}
+                            //value={formData.assigned_to || ''}
+                            value={selectedAssignTo}
                             // name='contacts'
                             limitTags={2}
-                            options={state?.users || []}
+                            options={state?.users?.filter(
+                              (user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
+                            )}
                             // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
                             getOptionLabel={(option: any) =>
                               state?.users
