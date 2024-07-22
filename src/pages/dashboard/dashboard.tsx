@@ -304,7 +304,7 @@ const Dashboard: React.FC = () => {
                                     {newLeads.map((lead) => (
                                         <TableRow key={lead.id}>
                                             <TableCell>{lead.account_name}</TableCell>
-                                            <TableCell>{lead.opportunity_amount}</TableCell>
+                                            <TableCell>{`€${lead.opportunity_amount}`}</TableCell>
                                             <TableCell>
                                                 <Box sx={{ width: '100%', position: 'relative', display: 'inline-flex', alignItems: 'center'}}>
                                                     <LinearProgress
