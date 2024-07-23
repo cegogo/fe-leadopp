@@ -227,7 +227,8 @@ const Dashboard: React.FC = () => {
                             <Typography variant="h5" gutterBottom>Team Members</Typography>
                             {teamMembers.map((member) => (
                                 <Typography key={member.id} variant="body1">{member.name}</Typography>
-                            ))}
+                            ))} 
+                            
                         </CardContent>
                     </Card>
                 </Grid>
