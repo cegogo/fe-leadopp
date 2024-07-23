@@ -25,6 +25,10 @@ import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../../styles/style.css'
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers';
+import moment from 'moment';
 
 import { CategoryList } from './constants'
 
@@ -46,6 +50,7 @@ type FormErrors = {
   country?: string[];
   language?: string[];
   do_not_call?: string[];
+  date_dnc?: string[];
   address_line?: string[];
   street?: string[];
   city?: string[];
@@ -88,6 +93,7 @@ function EditContact() {
     title: '',
     language: '',
     do_not_call: false,
+    date_dnc: '',
     department: '',
     address_line: '',
     street: '',
@@ -159,6 +165,10 @@ function EditContact() {
     }
   };
 
+  const handleDateTimeChange = (name: string, date: any) => {
+    setFormData({ ...formData, [name]: date ? moment(date).format('YYYY-MM-DD') : '' });
+  };
+
   // const emptyDescription = () => {
   //   // Reset the Quill editor to its initial state
   //   setFormData({ ...formData, description: '' })
@@ -201,6 +211,7 @@ function EditContact() {
       country: formData.country,
       language: formData.language,
       do_not_call: formData.do_not_call,
+      date_dnc: formData.date_dnc,
       address_line: formData.address_line,
       street: formData.street,
       city: formData.city,
@@ -423,6 +434,43 @@ function EditContact() {
                         />
                       </div>
                       <div className='fieldSubContainer'>
+                        <div className="fieldTitle">Category</div>
+                        <FormControl sx={{ width: '70%' }}>
+                          <Select
+                            name="category"
+                            value={formData.category}
+                            open={categorySelectOpen}
+                            onClick={() => setCategorySelectOpen(!categorySelectOpen)}
+                            IconComponent={() => (
+                              <div
+                                onClick={() =>
+                                  setCategorySelectOpen(!categorySelectOpen)
+                                }
+                                className="select-icon-background"
+                              >
+                                {categorySelectOpen ? (
+                                  <FiChevronUp className="select-icon" />
+                                ) : (
+                                  <FiChevronDown className="select-icon" />
+                                )}
+                              </div>
+                            )}
+                            className={'select'}
+                            onChange={handleChange}
+                            error={!!errors?.category?.[0]}
+                          >
+                            {CategoryList.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
+                        </FormControl>
+                      </div>
+                    </div>
+                    <div className='fieldContainer2'>
+                      <div className='fieldSubContainer'>
                         <div className='fieldTitle'>Don't call</div>
                         <AntSwitch
                           name='do_not_call'
@@ -430,39 +478,19 @@ function EditContact() {
                           onChange={handleChange}
                           sx={{ mt: '1%' }}
                         />
-                        <div className="fieldTitle">Category</div>
-                      <FormControl sx={{ width: '50%' }}>
-                        <Select
-                          name="category"
-                          value={formData.category}
-                          open={categorySelectOpen}
-                          onClick={() => setCategorySelectOpen(!categorySelectOpen)}
-                          IconComponent={() => (
-                            <div
-                              onClick={() =>
-                                setCategorySelectOpen(!categorySelectOpen)
-                              }
-                              className="select-icon-background"
-                            >
-                              {categorySelectOpen ? (
-                                <FiChevronUp className="select-icon" />
-                              ) : (
-                                <FiChevronDown className="select-icon" />
-                              )}
-                            </div>
-                          )}
-                          className={'select'}
-                          onChange={handleChange}
-                          error={!!errors?.category?.[0]}
-                        >
-                          {CategoryList.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
-                      </FormControl>
+                      </div>
+                      <div className='fieldSubContainer'>
+                        <div className="fieldTitle">Do not call Since</div>
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="nl-nl">
+                          <DatePicker
+                            name="date_dnc"
+                            label="Since when Do Not Call"
+                            value={formData.date_dnc ? moment(formData.date_dnc) : null}
+                            onChange={(date) => handleDateTimeChange('date_dnc', date)}
+                            sx={{ width: '70%' }}
+                            format="DD-MM-YYYY"
+                          />
+                        </LocalizationProvider>
                       </div>
                     </div>
                   </Box>

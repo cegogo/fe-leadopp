@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppBar, Avatar, Box, Drawer, IconButton, List, ListItem, ListItemIcon, Popover, Toolbar, Tooltip, Typography } from '@mui/material';
-import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, } from "react-icons/fa";
+import { FaAddressBook, FaBars, FaBriefcase, FaBuilding, FaChartLine, FaCog, FaDiceD6, FaHandshake, FaIndustry, FaSignOutAlt, FaTachometerAlt, FaUserFriends, FaUsers, FaUser, FaUserEdit, FaCalendarCheck } from "react-icons/fa";
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import OrganizationModal from '../pages/organization/OrganizationModal';
 import Company from '../pages/company/Company';
@@ -40,6 +40,10 @@ import Deals from '../pages/deals/Deals';
 import Dashboard from '../pages/dashboard/dashboard';
 import Admin from '../pages/admin/Admin';
 import { SERVER, ProfileUrl } from '../services/ApiUrls';
+import Interactions from '../pages/interactions/Interactions';
+import AddInteraction from '../pages/interactions/AddInteraction';
+import InteractionDetails from '../pages/interactions/InteractionDetail';
+import EditInteraction from '../pages/interactions/EditInteraction';
 
 
 interface UserDetails {
@@ -128,10 +132,10 @@ export default function Sidebar(props: any) {
 
     const toggleScreen = () => {
         const path = location.pathname.split('/')[2];
-        setScreen(path || 'contacts');
+        setScreen(path || 'dashboard');
     };
 
-    const navList = ['dashboard', 'deals', 'contacts', 'accounts', 'companies', 'cases'];
+    const navList = ['dashboard', 'deals', 'contacts', 'interactions', 'accounts', 'companies', 'cases'];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin'];
 
@@ -144,6 +148,8 @@ export default function Sidebar(props: any) {
                 return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'contacts':
                 return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'interactions':
+                return <FaCalendarCheck style={screen === 'interactions' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'accounts':
                 return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'companies':
@@ -155,7 +161,7 @@ export default function Sidebar(props: any) {
             case 'admin':
                 return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             default:
-                return <FaDiceD6 style={{ ...iconStyle, fill: '#3e79f7' }} />
+                return <FaChartLine style={{ ...iconStyle, fill: '#3e79f7' }} />
         }
     }
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -382,6 +388,10 @@ export default function Sidebar(props: any) {
                             <Route path='/app/admin/user-details' element={<UserDetails />} />
                             <Route path='/app/profile' element={<UserProfile />} />
                             <Route path="/app/profile/edit/:id" element={<EditUserProfile onUpdate={console.log} />} />
+                            <Route path='/app/interactions' element={<Interactions />} />
+                            <Route path='/app/interactions/add-interactions' element={<AddInteraction />} />
+                            <Route path='/app/interactions/edit-interaction' element={<EditInteraction />} />
+                            <Route path='/app/interactions/interaction-details' element={<InteractionDetails />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>
