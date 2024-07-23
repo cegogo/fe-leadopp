@@ -432,20 +432,20 @@ export default function Leads(props: any) {
                           </div>
 
                         </Box>
-                        {/* {
-                          item.assigned_to.map((assignItem: any, index: any) => (
+                        Assigned to:
+                        {item.assigned_to.map((assignItem: any, index: any) => (
                             assignItem.user_details.profile_pic
                               ? <Avatar alt='Remy Sharp'
                                 src={assignItem.user_details.profile_pic}
                               />
                               : <Avatar alt='Remy Sharp'
-                                size='small'
+                                // size='small'
                               // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                               >
                                 {assignItem.user_details.first_name.charAt(0)}
                               </Avatar>
                           ))
-                        } */}
+                        }
                       </div>
                       <div className='lead-row2-col2'>
                         {/* created on {formatDate(item.created_on)} by   &nbsp;<span> */}
