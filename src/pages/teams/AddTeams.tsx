@@ -137,8 +137,8 @@ const AddTeam: React.FC = () => {
   };
 
   return (
-    <Box sx={{ mt: '60px', mx: '24px', p: 3, borderRadius: 1, boxShadow: 3, backgroundColor: 'white', width: '100%' }}>
-      <Box sx={{ mt: '60px', maxWidth: '700px', mx: 'auto', p: 3, borderRadius: 2, textAlign: 'left' }}>
+    <Box sx={{ mt: '60px', mx: '24px', p: 3, borderRadius: 1, boxShadow: 3, backgroundColor: 'white', width: '100%', marginLeft: '0px', }}>
+      <Box sx={{ mt: '60px', maxWidth: '700px', mx: 'auto', p: 3, borderRadius: 2, textAlign: 'left' ,}}>
         <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>
           Users Control Panel
         </Typography>
@@ -185,7 +185,7 @@ const AddTeam: React.FC = () => {
                           <TextField
                             {...params}
                             variant="outlined"
-                            label="Assign To"
+                            label="Add team members"
                             placeholder="Add User"
                           />
                         )}
