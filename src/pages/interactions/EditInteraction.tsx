@@ -173,7 +173,13 @@ export default function EditInteraction() {
     };
 
     const backbtnHandle = () => {
-        navigate('/app/interactions/interaction-details', { state: { interactionId: { id: state?.id }, detail: true } })
+        navigate('/app/interactions/interaction-details', { state: { 
+            interactionId: state?.id, 
+            detail: true,
+            contacts: state?.contacts || [],
+            leads: state?.leads || [],
+            users: state?.users || [] 
+        } })
     }
     const module = 'Interactions'
     const crntPage = 'Edit Interaction'

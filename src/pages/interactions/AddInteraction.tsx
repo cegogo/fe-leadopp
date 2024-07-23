@@ -122,8 +122,11 @@ export default function AddInteractions() {
 
   const currentUser = () => {
     const currentUserId = localStorage.getItem('current_user_id');
-    const users = state?.users || [];
+    const users = state?.users as any[];
     const user = users.find((user: any) => user.id === currentUserId);
+    console.log('currentUserId', currentUserId);
+    console.log('users', users);
+    console.log('user', user);
     return user;
   };
 
@@ -182,7 +185,7 @@ export default function AddInteractions() {
                         <TextField
                           name='owner'
                           className="custom-textfield"
-                          value={currentUser().user__email}
+                          value={currentUser().email}
                           style={{ width: '70%' }}
                           size='small'
                           error={!!errors?.user?.[0]}
