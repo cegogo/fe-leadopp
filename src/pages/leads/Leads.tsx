@@ -479,7 +479,7 @@ export default function Leads(props: any) {
                         //   height: '20px',
                         //   width: '20px'
                         // }}
-                        /> &nbsp;&nbsp;{item?.first_name}&nbsp;{item?.last_name}
+                        /> &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;{item?.created_by?.last_name}
                       </div>
                     </Stack>
                   </Box>
