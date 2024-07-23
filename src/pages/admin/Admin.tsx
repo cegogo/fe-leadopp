@@ -15,6 +15,7 @@ import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssSty
 import Users from '../users/Users';
 import InviteTeammates from '../../components/InviteTeammates'
 import AddTeam from '../teams/AddTeams';
+import GetTeams from '../teams/Teams';
 
 interface HeadCell {
     disablePadding: boolean;
@@ -454,6 +455,7 @@ export default function Admin() {
                 </AccordionSummary>
                 <Divider className="divider" />
                 <AddTeam />
+                <GetTeams/>
             </Accordion>
             
             <Container sx={{ width: '100%', maxWidth: '100%', minWidth: '100%' }}>
