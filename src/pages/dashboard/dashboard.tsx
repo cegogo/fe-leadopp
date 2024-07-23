@@ -16,7 +16,6 @@ import {
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { fetchData } from '../../components/FetchData'; // Assuming fetchData is a utility function you've created
 import { LeadUrl, ProfileUrl, SERVER } from '../../services/ApiUrls'; // Assuming LeadUrl is your API endpoint for leads
-import GetTeams from '../teams/Teams';
 
 const Dashboard: React.FC = () => {
     const [newLeads, setNewLeads] = useState<any[]>([]);
