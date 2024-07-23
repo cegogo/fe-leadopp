@@ -46,6 +46,7 @@ type response = {
   department: string;
   description: string;
   do_not_call: boolean;
+  date_dnc: string;
   facebook_url: string;
   first_name: string;
   lastname: string;
@@ -155,6 +156,7 @@ export default function ContactDetails() {
           title: contactDetails?.title,
           language: contactDetails?.language,
           do_not_call: contactDetails?.do_not_call,
+          date_dnc: contactDetails?.date_dnc,
           website: contactDetails?.website,
           department: contactDetails?.department,
           address_line: addressDetails?.address_line,
@@ -478,6 +480,12 @@ export default function ContactDetails() {
                       checked={contactDetails?.do_not_call}
                       inputProps={{ 'aria-label': 'ant design' }}
                     />
+                  </div>
+                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Since when Do Not Call</div>
+                  <div className="title3">
+                    {contactDetails?.date_dnc ? formatDate(contactDetails?.date_dnc) : '----'}
                   </div>
                 </div>
               </div>

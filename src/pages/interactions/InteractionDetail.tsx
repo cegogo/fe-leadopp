@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     Card,
     Box,
+    Button,
 } from '@mui/material';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -122,6 +123,14 @@ export default function InteractionDetails() {
         return `${hours > 0 ? `${hours} hours ` : ''}${minutes} minutes`;
     }
 
+    const contactHandle = (contactId: any) => {
+        navigate(`/app/contacts/contact-details`, { state: { contactId, detail: true } })
+    }
+
+    const selectLeadList = (leadId: any) => {
+        navigate(`/app/leads/lead-details`, { state: { leadId, detail: true } })
+    }
+
     return (
         <Box sx={{ mt: '60px' }}>
             <div>
@@ -230,11 +239,13 @@ export default function InteractionDetails() {
                                 </div>
                                 <div style={{ width: '32%' }}>
                                     <div className="title2">Lead</div>
-                                    <div className="title3">{interactionDetails?.interact_with.account_name || '----'}</div>
+                                    <div className='title3 tableCell-link' onClick={() => selectLeadList(interactionDetails?.interact_with?.id)}>
+                                        {interactionDetails?.interact_with.account_name || '----'}
+                                    </div>
                                 </div>
                                 <div style={{ width: '32%' }}>
                                     <div className="title2">Contact person</div>
-                                    <div className="title3">
+                                    <div className="title3 tableCell-link" onClick={() => contactHandle(interactionDetails?.contact)}>
                                         {interactionDetails ? `${interactionDetails.contact.first_name} ${interactionDetails.contact.last_name}` : '----'}
                                     </div>
                                 </div>

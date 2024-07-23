@@ -25,6 +25,10 @@ import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import '../../styles/style.css'
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import moment from 'moment';
 
 import { CategoryList } from './constants'
 
@@ -46,6 +50,7 @@ type FormErrors = {
   country?: string[];
   language?: string[];
   do_not_call?: string[];
+  date_dnc?: string[];
   address_line?: string[];
   street?: string[];
   city?: string[];
@@ -88,6 +93,7 @@ function AddContacts() {
     title: '',
     language: '',
     do_not_call: false,
+    date_dnc: '',
     website: '',
     department: '',
     address_line: '',
@@ -154,6 +160,9 @@ function AddContacts() {
     // setFormData({ ...formData, [name]: newValue });
   };
 
+  const handleDateTimeChange = (name: string, date: any) => {
+    setFormData({ ...formData, [name]: date ? moment(date).format('YYYY-MM-DD') : '' });
+  };
 
   const resetQuillToInitialState = () => {
     // Reset the Quill editor to its initial state
@@ -206,6 +215,7 @@ function AddContacts() {
       country: formData.country,
       language: formData.language,
       do_not_call: formData.do_not_call,
+      date_dnc: formData.date_dnc,
       address_line: formData.address_line,
       street: formData.street,
       city: formData.city,
@@ -248,6 +258,7 @@ function AddContacts() {
       title: '',
       language: '',
       do_not_call: false,
+      date_dnc: '',
       website: '',
       department: '',
       address_line: '',
@@ -456,27 +467,9 @@ function AddContacts() {
                           helperText={errors?.language?.[0] ? errors?.language[0] : ''}
                         />
                       </div>
-
                       <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Do Not Call</div>
-                        {/* <FormControlLabel
-                          control={<AntSwitch
-                            name='do_not_call'
-                            checked={formData.do_not_call}
-                            onChange={handleChange}
-                            sx={{ mt: '1%' }}
-                          />}
-                        /> */}
-
-                        <AntSwitch
-                          name='do_not_call'
-                          checked={formData.do_not_call}
-                          // onChange={handleChange}
-                          onChange={(e: any) => { setFormData((prevData) => ({ ...prevData, do_not_call: e.target.checked })) }}
-                          sx={{ mt: '1%' }}
-                        />
                         <div className="fieldTitle">Category</div>
-                        <FormControl sx={{ width: '50%' }}>
+                        <FormControl sx={{ width: '70%' }}>
                           <Select
                             name="category"
                             value={formData.category}
@@ -508,6 +501,31 @@ function AddContacts() {
                           </Select>
                           {/* <FormHelperText>{errors?.[0] ? errors[0] : ''}</FormHelperText> */}
                         </FormControl>
+                      </div>
+                    </div>
+                    <div className='fieldContainer2'>
+                      <div className='fieldSubContainer'>
+                        <div className='fieldTitle'>Don't call</div>
+                        <AntSwitch
+                          name='do_not_call'
+                          checked={formData.do_not_call}
+                          onChange={handleChange}
+                          sx={{ mt: '1%' }}
+                        />
+                      </div>
+                      <div className='fieldSubContainer'>
+                        <div className="fieldTitle">Do not call Since</div>
+                        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="nl-nl">
+                          <DateTimePicker
+                            name="date_dnc"
+                            label="Since when Do Not Call"
+                            value={formData.date_dnc ? moment(formData.date_dnc) : null}
+                            onChange={(date) => handleDateTimeChange('date_dnc', date)}
+                            sx={{ width: '70%' }}
+                            format="DD-MM-YYYY HH:mm"
+                            ampm={false}
+                          />
+                        </LocalizationProvider>
                       </div>
                     </div>
                   </Box>
