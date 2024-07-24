@@ -214,13 +214,13 @@ export default function InteractionDetails() {
                                 <div style={{ width: '32%' }}>
                                     <div className="title2">Started at</div>
                                     <div className="title3">
-                                        {formatDate(interactionDetails?.start_at) || '----'}
+                                        {interactionDetails?.start_at ? formatDate(interactionDetails?.start_at) : '----'}
                                     </div>
                                 </div>
                                 <div style={{ width: '32%' }}>
                                     <div className="title2">Ended at</div>
                                     <div className="title3">
-                                        {formatDate(interactionDetails?.end_at) || '----'}
+                                        {interactionDetails?.end_at ? formatDate(interactionDetails?.end_at) : '----'}
                                     </div>
                                 </div>
                             </div>
