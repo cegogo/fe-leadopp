@@ -36,3 +36,5 @@ export const CheckUserCountUrl = 'http://localhost:8000/api/check-user-count/'
 export const InvitationUrl = 'invitation/'
 //Teams
 export const TeamsUrl = 'teams/'
+// Interactions
+export const InteractionsUrl = 'interactions'
