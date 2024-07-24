@@ -408,7 +408,7 @@ export default function Leads(props: any) {
                             // size='small'
                             // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                             >
-                              {assignItem.user_details.first_name.charAt(0)}
+                              {assignItem.user_details?.first_name?.charAt(0)}
                             </Avatar> 
                         ))
                         }
