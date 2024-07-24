@@ -387,7 +387,7 @@ export default function Leads(props: any) {
                 <Box className='lead-box'>
                   <Box className='lead-box1'>
                     <Stack className='lead-row1'>
-                      <div style={{ color: '#1A3353', fontSize: '1rem', fontWeight: '500', cursor: 'pointer' }} onClick={() => selectLeadList(item?.id)}>
+                      <div style={{ color: '#1A3353', fontSize: '1.2rem', fontWeight: '500', cursor: 'pointer' }} onClick={() => selectLeadList(item?.id)}>
                         {item?.account_name}
                       </div>
                       <div onClick={() => deleteLead(item?.id)}>
@@ -396,8 +396,39 @@ export default function Leads(props: any) {
                     </Stack>
                     <Stack className='lead-row2'>
                       <div className='lead-row2-col1'>
-                        <div style={{ color: 'gray', fontSize: '16px', textTransform: 'capitalize' }}>
-                          {item?.country || ''} - source <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.source || '--'}</span> - status <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.status || '--'}</span> - value <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.opportunity_amount || '--'}</span>
+                      <div style={{ color: 'gray', fontSize: '16px', textTransform: 'capitalize' }}>
+                      <div> value: <span style={{ color: '#1a3353', fontWeight: 500 }}> € {item?.opportunity_amount || '--'}</span> </div>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>Assignee:&nbsp; 
+                        {item.assigned_to.map((assignItem: any, index: any) => (
+                          assignItem.user_details.profile_pic
+                            ? <Avatar alt='Remy Sharp'
+                              src={assignItem.user_details.profile_pic}
+                            />
+                            : <Avatar alt='Remy Sharp'
+                            // size='small'
+                            // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
+                            >
+                              {assignItem.user_details.first_name.charAt(0)}
+                            </Avatar> 
+                        ))
+                        }
+                        <span style={{ color: '#1a3353', fontWeight: 500, textTransform: 'none' }}>
+                          &nbsp;{item.assigned_to.map((assignItem: any, index: number) => {
+                          const { first_name, last_name, email } = assignItem?.user_details || {};
+
+                          if (first_name && last_name) {
+                            return `${first_name} ${last_name}`;
+                          } else if (first_name) {
+                            return first_name;
+                          } else if (last_name) {
+                            return last_name;
+                          } else if (email) {
+                            return email;
+                          } 
+                        }).join(', ') || 'Unassigned'}
+                        </span>
+                        &nbsp;- status:&nbsp; <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.status || '--'}</span>
+                        </div>
                         </div>
                         <Box sx={{
                           ml: 1
@@ -432,20 +463,10 @@ export default function Leads(props: any) {
                           </div>
 
                         </Box>
-                        {/* {
-                          item.assigned_to.map((assignItem: any, index: any) => (
-                            assignItem.user_details.profile_pic
-                              ? <Avatar alt='Remy Sharp'
-                                src={assignItem.user_details.profile_pic}
-                              />
-                              : <Avatar alt='Remy Sharp'
-                                size='small'
-                              // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
-                              >
-                                {assignItem.user_details.first_name.charAt(0)}
-                              </Avatar>
-                          ))
-                        } */}
+                
+
+
+
                       </div>
                       <div className='lead-row2-col2'>
                         {/* created on {formatDate(item.created_on)} by   &nbsp;<span> */}
@@ -458,7 +479,7 @@ export default function Leads(props: any) {
                         //   height: '20px',
                         //   width: '20px'
                         // }}
-                        /> &nbsp;&nbsp;{item?.first_name}&nbsp;{item?.last_name}
+                        /> &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;{item?.created_by?.last_name}
                       </div>
                     </Stack>
                   </Box>
