@@ -24,6 +24,7 @@ interface Contact {
     last_name: string;
     primary_email: string;
     mobile_number?: string;
+    do_not_call?: boolean;
     organization?: string;
     category: string;
 }
@@ -78,6 +79,12 @@ const headCells: readonly HeadCell[] = [
         numeric: true,
         disablePadding: false,
         label: 'Phone Number'
+    },
+    {
+        id: 'do_not_call',
+        numeric: false,
+        disablePadding: false,
+        label: 'Do not call'
     },
     {
         id: 'organization',
@@ -416,9 +423,9 @@ export default function Contacts() {
                                                     onClick={() => contactHandle(item)}>{item.first_name + ' ' + item.last_name}</TableCell>
                                                 <TableCell className='tableCell'>{item.primary_email}</TableCell>
                                                 <TableCell className='tableCell'>{item.mobile_number ? item.mobile_number : '---'}</TableCell>
+                                                <TableCell className='tableCell'><AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /></TableCell>
                                                 <TableCell className='tableCell'>{item.organization ? item.organization : '---'}</TableCell>
                                                 <TableCell className='tableCell'>
-                                                    {/* <AntSwitch checked={item.do_not_call} inputProps={{ 'aria-label': 'ant design' }} /> */}
                                                     <Button
                                                         style={{ backgroundColor: getCategoryColor(item.category), color: 'white' }}
                                                         onClick={() => handleCategoryChoose(item.category)}
