@@ -77,6 +77,18 @@ const headCells: readonly HeadCell[] = [
     label: 'Email Address',
   },
   {
+    id: 'workload',
+    numeric: true,
+    disablePadding: false,
+    label: 'Workload',
+  },
+  {
+    id: 'expertise',
+    numeric: true,
+    disablePadding: false,
+    label: 'Expertise',
+  },
+  {
     id: 'phone',
     numeric: true,
     disablePadding: false,
@@ -369,6 +381,8 @@ export default function Users() {
             value: {
               email: data?.user_details?.email,
               role: data?.role,
+              workload: data?.workload,
+              expertise: data?.expertise,
               phone: data?.phone,
               alternate_phone: data?.alternate_phone,
               address_line: data?.address?.address_line,
@@ -700,6 +714,12 @@ export default function Users() {
                               {item?.user_details?.email
                                 ? item.user_details.email
                                 : '---'}
+                            </TableCell>
+                            <TableCell className="tableCell">
+                              {item?.workload ? item.workload : '---'}
+                            </TableCell>
+                            <TableCell className="tableCell">
+                              {item?.expertise ? item.expertise : '---'}
                             </TableCell>
                             <TableCell className="tableCell">
                               <div style={{ display: 'flex' }}>

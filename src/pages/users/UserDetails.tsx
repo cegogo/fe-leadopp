@@ -1,6 +1,25 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Card, Link, Button, Avatar, Divider, TextField, Box, AvatarGroup, FormControlLabel, Switch } from '@mui/material';
-import { Fa500Px, FaAccusoft, FaAd, FaAddressCard, FaEnvelope, FaRegAddressCard, FaStar } from 'react-icons/fa';
+import {
+  Card,
+  Link,
+  Button,
+  Avatar,
+  Divider,
+  TextField,
+  Box,
+  AvatarGroup,
+  FormControlLabel,
+  Switch,
+} from '@mui/material';
+import {
+  Fa500Px,
+  FaAccusoft,
+  FaAd,
+  FaAddressCard,
+  FaEnvelope,
+  FaRegAddressCard,
+  FaStar,
+} from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AntSwitch } from '../../styles/CssStyled';
@@ -11,9 +30,10 @@ type response = {
   user_details: {
     email: string;
     is_active: boolean;
-    profile_pic: string;
+    profile_pic: string | null;
   };
   role: string;
+  expertise: string;
   address: {
     address_line: string;
     street: string;
@@ -39,6 +59,16 @@ export const formatDate = (dateString: any) => {
     day: 'numeric',
   };
   return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const expertiseDisplayName = (expertise: string) => {
+  const expertiseMap: { [key: string]: string } = {
+    junior: 'Junior',
+    medior: 'Medior',
+    senior: 'Senior',
+    'N/A': 'N/A',
+  };
+  return expertiseMap[expertise] || expertise;
 };
 
 export default function UserDetails() {
@@ -68,38 +98,46 @@ export default function UserDetails() {
     });
   };
 
-  const handleToggleChange = (key: keyof response) => async (event: ChangeEvent<HTMLInputElement>) => {
-    if (!userDetails) return;
-  
-    const updatedUserDetails = { ...userDetails, [key]: event.target.checked };
-    setUserDetails(updatedUserDetails);
-  
-    const dataToUpdate = { [key]: event.target.checked };
-    const headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-  
-    try {
-      const res = await fetchData(`${ProfileUrl}/${state.userId}/`, 'PUT', JSON.stringify(dataToUpdate), headers);
-      console.log('Response from server:', res);
-  
-      if (!res.error && res.data && res.data.profile_obj) {
-        const updatedDetails = {
-          ...userDetails,
-          ...res.data.profile_obj.user_details, 
-        };
-        setUserDetails(updatedDetails);
-        console.log('Update successful');
+  const handleToggleChange =
+    (key: keyof response) => async (event: ChangeEvent<HTMLInputElement>) => {
+      if (!userDetails) return;
+
+      const updatedUserDetails = {
+        ...userDetails,
+        [key]: event.target.checked,
+      };
+      setUserDetails(updatedUserDetails);
+
+      const dataToUpdate = { [key]: event.target.checked };
+      const headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: localStorage.getItem('Token') || '',
+        org: localStorage.getItem('org') || '',
+      };
+
+      try {
+        const res = await fetchData(
+          `${ProfileUrl}/${state.userId}/`,
+          'PUT',
+          JSON.stringify(dataToUpdate),
+          headers
+        );
+        console.log('Response from server:', res);
+
+        if (!res.error && res.data && res.data.profile_obj) {
+          const updatedDetails = {
+            ...userDetails,
+            ...res.data.profile_obj.user_details,
+          };
+          setUserDetails(updatedDetails);
+          console.log('Update successful');
+        }
+      } catch (error) {
+        console.error('Error updating user details:', error);
       }
-    } catch (error) {
-      console.error('Error updating user details:', error);
-    }
-  };
-  
-  
+    };
+
   //   useEffect(() => {
   // navigate(-1)
   //     fetchData(`${ContactUrl}/${state.contactId}/`, 'GET', null as any, headers)
@@ -141,9 +179,11 @@ export default function UserDetails() {
           country: userDetails?.address?.country,
           profile_pic: userDetails?.user_details?.profile_pic,
           has_sales_access: userDetails?.has_sales_access,
-          has_sales_representative_access: userDetails?.has_sales_representative_access,
+          has_sales_representative_access:
+            userDetails?.has_sales_representative_access,
           has_marketing_access: userDetails?.has_marketing_access,
           is_organization_admin: userDetails?.is_organization_admin,
+          expertise: userDetails?.expertise,
         },
         id: state?.userId,
       },
@@ -182,10 +222,20 @@ export default function UserDetails() {
                   borderBottom: '1px solid lightgray',
                   display: 'flex',
                   flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  justifyContent: 'flex-start',
                   alignItems: 'center',
                 }}
               >
+                <div
+                  style={{
+                    marginRight: '20px',
+                  }}
+                >
+                  <Avatar
+                    alt="Profile Picture"
+                    src={userDetails?.user_details?.profile_pic || ''}
+                  />
+                </div>
                 <div
                   style={{
                     fontWeight: 600,
@@ -241,41 +291,18 @@ export default function UserDetails() {
               <div
                 style={{
                   padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div style={{ width: '32%' }}>
-                  <div className="title2">Email Name</div>
-                  <div className="title3">
-                    {userDetails?.user_details?.email || '---'}
-                  </div>
-                </div>
-                <div style={{ width: '32%' }}>
-                  <div className="title2">Is Active</div>
-                  <div className="title3">
-                    <AntSwitch checked={userDetails?.user_details?.is_active} />
-                  </div>
-                </div>
-                <div style={{ width: '32%' }}>
-                  <div className="title2">Profile pic</div>
-                  <div className="title3">
-                    <Avatar alt={'sdf'}>
-                      {userDetails?.user_details?.profile_pic}
-                    </Avatar>
-                  </div>
-                </div>
-              </div>
-              <div
-                style={{
-                  padding: '20px',
                   marginTop: '15px',
                   display: 'flex',
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                 }}
               >
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Email</div>
+                  <div className="title3">
+                    {userDetails?.user_details?.email || '---'}
+                  </div>
+                </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Role</div>
                   <div
@@ -289,17 +316,10 @@ export default function UserDetails() {
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
-                  <div className="title2">Mobile Number</div>
-                  <div className="title3">{userDetails?.phone || '---'}</div>
-                </div>
-                <div style={{ width: '32%' }}>
-                  <div className="title2">Marketing Manager</div>
+                  <div className="title2">Is Active</div>
                   <div className="title3">
-                  <FormControlLabel
-                    control={<Switch checked={userDetails?.has_marketing_access} onChange={handleToggleChange('has_marketing_access')} />}
-                    label={userDetails?.has_marketing_access ? 'Enabled' : 'Disabled'}
-                  />
-                </div>
+                    <AntSwitch checked={userDetails?.user_details?.is_active} />
+                  </div>
                 </div>
               </div>
               <div
@@ -308,26 +328,18 @@ export default function UserDetails() {
                   marginTop: '15px',
                   display: 'flex',
                   flexDirection: 'row',
-                  // , justifyContent: 'space-between'
+                  justifyContent: 'space-between',
                 }}
               >
-                <div style={{ width: '34%' }}>
-                  <div className="title2">Sales Manager</div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Expertise</div>
                   <div className="title3">
-                  <FormControlLabel
-                    control={<Switch checked={userDetails?.has_sales_access} onChange={handleToggleChange('has_sales_access')} />}
-                    label={userDetails?.has_sales_access ? 'Enabled' : 'Disabled'}
-                  />
+                    {expertiseDisplayName(userDetails?.expertise || '')}
+                  </div>
                 </div>
-                </div>
-                <div style={{ width: '34%' }}>
-                  <div className="title2">Sales Representative</div>
-                  <div className="title3">
-                  <FormControlLabel
-                    control={<Switch checked={userDetails?.has_sales_representative_access} onChange={handleToggleChange('has_sales_representative_access')} />}
-                    label={userDetails?.has_sales_representative_access ? 'Enabled' : 'Disabled'}
-                  />
-                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Mobile Number</div>
+                  <div className="title3">{userDetails?.phone || '---'}</div>
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Date of joining</div>
@@ -335,8 +347,79 @@ export default function UserDetails() {
                     {userDetails?.date_of_joining || '---'}
                   </div>
                 </div>
-                
-                {/* <div style={{ width: '32%' }}>
+              </div>
+              <div>
+                <div
+                  style={{
+                    padding: '20px',
+                    marginTop: '15px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ width: '32%' }}>
+                    <div className="title2">Sales Manager</div>
+                    <div className="title3">
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={userDetails?.has_sales_access}
+                            onChange={handleToggleChange('has_sales_access')}
+                          />
+                        }
+                        label={
+                          userDetails?.has_sales_access ? 'Enabled' : 'Disabled'
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div style={{ width: '32%' }}>
+                    <div className="title2">Sales Representative</div>
+                    <div className="title3">
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={
+                              userDetails?.has_sales_representative_access
+                            }
+                            onChange={handleToggleChange(
+                              'has_sales_representative_access'
+                            )}
+                          />
+                        }
+                        label={
+                          userDetails?.has_sales_representative_access
+                            ? 'Enabled'
+                            : 'Disabled'
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div style={{ width: '32%' }}>
+                    <div className="title2">Marketing Manager</div>
+                    <div className="title3">
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={userDetails?.has_marketing_access}
+                            onChange={handleToggleChange(
+                              'has_marketing_access'
+                            )}
+                          />
+                        }
+                        label={
+                          userDetails?.has_marketing_access
+                            ? 'Enabled'
+                            : 'Disabled'
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* <div style={{ width: '32%' }}>
                                     <div className='title2'>Do Not Call</div>
                                     <div className='title3'>
                                         <AntSwitch
@@ -344,7 +427,6 @@ export default function UserDetails() {
                                             inputProps={{ 'aria-label': 'ant design' }} />
                                     </div>
                                 </div> */}
-              </div>
               {/* Address details */}
               <div style={{ marginTop: '15px' }}>
                 <div
