@@ -141,6 +141,10 @@ export default function Leads(props: any) {
 
   const [deleteLeadModal, setDeleteLeadModal] = useState(false)
   const [selectedId, setSelectedId] = useState('')
+  const [selectedAssignTo, setSelectedAssignTo] = useState();  
+  const [selectedContacts, setSelectedContacts] = useState();  
+
+
 
   useEffect(() => {
     if (localStorage.getItem('org')) {
@@ -245,7 +249,7 @@ export default function Leads(props: any) {
   }
 
   const selectLeadList = (leadId: any) => {
-    navigate(`/app/leads/lead-details`, { state: { leadId, detail: true, contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || [] } })
+    navigate(`/app/leads/lead-details`, { state: { leadId, detail: true, contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || [], selectedAssignTo: selectedAssignTo, selectedContacts: selectedContacts  } })
     // navigate('/app/leads/lead-details', { state: { leadId: leadItem.id, edit: storeData, value } })
   }
   const deleteLead = (deleteId: any) => {
