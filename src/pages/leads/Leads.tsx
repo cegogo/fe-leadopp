@@ -1,6 +1,6 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Avatar, AvatarGroup, Box, Button, Card, List, Stack, Tab, TablePagination, Tabs, Toolbar, Typography, Link, MenuItem, Select } from '@mui/material'
+import { Avatar, AvatarGroup, Box, Button, Card, List, Stack, Tab, TablePagination, Tabs, Toolbar, Typography, Link, MenuItem, Select, InputBase } from '@mui/material'
 import styled from '@emotion/styled';
 import { LeadUrl } from '../../services/ApiUrls';
 import { DeleteModal } from '../../components/DeleteModal';
@@ -29,47 +29,65 @@ import '../../styles/style.css'
 //   display: flex;
 //   justify-content: space-between;
 //   background-color: #1A3353;
+
+interface UserDetails {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+}
+
+interface User {
+  user_details?: UserDetails;
+}
+
+interface Lead {
+  assigned_to?: User;
+  account_name?: string;
+  created_by?: UserDetails;
+  opportunity_amount?: number | string;
+}
+
 export const CustomTablePagination = styled(TablePagination)`
-.MuiToolbar-root {
-  min-width: 100px;
-}
-.MuiTablePagination-toolbar {
-  background-color: #f0f0f0;
-  color: #333;
-}
-.MuiTablePagination-caption {
-  color: #999;
-}
+  .MuiToolbar-root {
+    min-width: 100px;
+  }
+  .MuiTablePagination-toolbar {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  .MuiTablePagination-caption {
+    color: #999;
+  }
 '.MuiTablePagination-displayedRows': {
-  display: none;
-}
+    display: none;
+  }
 '.MuiTablePagination-actions': {
-  display: none;
-}
+    display: none;
+  }
 '.MuiTablePagination-selectLabel': {
-  margin-top: 4px;
-  margin-left: -15px;
-}
+    margin-top: 4px;
+    margin-left: -15px;
+  }
 '.MuiTablePagination-select': {
-  color: black;
-  margin-right: 0px;
-  margin-left: -12px;
-  margin-top: -6px;
-}
+    color: black;
+    margin-right: 0px;
+    margin-left: -12px;
+    margin-top: -6px;
+  }
 '.MuiSelect-icon': {
+    color: black;
+    margin-top: -5px;
+  }
+  background-color: white;
+  border-radius: 1;
+  height: 10%;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  width: 39%;
+  padding-bottom: 5;
   color: black;
-  margin-top: -5px;
-}
-background-color: white;
-border-radius: 1;
-height: 10%;
-overflow: hidden;
-padding: 0;
-margin: 0;
-width: 39%;
-padding-bottom: 5;
-color: black;
-margin-right: 1;
+  margin-right: 1;
 `;
 
 
@@ -102,7 +120,7 @@ export default function Leads(props: any) {
   const [tab, setTab] = useState('open');
   const [loading, setLoading] = useState(true);
 
-  const [leads, setLeads] = useState([])
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [valued, setValued] = useState(10)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [page, setPage] = useState(0)
@@ -110,9 +128,9 @@ export default function Leads(props: any) {
   const [order] = useState('asc')
   const [orderBy] = useState('calories')
 
-  const [openLeads, setOpenLeads] = useState([])
+  const [openLeads, setOpenLeads] = useState<Lead[]>([]);
   const [openLeadsCount, setOpenLeadsCount] = useState(0)
-  const [closedLeads, setClosedLeads] = useState([])
+  const [closedLeads, setClosedLeads] = useState<Lead[]>([]);
   const [openClosedCount, setClosedLeadsCount] = useState(0)
   const [contacts, setContacts] = useState([])
   const [status, setStatus] = useState([])
@@ -141,6 +159,8 @@ export default function Leads(props: any) {
 
   const [deleteLeadModal, setDeleteLeadModal] = useState(false)
   const [selectedId, setSelectedId] = useState('')
+  const [searchQuery, setSearchQuery] = useState('');
+  const [leadList, setLeadList] = useState<Lead[]>([]);
 
   useEffect(() => {
     if (localStorage.getItem('org')) {
@@ -150,7 +170,8 @@ export default function Leads(props: any) {
 
   useEffect(() => {
     getLeads()
-  }, [openCurrentPage, openRecordsPerPage, closedCurrentPage, closedRecordsPerPage]);
+  }, [openCurrentPage, openRecordsPerPage, closedCurrentPage, closedRecordsPerPage, searchQuery]);
+
   const getLeads = async () => {
     const Header = {
       Accept: 'application/json',
@@ -161,58 +182,51 @@ export default function Leads(props: any) {
     try {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
-      await fetchData(`${LeadUrl}/?offset=${tab === "open" ? openOffset : closeOffset}&limit=${tab === "open" ? openRecordsPerPage : closedRecordsPerPage}`, 'GET', null as any, Header)
-        .then((res: any) => {
-          console.log(res, 'leads')
-          if (!res.error) {
-            // if (initial) {
-            setOpenLeads(res?.open_leads?.open_leads)
-            setOpenLeadsCount(res?.open_leads?.leads_count)
-            setOpenTotalPages(Math.ceil(res?.open_leads?.leads_count / openRecordsPerPage));
-            setClosedLeads(res?.close_leads?.close_leads)
-            setClosedLeadsCount(res?.close_leads?.leads_count)
-            setClosedTotalPages(Math.ceil(res?.close_leads?.leads_count / closedRecordsPerPage));
-            setContacts(res?.contacts)
-            setStatus(res?.status)
-            setSource(res?.source)
-            setCompanies(res?.companies)
-            setTags(res?.tags)
-            setUsers(res?.users)
-            setCountries(res?.countries)
-            setIndustries(res?.industries)
-            setLoading(false)
-            // setLeadsList();
-            // setInitial(false)
-          }
-          // else {
-          //     // setContactList(Object.assign([], contacts, [data.contact_obj_list]))
-          //     setContactList(prevContactList => prevContactList.concat(data.contact_obj_list));
-          //     // setContactList(...contactList,data.contact_obj_list)
-          //     setLoading(false)
-          // }
-          // }
-        })
-    }
-    catch (error) {
+      const response = await fetchData(`${LeadUrl}/?offset=${tab === "open" ? openOffset : closeOffset}&limit=${tab === "open" ? openRecordsPerPage : closedRecordsPerPage}`, 'GET', null as any, Header);
+      
+      if (!response.error) {
+        setOpenLeads(response?.open_leads?.open_leads || []);
+        setOpenLeadsCount(response?.open_leads?.leads_count || 0);
+        setOpenTotalPages(Math.ceil((response?.open_leads?.leads_count || 0) / openRecordsPerPage));
+
+        setClosedLeads(response?.close_leads?.close_leads || []);
+        setClosedLeadsCount(response?.close_leads?.leads_count || 0);
+        setClosedTotalPages(Math.ceil((response?.close_leads?.leads_count || 0) / closedRecordsPerPage));
+
+        setContacts(response?.contacts || []);
+        setStatus(response?.status || []);
+        setSource(response?.source || []);
+        setCompanies(response?.companies || []);
+        setTags(response?.tags || []);
+        setUsers(response?.users || []);
+        setCountries(response?.countries || []);
+        setIndustries(response?.industries || []);
+
+        setLoading(false);
+        setLeadList(response?.open_leads?.open_leads || []);
+        
+      }
+    } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
 
   const handleChangeTab = (e: SyntheticEvent, val: any) => {
-    setTab(val)
+    setTab(val);
   }
+
   const handleRecordsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (tab == 'open') {
-      setOpenLoading(true)
+    if (tab === 'open') {
+      setOpenLoading(true);
       setOpenRecordsPerPage(parseInt(event.target.value));
       setOpenCurrentPage(1);
     } else {
-      setClosedLoading(true)
+      setClosedLoading(true);
       setClosedRecordsPerPage(parseInt(event.target.value));
       setClosedCurrentPage(1);
     }
+  }
 
-  };
   const handlePreviousPage = () => {
     if (tab == 'open') {
       setOpenLoading(true)
@@ -307,6 +321,19 @@ export default function Leads(props: any) {
   };
   const recordsList = [[10, '10 Records per page'], [20, '20 Records per page'], [30, '30 Records per page'], [40, '40 Records per page'], [50, '50 Records per page']]
   const tag = ['account', 'leading', 'account', 'leading', 'account', 'leading', 'account', 'account', 'leading', 'account', 'leading', 'account', 'leading', 'leading', 'account', 'account', 'leading', 'account', 'leading', 'account', 'leading', 'account', 'leading', 'account', 'leading', 'account', 'leading']
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filteredLeads = leads.filter((lead) => {
+    const fullName = `${lead.assigned_to?.user_details?.first_name || ''} ${lead.assigned_to?.user_details?.last_name || ''}`.toLowerCase();
+    const email = lead.assigned_to?.user_details?.email?.toLowerCase() || '';
+    const accountName = lead.account_name?.toLowerCase() || '';
+    const search = searchQuery.toLowerCase();
+
+    return fullName.includes(search) || email.includes(search) || accountName.includes(search);
+  });
+
   return (
     <Box sx={{
       mt: '60px',
@@ -328,8 +355,13 @@ export default function Leads(props: any) {
             }}
           />
         </Tabs>
-
-        <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+ <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <InputBase
+            placeholder="Search leads"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{ marginRight: 2, padding: '0 10px', backgroundColor: '#fff', borderRadius: '4px', height: '40px', minWidth: '250px' }}
+          />
           <Select
             value={tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}
             onChange={(e: any) => handleRecordsPerPage(e)}
