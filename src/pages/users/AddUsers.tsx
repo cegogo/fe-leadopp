@@ -54,6 +54,7 @@ type FormErrors = {
   state?: string[];
   postcode?: string[];
   country?: string[];
+  job_title?: string[];
   //profile_pic?: string[];
   //has_sales_access?: string[];
   //has_marketing_access?: string[];
@@ -70,6 +71,7 @@ interface FormData {
   state: string;
   postcode: string;
   country: string;
+  job_title: string;
   //profile_pic: string | null;
   //has_sales_access: boolean;
   //has_marketing_access: boolean;
@@ -122,15 +124,16 @@ export function AddUsers() {
     state: '',
     postcode: '',
     country: '',
+    job_title: '',
     //profile_pic: null,
     //has_sales_access: false,
     //has_marketing_access: false,
     //is_organization_admin: false,
   });
 
-const [countries, setCountries] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [, setCountry] = useState('');
- /* 
+  /* 
   useEffect(() => {
     if (state?.id) {
       fetchUserData(state.id);
@@ -210,6 +213,7 @@ const [countries, setCountries] = useState([]);
       state: formData.state,
       postcode: formData.postcode,
       country: formData.country,
+      job_title: formData.job_title,
       //profile_pic: formData.profile_pic,
       //has_sales_access: formData.has_sales_access,
       //has_marketing_access: formData.has_marketing_access,
@@ -248,6 +252,7 @@ const [countries, setCountries] = useState([]);
       state: '',
       postcode: '',
       country: '',
+      job_title: '',
       //profile_pic: null,
       //has_sales_access: false,
       //has_marketing_access: false,
@@ -378,9 +383,7 @@ const [countries, setCountries] = useState([]);
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Alternate Phone</div>
                         <Tooltip title="Please enter the country code (e.g., +31).">
-
                           <TextField
-
                             required
                             name="alternate_phone"
                             value={formData.alternate_phone}
@@ -398,6 +401,28 @@ const [countries, setCountries] = useState([]);
                             }
                           />
                         </Tooltip>
+                      </div>
+                    </div>
+                    <div className="fieldContainer2">
+                      <div className="fieldSubContainer">
+                        <div className="fieldTitle">Job Title</div>
+                        <TextField
+                          required
+                          name="job_title"
+                          value={formData.job_title}
+                          onChange={handleChange}
+                          style={{ width: '70%' }}
+                          size="small"
+                          error={
+                            !!profileErrors?.job_title?.[0] ||
+                            !!userErrors?.job_title?.[0]
+                          }
+                          helperText={
+                            profileErrors?.job_title?.[0] ||
+                            userErrors?.job_title?.[0] ||
+                            ''
+                          }
+                        />
                       </div>
                     </div>
                   </Box>
@@ -532,7 +557,9 @@ const [countries, setCountries] = useState([]);
                             name="country"
                             value={formData.country}
                             open={countrySelectOpen}
-                            onClick={() => setCountrySelectOpen(!countrySelectOpen)}
+                            onClick={() =>
+                              setCountrySelectOpen(!countrySelectOpen)
+                            }
                             IconComponent={() => (
                               <div
                                 onClick={() =>
@@ -551,14 +578,9 @@ const [countries, setCountries] = useState([]);
                             onChange={handleChange}
                             error={!!profileErrors?.country?.[0]}
                           >
-
                             {COUNTRIES.map((option) => (
-                              <MenuItem
-                                key={option.code}
-                                value={option.code}
-                              >
+                              <MenuItem key={option.code} value={option.code}>
                                 {option.name}
-
                               </MenuItem>
                             ))}
                           </Select>
@@ -574,7 +596,6 @@ const [countries, setCountries] = useState([]);
                 </AccordionDetails>
               </Accordion>
             </div>
-           
           </div>
         </form>
       </Box>
