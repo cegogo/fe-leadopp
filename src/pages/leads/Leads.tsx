@@ -135,7 +135,6 @@ export default function Leads(props: any) {
   const [closedTotalPages, setClosedTotalPages] = useState<number>(0);
   const [deleteLeadModal, setDeleteLeadModal] = useState(false);
   const [closedLoading, setClosedLoading] = useState(true);
-  const [deleteLeadModal, setDeleteLeadModal] = useState;(false)
   const [selectedId, setSelectedId] = useState('')
   const [selectedAssignTo, setSelectedAssignTo] = useState();  
   const [selectedContacts, setSelectedContacts] = useState();  
