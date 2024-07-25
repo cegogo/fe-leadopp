@@ -7,12 +7,9 @@ import {
   Typography,
   FormControl,
   CircularProgress,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Autocomplete,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { SERVER, TeamsUrl, UsersUrl } from '../../services/ApiUrls';
 
 interface User {
@@ -129,6 +126,7 @@ const AddTeam: React.FC = () => {
         setTeamName('');
         setDescription('');
         setAssignedUsers([]);
+        window.location.reload();
       }
     } catch (error) {
       setError('An error occurred. Please try again.');
