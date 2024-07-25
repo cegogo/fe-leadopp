@@ -444,22 +444,11 @@ export default function Admin() {
                     </Button>
                 </Stack> */}
             </CustomToolbar>
-            <Accordion defaultExpanded style={{ width: '100%' }}>
-                <AccordionSummary
-                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
-                >
-                    <Typography className="accordion-header">
-                        Teams control pannel
-                    </Typography>
-                </AccordionSummary>
-                <Divider className="divider" />
-                <AddTeam />
-                <GetTeams/>
-            </Accordion>
             <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex' }}>
                 <InviteTeammates />
-                <Box sx={{ mt: '60px', mx: '24px', mr: '24px', width: '48%', height: '100%' }}>
-                    <Paper sx={{ width: 'calc(100%-15px)', mb: 2, p: '0px 15px 15px 15px' }}>
+                <Box sx={{ mt: '24px', width: '50%', mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
+                    <Box sx={{ mt: '60px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left' }}>
+                        <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Google Auth control</Typography>
                         <TableContainer>
                             <Table>
                                 <EnhancedTableHead
@@ -490,9 +479,21 @@ export default function Admin() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </Paper>
+                    </Box>
                 </Box>
             </Container>
+            <Accordion defaultExpanded style={{ width: '100%', marginTop: '10px' }}>
+                <AccordionSummary
+                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
+                >
+                    <Typography className="accordion-header">
+                        Teams control pannel
+                    </Typography>
+                </AccordionSummary>
+                <Divider className="divider" />
+                <AddTeam />
+                <GetTeams />
+            </Accordion>
             <DeleteModal
                 onClose={deleteRowModalClose}
                 open={deleteRowModal}
@@ -501,7 +502,7 @@ export default function Admin() {
                 modalTitle={modalTitle}
                 DeleteItem={DeleteItem}
             />
-            <Accordion defaultExpanded style={{ width: '100%' }}>
+            <Accordion defaultExpanded style={{ width: '100%', marginTop: '10px' }}>
                 <AccordionSummary
                     expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                 >

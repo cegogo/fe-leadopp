@@ -126,7 +126,7 @@ interface FormData {
   description: string;
   teams: string;
   assigned_to: string[];
-  contacts: string[];
+  contacts: string;
   status: string;
   source: string;
   address_line: string;
@@ -157,8 +157,9 @@ export function EditLead() {
   const autocompleteRef = useRef<any>(null);
   const [reset, setReset] = useState(false);
   const [error, setError] = useState(false);
-  const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
-  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>([] || '');
+  //const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
+  const [selectedContacts, setSelectedContacts] = useState('');  
+  const [selectedAssignTo, setSelectedAssignTo] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<any[]>([] || '');
   const [selectedCountry, setSelectedCountry] = useState<any[]>([] || '');
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
@@ -179,7 +180,7 @@ export function EditLead() {
     description: '',
     teams: '',
     assigned_to: [],
-    contacts: [],
+    contacts: '',
     status: 'assigned',
     source: 'call',
     address_line: '',
@@ -219,6 +220,17 @@ export function EditLead() {
   useEffect(() => {
     setFormData(state?.value);
   }, [state?.id]);
+
+  useEffect(() => {
+    setSelectedAssignTo([state.selectedAssignTo?.id]);
+    setSelectedContacts(state.selectedContacts?.id);
+  }, [state.selectedAssignTo?.id, state.selectedContacts]);
+
+  useEffect(() => {
+    // Log selectedAssignTo after it has been updated
+    console.log(selectedAssignTo, 'This is selectedAssignTo Edit');
+    console.log(selectedContacts, 'This is selectedContacts Edit');
+  }, [selectedAssignTo,selectedContacts]);
 
   useEffect(() => {
     if (reset) {
@@ -277,19 +289,20 @@ export function EditLead() {
     if (title === 'contacts') {
       setFormData({
         ...formData,
-        contacts: val.length > 0 ? val.map((item: any) => item.id) : [],
+        contacts: val ? val.id : '',
+        //contacts: val.length > 0 ? val.map((item: any) => item.id) : []
       });
-      setSelectedContacts(val);
+      setSelectedContacts(val.id);
     } else if (title === 'assigned_to') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        assigned_to: val ? [val.id] : [],
       });
-      setSelectedAssignTo(val);
+      setSelectedAssignTo([val.id]);
     } else if (title === 'tags') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        tags: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
     }
@@ -341,8 +354,8 @@ export function EditLead() {
       website: formData.website,
       description: formData.description,
       teams: formData.teams,
-      assigned_to: formData.assigned_to,
-      contacts: formData.contacts,
+      assigned_to: selectedAssignTo,
+      contacts: selectedContacts,
       status: formData.status,
       source: formData.source,
       address_line: formData.address_line,
@@ -357,6 +370,13 @@ export function EditLead() {
       industry: formData.industry,
       skype_ID: formData.skype_ID,
     };
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token'),
+      org: localStorage.getItem('org'),
+    }
+    
     // console.log(data, 'edit')
     fetchData(`${LeadUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
@@ -388,7 +408,7 @@ export function EditLead() {
       description: '',
       teams: '',
       assigned_to: [],
-      contacts: [],
+      contacts: '',
       status: 'assigned',
       source: 'call',
       address_line: '',
@@ -405,8 +425,8 @@ export function EditLead() {
       file: null,
     });
     setErrors({});
-    setSelectedContacts([]);
-    setSelectedAssignTo([]);
+    //setSelectedContacts([]);
+    // setSelectedAssignTo([]);
     setSelectedTags([]);
     // setSelectedCountry([])
     // if (autocompleteRef.current) {
@@ -453,8 +473,9 @@ export function EditLead() {
   // };
   const backbtnHandle = () => {
     navigate('/app/leads/lead-details', {
-      state: { leadId: state?.id, detail: true },
+      state: { leadId: state?.id, detail: true, selectedAssignTo:selectedAssignTo, selectedContacts:selectedContacts },
     });
+    console.log(state, 'This is backbutton')
     // navigate('/app/leads')
   };
 
@@ -553,10 +574,10 @@ export function EditLead() {
                           sx={{ width: '70%' }}
                         >
                           <Autocomplete
-                            multiple
-                            value={selectedContacts}
-                            limitTags={2}
-                            options={state.contacts || []}
+                            //multiple
+                            value={state.selectedContacts}
+                            //limitTags={1}
+                            options={state.contacts || ''}
                             getOptionLabel={(option: any) =>
                               state.contacts ? option?.first_name : option
                             }
@@ -622,11 +643,15 @@ export function EditLead() {
                         >
                           <Autocomplete
                             // ref={autocompleteRef}
-                            multiple
-                            value={selectedAssignTo}
+                            //multiple                          
+                            //value={formData.assigned_to || ''}
+                            value={state.selectedAssignTo}
                             // name='contacts'
-                            limitTags={2}
+                            //limitTags={2}
                             options={state?.users || []}
+                            //options={state?.users?.filter(
+                              //(user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
+                            //)}
                             // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
                             getOptionLabel={(option: any) =>
                               state?.users
@@ -800,17 +825,35 @@ export function EditLead() {
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">SkypeID</div>
+                        <div className="fieldTitle">Probability</div>
                         <TextField
-                          name="skype_ID"
-                          value={formData.skype_ID}
+                          name="probability"
+                          value={formData.probability}
                           onChange={handleChange}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  disableFocusRipple
+                                  disableTouchRipple
+                                  sx={{
+                                    backgroundColor: '#d3d3d34a',
+                                    width: '45px',
+                                    borderRadius: '0px',
+                                    mr: '-12px',
+                                  }}
+                                >
+                                  <FaPercent style={{ width: '12px' }} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                           style={{ width: '70%' }}
                           size="small"
                           helperText={
-                            errors?.skype_ID?.[0] ? errors?.skype_ID[0] : ''
+                            errors?.probability?.[0] ? errors?.probability[0] : ''
                           }
-                          error={!!errors?.skype_ID?.[0]}
+                          error={!!errors?.probability?.[0]}
                         />
                       </div>
                     </div>
@@ -908,108 +951,8 @@ export function EditLead() {
                           }
                           error={!!errors?.lead_attachment?.[0]}
                         />
-                      </div>
-                    </div>
-                    <div className="fieldContainer2">
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Tags</div>
-                        <FormControl
-                          error={!!errors?.tags?.[0]}
-                          sx={{ width: '70%' }}
-                        >
-                          <Autocomplete
-                            // ref={autocompleteRef}
-                            value={selectedTags}
-                            multiple
-                            limitTags={5}
-                            options={state?.tags || []}
-                            // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
-                            getOptionLabel={(option: any) => option}
-                            onChange={(e: any, value: any) =>
-                              handleChange2('tags', value)
-                            }
-                            size="small"
-                            filterSelectedOptions
-                            renderTags={(value, getTagProps) =>
-                              value.map((option, index) => (
-                                <Chip
-                                  deleteIcon={
-                                    <FaTimes style={{ width: '9px' }} />
-                                  }
-                                  sx={{
-                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                                    height: '18px',
-                                  }}
-                                  variant="outlined"
-                                  label={option}
-                                  {...getTagProps({ index })}
-                                />
-                              ))
-                            }
-                            popupIcon={
-                              <CustomPopupIcon>
-                                <FaPlus className="input-plus-icon" />
-                              </CustomPopupIcon>
-                            }
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                placeholder="Add Tags"
-                                InputProps={{
-                                  ...params.InputProps,
-                                  sx: {
-                                    '& .MuiAutocomplete-popupIndicator': {
-                                      '&:hover': { backgroundColor: 'white' },
-                                    },
-                                    '& .MuiAutocomplete-endAdornment': {
-                                      mt: '0px',
-                                      mr: '-8px',
-                                    },
-                                  },
-                                }}
-                              />
-                            )}
-                          />
-                          <FormHelperText>
-                            {errors?.tags?.[0] || ''}
-                          </FormHelperText>
-                        </FormControl>
-                      </div>
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Probability</div>
-                        <TextField
-                          name="probability"
-                          value={formData.probability}
-                          onChange={handleChange}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  disableFocusRipple
-                                  disableTouchRipple
-                                  sx={{
-                                    backgroundColor: '#d3d3d34a',
-                                    width: '45px',
-                                    borderRadius: '0px',
-                                    mr: '-12px',
-                                  }}
-                                >
-                                  <FaPercent style={{ width: '12px' }} />
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
-                          style={{ width: '70%' }}
-                          size="small"
-                          helperText={
-                            errors?.probability?.[0]
-                              ? errors?.probability[0]
-                              : ''
-                          }
-                          error={!!errors?.probability?.[0]}
-                        />
-                      </div>
-                    </div>
+                      </div> 
+                    </div>                   
                     {/* <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'> Close Date</div>
@@ -1074,7 +1017,7 @@ export function EditLead() {
                 <AccordionSummary
                   expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                 >
-                  <Typography className="accordion-header">Contact</Typography>
+                  <Typography className="accordion-header">Prospect</Typography>
                 </AccordionSummary>
                 <Divider className="divider" />
                 <AccordionDetails>

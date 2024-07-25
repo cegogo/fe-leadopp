@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Typography,
-    CircularProgress,
-    Box,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Avatar,
-    IconButton,
-    Divider
+  Typography,
+  CircularProgress,
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Avatar,
+  IconButton,
+  Divider,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -23,25 +23,27 @@ import { DeleteModal } from '../../components/DeleteModal';
 
 
 interface UserDetails {
-    email: string;
-    first_name: string;
-    profile_pic: string | null;
-    last_name: string;
+  email: string;
+  first_name: string;
+  profile_pic: string | null;
+  last_name: string;
 }
 
 interface User {
-    is_active: boolean;
-    user_details: UserDetails;
+  is_active: boolean;
+  user_details: UserDetails;
+  workload: string; // Add the workload property here
+  expertise: string;
 }
 
 interface Team {
-    id: string;
-    name: string;
-    description: string;
-    users: User[];
-    created_at: string;
-    created_by: User;
-    created_on_arrow: string;
+  id: string;
+  name: string;
+  description: string;
+  users: User[];
+  created_at: string;
+  created_by: User;
+  created_on_arrow: string;
 }
 
 const GetTeams: React.FC = () => {
@@ -140,9 +142,10 @@ const GetTeams: React.FC = () => {
         return <CircularProgress />;
     }
 
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
     return (
         <Box mt={4}>
