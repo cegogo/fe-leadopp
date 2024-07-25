@@ -126,7 +126,7 @@ interface FormData {
   description: string;
   teams: string;
   assigned_to: string[];
-  contacts: string[];
+  contacts: string;
   status: string;
   source: string;
   address_line: string;
@@ -157,11 +157,9 @@ export function EditLead() {
   const autocompleteRef = useRef<any>(null);
   const [reset, setReset] = useState(false);
   const [error, setError] = useState(false);
-  const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
-  const [selectedAssignTo, setSelectedAssignTo] = useState<any[]>(() => {
-    const savedData = localStorage.getItem('selectedAssignTo');
-    return savedData ? JSON.parse(savedData) : [];
-  });  
+  //const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
+  const [selectedContacts, setSelectedContacts] = useState('');  
+  const [selectedAssignTo, setSelectedAssignTo] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<any[]>([] || '');
   const [selectedCountry, setSelectedCountry] = useState<any[]>([] || '');
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
@@ -182,7 +180,7 @@ export function EditLead() {
     description: '',
     teams: '',
     assigned_to: [],
-    contacts: [],
+    contacts: '',
     status: 'assigned',
     source: 'call',
     address_line: '',
@@ -224,6 +222,17 @@ export function EditLead() {
   }, [state?.id]);
 
   useEffect(() => {
+    setSelectedAssignTo([state.selectedAssignTo?.id]);
+    setSelectedContacts(state.selectedContacts?.id);
+  }, [state.selectedAssignTo?.id, state.selectedContacts]);
+
+  useEffect(() => {
+    // Log selectedAssignTo after it has been updated
+    console.log(selectedAssignTo, 'This is selectedAssignTo Edit');
+    console.log(selectedContacts, 'This is selectedContacts Edit');
+  }, [selectedAssignTo,selectedContacts]);
+
+  useEffect(() => {
     if (reset) {
       setFormData(state?.value);
       if (quill && initialContentRef.current !== null) {
@@ -243,9 +252,6 @@ export function EditLead() {
     }
   }, [quill, formData.description]);
 
-  useEffect(() => {
-    localStorage.setItem('selectedAssignTo', JSON.stringify(selectedAssignTo));
-  }, [selectedAssignTo]);
   // useEffect(() => {
   //     if (quill && initialContentRef.current === null) {
   //       // Save the initial state (HTML content) of the Quill editor only if not already saved
@@ -283,19 +289,20 @@ export function EditLead() {
     if (title === 'contacts') {
       setFormData({
         ...formData,
-        contacts: val.length > 0 ? val.map((item: any) => item.id) : [],
+        contacts: val ? val.id : '',
+        //contacts: val.length > 0 ? val.map((item: any) => item.id) : []
       });
-      setSelectedContacts(val);
+      setSelectedContacts(val.id);
     } else if (title === 'assigned_to') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        assigned_to: val ? [val.id] : [],
       });
-      setSelectedAssignTo(val);
+      setSelectedAssignTo([val.id]);
     } else if (title === 'tags') {
       setFormData({
         ...formData,
-        assigned_to: val.length > 0 ? val.map((item: any) => item.id) : [],
+        tags: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedTags(val);
     }
@@ -347,8 +354,8 @@ export function EditLead() {
       website: formData.website,
       description: formData.description,
       teams: formData.teams,
-      assigned_to: formData.assigned_to,
-      contacts: formData.contacts,
+      assigned_to: selectedAssignTo,
+      contacts: selectedContacts,
       status: formData.status,
       source: formData.source,
       address_line: formData.address_line,
@@ -401,7 +408,7 @@ export function EditLead() {
       description: '',
       teams: '',
       assigned_to: [],
-      contacts: [],
+      contacts: '',
       status: 'assigned',
       source: 'call',
       address_line: '',
@@ -418,8 +425,8 @@ export function EditLead() {
       file: null,
     });
     setErrors({});
-    setSelectedContacts([]);
-    setSelectedAssignTo([]);
+    //setSelectedContacts([]);
+    // setSelectedAssignTo([]);
     setSelectedTags([]);
     // setSelectedCountry([])
     // if (autocompleteRef.current) {
@@ -466,8 +473,9 @@ export function EditLead() {
   // };
   const backbtnHandle = () => {
     navigate('/app/leads/lead-details', {
-      state: { leadId: state?.id, detail: true },
+      state: { leadId: state?.id, detail: true, selectedAssignTo:selectedAssignTo, selectedContacts:selectedContacts },
     });
+    console.log(state, 'This is backbutton')
     // navigate('/app/leads')
   };
 
@@ -566,10 +574,10 @@ export function EditLead() {
                           sx={{ width: '70%' }}
                         >
                           <Autocomplete
-                            multiple
-                            value={selectedContacts}
-                            limitTags={2}
-                            options={state.contacts || []}
+                            //multiple
+                            value={state.selectedContacts}
+                            //limitTags={1}
+                            options={state.contacts || ''}
                             getOptionLabel={(option: any) =>
                               state.contacts ? option?.first_name : option
                             }
@@ -635,14 +643,15 @@ export function EditLead() {
                         >
                           <Autocomplete
                             // ref={autocompleteRef}
-                            multiple                          
+                            //multiple                          
                             //value={formData.assigned_to || ''}
-                            value={selectedAssignTo}
+                            value={state.selectedAssignTo}
                             // name='contacts'
-                            limitTags={2}
-                            options={state?.users?.filter(
-                              (user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
-                            )}
+                            //limitTags={2}
+                            options={state?.users || []}
+                            //options={state?.users?.filter(
+                              //(user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
+                            //)}
                             // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
                             getOptionLabel={(option: any) =>
                               state?.users

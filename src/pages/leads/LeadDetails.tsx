@@ -23,6 +23,36 @@ export const formatDate = (dateString: any) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+type FormErrors = {
+  title?: string[];
+  first_name?: string[];
+  last_name?: string[];
+  account_name?: string[];
+  phone?: string[];
+  email?: string[];
+  lead_attachment?: string[];
+  opportunity_amount?: string[];
+  website?: string[];
+  description?: string[];
+  teams?: string[];
+  assigned_to?: string[];
+  contacts?: string[];
+  status?: string[];
+  source?: string[];
+  address_line?: string[];
+  street?: string[];
+  city?: string[];
+  state?: string[];
+  postcode?: string[];
+  country?: string[];
+  tags?: string[];
+  company?: string[];
+  probability?: number[];
+  industry?: string[];
+  skype_ID?: string[];
+  file?: string[];
+};
+
 type response = {
   created_by: {
     email: string;
@@ -101,6 +131,10 @@ function LeadDetails(props: any) {
   const [inputValue, setInputValue] = useState<string>('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [selectedAssignTo, setSelectedAssignTo] = useState();  
+  const [selectedContacts, setSelectedContacts] = useState();  
+ 
 
   useEffect(() => {
     getLeadDetails(state.leadId);
@@ -126,8 +160,11 @@ function LeadDetails(props: any) {
           setSource(res?.source);
           setUsers(res?.users);
           setContacts(res?.contacts);
+          setSelectedContacts(res?.lead_obj.contacts[0]);
           setTeams(res?.teams);
           setComments(res?.comments);
+          setSelectedAssignTo(res?.lead_obj.assigned_to[0])
+          console.log(res,'this is res')
         }
       })
       .catch((err) => {
@@ -176,6 +213,8 @@ function LeadDetails(props: any) {
         if (!res.error) {
           resetForm();
           getLeadDetails(state?.leadId);
+        }  else {
+           setErrors(res.errors || {});
         }
       })
       .catch(() => {});
@@ -204,6 +243,8 @@ function LeadDetails(props: any) {
         break;
       }
     }
+    console.log(selectedContacts,'This is preNavigate selectedContacts')
+    console.log(selectedAssignTo,'This is preNavigate selectedAssignTo')
     navigate('/app/leads/edit-lead', {
       state: {
         value: {
@@ -246,10 +287,15 @@ function LeadDetails(props: any) {
         industries,
         users,
         contacts:state.contacts || [],
+        selectedContacts: selectedContacts,
         teams,
         comments,
+        selectedAssignTo: selectedAssignTo,
       },
     });
+    console.log(selectedAssignTo, 'This is selectedAssignTo LeadDetails')
+    console.log(selectedContacts, 'This is selectedContacts LeadDetails')
+    console.log(state, 'This is state LeadDetails')
   };
 
   const handleAttachmentClick = () => {
@@ -501,15 +547,7 @@ function LeadDetails(props: any) {
                   <div className="title2">Industry</div>
                   <div className="title3">{leadDetails?.industry || '---'}</div>
                 </div>
-                <div style={{ width: '32%' }}>
-                  <div className="title2">SkypeID</div>
-                  <div className="title3">
-                    {leadDetails?.skype_ID ? (
-                      <Link>{leadDetails?.skype_ID}</Link>
-                    ) : (
-                      '---'
-                    )}
-                  </div>
+                <div style={{ width: '32%' }}>                  
                 </div>
                 <div style={{ width: '32%' }}>
                   <div style={{ fontSize: '16px', fontWeight: 600 }}>
