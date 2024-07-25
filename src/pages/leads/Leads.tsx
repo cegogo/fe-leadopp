@@ -135,7 +135,12 @@ export default function Leads(props: any) {
   const [closedTotalPages, setClosedTotalPages] = useState<number>(0);
   const [deleteLeadModal, setDeleteLeadModal] = useState(false);
   const [closedLoading, setClosedLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState('');
+  const [deleteLeadModal, setDeleteLeadModal] = useState;(false)
+  const [selectedId, setSelectedId] = useState('')
+  const [selectedAssignTo, setSelectedAssignTo] = useState();  
+  const [selectedContacts, setSelectedContacts] = useState();  
+
+
 
   useEffect(() => {
     getLeads();
@@ -225,7 +230,9 @@ export default function Leads(props: any) {
   }
 
   const selectLeadList = (leadId: any) => {
-    navigate(`/app/leads/lead-details`, { state: { leadId, detail: true } })
+
+    navigate(`/app/leads/lead-details`, { state: { leadId, detail: true, contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || [], selectedAssignTo: selectedAssignTo, selectedContacts: selectedContacts  } })
+
     // navigate('/app/leads/lead-details', { state: { leadId: leadItem.id, edit: storeData, value } })
   }
   const deleteLead = (deleteId: any) => {
