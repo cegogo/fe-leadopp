@@ -1,6 +1,23 @@
 import React, { SyntheticEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, AvatarGroup, Box, Button, Card, List, Stack, Tab, TablePagination, Tabs, Toolbar, Typography, Link, MenuItem, Select, InputBase } from '@mui/material'
+import {
+  Avatar,
+  AvatarGroup,
+  Box,
+  Button,
+  Card,
+  List,
+  Stack,
+  Tab,
+  TablePagination,
+  Tabs,
+  Toolbar,
+  Typography,
+  Link,
+  MenuItem,
+  Select,
+  InputBase,
+} from '@mui/material';
 import styled from '@emotion/styled';
 import { LeadUrl } from '../../services/ApiUrls';
 import { DeleteModal } from '../../components/DeleteModal';
@@ -10,10 +27,15 @@ import FormateTime from '../../components/FormateTime';
 import { FaTrashAlt } from 'react-icons/fa';
 import { FiChevronUp } from '@react-icons/all-files/fi/FiChevronUp';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
-import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
-import { FiChevronLeft } from "@react-icons/all-files/fi/FiChevronLeft";
-import { FiChevronRight } from "@react-icons/all-files/fi/FiChevronRight";
-import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssStyled';
+import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
+import { FiChevronLeft } from '@react-icons/all-files/fi/FiChevronLeft';
+import { FiChevronRight } from '@react-icons/all-files/fi/FiChevronRight';
+import {
+  CustomTab,
+  CustomToolbar,
+  FabLeft,
+  FabRight,
+} from '../../styles/CssStyled';
 import '../../styles/style.css';
 
 interface UserDetails {
@@ -50,23 +72,23 @@ export const CustomTablePagination = styled(TablePagination)`
   .MuiTablePagination-caption {
     color: #999;
   }
-'.MuiTablePagination-displayedRows': {
+  '.muitablepagination-displayedrows': {
     display: none;
   }
-'.MuiTablePagination-actions': {
+  '.muitablepagination-actions': {
     display: none;
   }
-'.MuiTablePagination-selectLabel': {
+  '.muitablepagination-selectlabel': {
     margin-top: 4px;
     margin-left: -15px;
   }
-'.MuiTablePagination-select': {
+  '.muitablepagination-select': {
     color: black;
     margin-right: 0px;
     margin-left: -12px;
     margin-top: -6px;
   }
-'.MuiSelect-icon': {
+  '.muiselect-icon': {
     color: black;
     margin-top: -5px;
   }
@@ -82,22 +104,32 @@ export const CustomTablePagination = styled(TablePagination)`
   margin-right: 1;
 `;
 
-
 export const Tabss = styled(Tab)({
   height: '34px',
   textDecoration: 'none',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
 });
 
 export const ToolbarNew = styled(Toolbar)({
-  minHeight: '48px', height: '48px', maxHeight: '48px',
-  width: '100%', display: 'flex', justifyContent: 'space-between', backgroundColor: '#1A3353',
-  '& .MuiToolbar-root': { minHeight: '48px !important', height: '48px !important', maxHeight: '48px !important' },
+  minHeight: '48px',
+  height: '48px',
+  maxHeight: '48px',
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: '#1A3353',
+  '& .MuiToolbar-root': {
+    minHeight: '48px !important',
+    height: '48px !important',
+    maxHeight: '48px !important',
+  },
   '@media (min-width:600px)': {
     '& .MuiToolbar-root': {
-      minHeight: '48px !important', height: '48px !important', maxHeight: '48px !important'
-    }
-  }
+      minHeight: '48px !important',
+      height: '48px !important',
+      maxHeight: '48px !important',
+    },
+  },
 });
 
 const recordsList = [
@@ -105,7 +137,7 @@ const recordsList = [
   [20, '20 Records per page'],
   [30, '30 Records per page'],
   [40, '40 Records per page'],
-  [50, '50 Records per page']
+  [50, '50 Records per page'],
 ];
 
 export default function Leads(props: any) {
@@ -116,15 +148,15 @@ export default function Leads(props: any) {
   const [searchQuery, setSearchQuery] = useState('');
   const [openLeads, setOpenLeads] = useState<Lead[]>([]);
   const [closedLeads, setClosedLeads] = useState<Lead[]>([]);
-  const [openClosedCount, setClosedLeadsCount] = useState(0)
-  const [contacts, setContacts] = useState([])
-  const [status, setStatus] = useState([])
-  const [source, setSource] = useState([])
-  const [companies, setCompanies] = useState([])
-  const [tags, setTags] = useState([])
-  const [users, setUsers] = useState([])
-  const [countries, setCountries] = useState([])
-  const [industries, setIndustries] = useState([])
+  const [openClosedCount, setClosedLeadsCount] = useState(0);
+  const [contacts, setContacts] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [source, setSource] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [industries, setIndustries] = useState([]);
   const [selectOpen, setSelectOpen] = useState(false);
   const [openCurrentPage, setOpenCurrentPage] = useState<number>(1);
   const [openRecordsPerPage, setOpenRecordsPerPage] = useState<number>(10);
@@ -135,38 +167,55 @@ export default function Leads(props: any) {
   const [closedTotalPages, setClosedTotalPages] = useState<number>(0);
   const [deleteLeadModal, setDeleteLeadModal] = useState(false);
   const [closedLoading, setClosedLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState('')
-  const [selectedAssignTo, setSelectedAssignTo] = useState();  
-  const [selectedContacts, setSelectedContacts] = useState();  
-
-
+  const [selectedId, setSelectedId] = useState('');
+  const [selectedAssignTo, setSelectedAssignTo] = useState();
+  const [selectedContacts, setSelectedContacts] = useState();
+  const [workloadCount, setWorkloadCount] = useState(0); // New state for workload count
 
   useEffect(() => {
     getLeads();
-  }, [openCurrentPage, openRecordsPerPage, closedCurrentPage, closedRecordsPerPage, searchQuery]);
+  }, [
+    openCurrentPage,
+    openRecordsPerPage,
+    closedCurrentPage,
+    closedRecordsPerPage,
+    searchQuery,
+  ]);
 
   const getLeads = async () => {
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Authorization: localStorage.getItem('Token'),
-      org: localStorage.getItem('org')
+      org: localStorage.getItem('org'),
     };
     try {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
       const response = await fetchData(
-        `${LeadUrl}/?offset=${tab === "open" ? openOffset : closeOffset}&limit=${tab === "open" ? openRecordsPerPage : closedRecordsPerPage}&search=${searchQuery}`, 
-        'GET', 
-        null as any, 
+        `${LeadUrl}/?offset=${
+          tab === 'open' ? openOffset : closeOffset
+        }&limit=${
+          tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
+        }&search=${searchQuery}`,
+        'GET',
+        null as any,
         Header
       );
-      
+
       if (!response.error) {
         setOpenLeads(response?.open_leads?.open_leads || []);
         setClosedLeads(response?.close_leads?.close_leads || []);
-        setOpenTotalPages(Math.ceil((response?.open_leads?.leads_count || 0) / openRecordsPerPage));
-        setClosedTotalPages(Math.ceil((response?.close_leads?.leads_count || 0) / closedRecordsPerPage));
+        setOpenTotalPages(
+          Math.ceil(
+            (response?.open_leads?.leads_count || 0) / openRecordsPerPage
+          )
+        );
+        setClosedTotalPages(
+          Math.ceil(
+            (response?.close_leads?.leads_count || 0) / closedRecordsPerPage
+          )
+        );
         setContacts(response?.contacts || []);
         setStatus(response?.status || []);
         setSource(response?.source || []);
@@ -175,6 +224,7 @@ export default function Leads(props: any) {
         setUsers(response?.users || []);
         setCountries(response?.countries || []);
         setIndustries(response?.industries || []);
+        setWorkloadCount(response?.workload_count || 0);
         setLoading(false);
       }
     } catch (error) {
@@ -186,7 +236,9 @@ export default function Leads(props: any) {
     setTab(val);
   };
 
-  const handleRecordsPerPage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecordsPerPage = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     if (tab === 'open') {
       setOpenLoading(true);
       setOpenRecordsPerPage(parseInt(event.target.value));
@@ -200,21 +252,23 @@ export default function Leads(props: any) {
 
   const handlePreviousPage = () => {
     if (tab == 'open') {
-      setOpenLoading(true)
+      setOpenLoading(true);
       setOpenCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     } else {
-      setClosedLoading(true)
+      setClosedLoading(true);
       setClosedCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
     }
   };
 
   const handleNextPage = () => {
     if (tab == 'open') {
-      setOpenLoading(true)
+      setOpenLoading(true);
       setOpenCurrentPage((prevPage) => Math.min(prevPage + 1, openTotalPages));
     } else {
-      setClosedLoading(true)
-      setClosedCurrentPage((prevPage) => Math.min(prevPage + 1, closedTotalPages));
+      setClosedLoading(true);
+      setClosedCurrentPage((prevPage) =>
+        Math.min(prevPage + 1, closedTotalPages)
+      );
     }
   };
   const onAddHandle = () => {
@@ -222,79 +276,122 @@ export default function Leads(props: any) {
       navigate('/app/leads/add-leads', {
         state: {
           detail: false,
-          contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || []
-          }
-      })
+          contacts: contacts || [],
+          status: status || [],
+          source: source || [],
+          companies: companies || [],
+          tags: tags || [],
+          users: users || [],
+          countries: countries || [],
+          industries: industries || [],
+        },
+      });
     }
-  }
+  };
 
   const selectLeadList = (leadId: any) => {
-
-    navigate(`/app/leads/lead-details`, { state: { leadId, detail: true, contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || [], selectedAssignTo: selectedAssignTo, selectedContacts: selectedContacts  } })
+    navigate(`/app/leads/lead-details`, {
+      state: {
+        leadId,
+        detail: true,
+        contacts: contacts || [],
+        status: status || [],
+        source: source || [],
+        companies: companies || [],
+        tags: tags || [],
+        users: users || [],
+        countries: countries || [],
+        industries: industries || [],
+        selectedAssignTo: selectedAssignTo,
+        selectedContacts: selectedContacts,
+      },
+    });
 
     // navigate('/app/leads/lead-details', { state: { leadId: leadItem.id, edit: storeData, value } })
-  }
+  };
   const deleteLead = (deleteId: any) => {
-    setDeleteLeadModal(true)
-    setSelectedId(deleteId)
-  }
+    setDeleteLeadModal(true);
+    setSelectedId(deleteId);
+  };
 
   const deleteLeadModalClose = () => {
-    setDeleteLeadModal(false)
-    setSelectedId('')
-  }
-  const modalDialog = 'Are You Sure You want to delete selected Lead?'
-  const modalTitle = 'Delete Lead'
+    setDeleteLeadModal(false);
+    setSelectedId('');
+  };
+  const modalDialog = 'Are You Sure You want to delete selected Lead?';
+  const modalTitle = 'Delete Lead';
 
   const deleteItem = () => {
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
       Authorization: localStorage.getItem('Token'),
-      org: localStorage.getItem('org')
-    }
+      org: localStorage.getItem('org'),
+    };
     fetchData(`${LeadUrl}/${selectedId}/`, 'DELETE', null as any, Header)
       .then((res: any) => {
         // console.log('delete:', res);
         if (!res.error) {
-          deleteLeadModalClose()
-          getLeads()
+          deleteLeadModalClose();
+          getLeads();
+          setWorkloadCount((prevCount) => prevCount - 1);
         }
       })
-      .catch(() => {
-      })
-  }
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      .catch(() => {});
+  };
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
   const handlePageChange = (direction: 'next' | 'previous') => {
     if (tab === 'open') {
-      setOpenCurrentPage(prevPage => direction === 'next' ? Math.min(prevPage + 1, openTotalPages) : Math.max(prevPage - 1, 1));
+      setOpenCurrentPage((prevPage) =>
+        direction === 'next'
+          ? Math.min(prevPage + 1, openTotalPages)
+          : Math.max(prevPage - 1, 1)
+      );
     } else {
-      setClosedCurrentPage(prevPage => direction === 'next' ? Math.min(prevPage + 1, closedTotalPages) : Math.max(prevPage - 1, 1));
+      setClosedCurrentPage((prevPage) =>
+        direction === 'next'
+          ? Math.min(prevPage + 1, closedTotalPages)
+          : Math.max(prevPage - 1, 1)
+      );
     }
   };
 
-  const filteredLeads = (tab === 'open' ? openLeads : closedLeads).filter((lead) => {
-    const fullName = `${lead.assigned_to?.[0]?.user_details?.first_name || ''} ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
-    const email = lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
-    const accountName = lead.account_name?.toLowerCase() || '';
-    const search = searchQuery.toLowerCase();
+  const filteredLeads = (tab === 'open' ? openLeads : closedLeads).filter(
+    (lead) => {
+      const fullName = `${
+        lead.assigned_to?.[0]?.user_details?.first_name || ''
+      } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
+      const email =
+        lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
+      const accountName = lead.account_name?.toLowerCase() || '';
+      const search = searchQuery.toLowerCase();
 
-    return fullName.includes(search) || email.includes(search) || accountName.includes(search);
-  });
+      return (
+        fullName.includes(search) ||
+        email.includes(search) ||
+        accountName.includes(search)
+      );
+    }
+  );
 
   return (
     <Box sx={{ mt: '60px' }}>
       <CustomToolbar>
         <Tabs value={tab} onChange={handleChangeTab} sx={{ mt: '26px' }}>
-          <CustomTab value="open" label="Open"
+          <CustomTab
+            value="open"
+            label="Open"
             sx={{
               backgroundColor: tab === 'open' ? '#F0F7FF' : '#284871',
               color: tab === 'open' ? '#3f51b5' : 'white',
-            }} />
-          <CustomTab value="closed" label="Closed"
+            }}
+          />
+          <CustomTab
+            value="closed"
+            label="Closed"
             sx={{
               backgroundColor: tab === 'closed' ? '#F0F7FF' : '#284871',
               color: tab === 'closed' ? '#3f51b5' : 'white',
@@ -302,12 +399,21 @@ export default function Leads(props: any) {
             }}
           />
         </Tabs>
-        <Stack sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <Stack
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+        >
           <InputBase
             placeholder="Search leads"
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ marginRight: 2, padding: '0 10px', backgroundColor: '#fff', borderRadius: '4px', height: '40px', minWidth: '250px' }}
+            sx={{
+              marginRight: 2,
+              padding: '0 10px',
+              backgroundColor: '#fff',
+              borderRadius: '4px',
+              height: '40px',
+              minWidth: '250px',
+            }}
           />
           <Select
             value={tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}
@@ -318,33 +424,76 @@ export default function Leads(props: any) {
             className={`custom-select`}
             onClick={() => setSelectOpen(!selectOpen)}
             IconComponent={() => (
-              <div onClick={() => setSelectOpen(!selectOpen)} className="custom-select-icon">
-                {selectOpen ? <FiChevronUp style={{ marginTop: '12px' }} /> : <FiChevronDown style={{ marginTop: '12px' }} />}
+              <div
+                onClick={() => setSelectOpen(!selectOpen)}
+                className="custom-select-icon"
+              >
+                {selectOpen ? (
+                  <FiChevronUp style={{ marginTop: '12px' }} />
+                ) : (
+                  <FiChevronDown style={{ marginTop: '12px' }} />
+                )}
               </div>
             )}
             sx={{
-              '& .MuiSelect-select': { overflow: 'visible !important' }
+              '& .MuiSelect-select': { overflow: 'visible !important' },
             }}
           >
             {recordsList.map((item, i) => (
-              <MenuItem key={i} value={item[0]}>{item[1]}</MenuItem>
+              <MenuItem key={i} value={item[0]}>
+                {item[1]}
+              </MenuItem>
             ))}
           </Select>
-          <Box sx={{ borderRadius: '7px', backgroundColor: 'white', height: '40px', minHeight: '40px', maxHeight: '40px', display: 'flex', flexDirection: 'row', alignItems: 'center', mr: 1, p: '0px' }}>
-            <FabLeft onClick={handlePreviousPage} disabled={tab === 'open' ? openCurrentPage === 1 : closedCurrentPage === 1}>
+          <Box
+            sx={{
+              borderRadius: '7px',
+              backgroundColor: 'white',
+              height: '40px',
+              minHeight: '40px',
+              maxHeight: '40px',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              mr: 1,
+              p: '0px',
+            }}
+          >
+            <FabLeft
+              onClick={handlePreviousPage}
+              disabled={
+                tab === 'open' ? openCurrentPage === 1 : closedCurrentPage === 1
+              }
+            >
               <FiChevronLeft style={{ height: '15px' }} />
             </FabLeft>
-            <Typography sx={{ mt: 0, textTransform: 'lowercase', fontSize: '15px', color: '#1A3353', textAlign: 'center' }}>
-              {tab === 'open' ? `${openCurrentPage} to ${openTotalPages}` : `${closedCurrentPage} to ${closedTotalPages}`}
-
+            <Typography
+              sx={{
+                mt: 0,
+                textTransform: 'lowercase',
+                fontSize: '15px',
+                color: '#1A3353',
+                textAlign: 'center',
+              }}
+            >
+              {tab === 'open'
+                ? `${openCurrentPage} to ${openTotalPages}`
+                : `${closedCurrentPage} to ${closedTotalPages}`}
             </Typography>
-            <FabRight onClick={handleNextPage} disabled={tab === 'open' ? (openCurrentPage === openTotalPages) : (closedCurrentPage === closedTotalPages)}>
+            <FabRight
+              onClick={handleNextPage}
+              disabled={
+                tab === 'open'
+                  ? openCurrentPage === openTotalPages
+                  : closedCurrentPage === closedTotalPages
+              }
+            >
               <FiChevronRight style={{ height: '15px' }} />
             </FabRight>
           </Box>
           <Button
-            variant='contained'
-            startIcon={<FiPlus className='plus-icon' />}
+            variant="contained"
+            startIcon={<FiPlus className="plus-icon" />}
             onClick={onAddHandle}
             className={'add-button'}
           >
@@ -358,101 +507,158 @@ export default function Leads(props: any) {
             <Typography>Loading...</Typography>
           ) : (
             filteredLeads.map((item, i) => (
-              <Card key={i} sx={{ mb: 2}}>
-                <Box className='lead-box'>
-                <Stack className='lead-row1'>
-                      <div style={{ color: '#1A3353', fontSize: '1.2rem', fontWeight: '500', cursor: 'pointer' }} onClick={() => selectLeadList(item?.id)}>
-                        {item?.account_name}
-                      </div>
-                      <div onClick={() => deleteLead(item?.id)}>
-                        <FaTrashAlt style={{ cursor: 'pointer', color: 'gray' }} />
-                      </div>
-                      </Stack>
-                      <Stack className='lead-row2'>
-                      <div className='lead-row2-col1'>
-                      <div style={{ color: 'gray', fontSize: '16px', textTransform: 'capitalize' }}>
-                      <div> value: <span style={{ color: '#1a3353', fontWeight: 500 }}> € {item?.opportunity_amount || '--'}</span> </div>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>Assignee:&nbsp; 
-                        {item?.assigned_to?.map((assignItem: any, index: any) => (
-                          assignItem.user_details.profile_pic
-                            ? <Avatar alt='Remy Sharp'
-                              src={assignItem.user_details.profile_pic}
-                            />
-                            : <Avatar alt='Remy Sharp'
-                            // size='small'
-                            // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
-                            >
-                              {assignItem.user_details?.first_name?.charAt(0)}
-                            </Avatar> 
-                        ))
-                        }
-                        <span style={{ color: '#1a3353', fontWeight: 500, textTransform: 'none' }}>
-                          &nbsp;{item?.assigned_to?.map((assignItem: any, index: number) => {
-                          const { first_name, last_name, email } = assignItem?.user_details || {};
-
-                          if (first_name && last_name) {
-                            return `${first_name} ${last_name}`;
-                          } else if (first_name) {
-                            return first_name;
-                          } else if (last_name) {
-                            return last_name;
-                          } else if (email) {
-                            return email;
-                          } 
-                        }).join(', ') || 'Unassigned'}
-                        </span>
-                        &nbsp;- status:&nbsp; <span style={{ color: '#1a3353', fontWeight: 500 }}>{item?.status || '--'}</span>
+              <Card key={i} sx={{ mb: 2 }}>
+                <Box className="lead-box">
+                  <Stack className="lead-row1">
+                    <div
+                      style={{
+                        color: '#1A3353',
+                        fontSize: '1.2rem',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => selectLeadList(item?.id)}
+                    >
+                      {item?.account_name}
+                    </div>
+                    <div onClick={() => deleteLead(item?.id)}>
+                      <FaTrashAlt
+                        style={{ cursor: 'pointer', color: 'gray' }}
+                      />
+                    </div>
+                  </Stack>
+                  <Stack className="lead-row2">
+                    <div className="lead-row2-col1">
+                      <div
+                        style={{
+                          color: 'gray',
+                          fontSize: '16px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        <div>
+                          {' '}
+                          value:{' '}
+                          <span style={{ color: '#1a3353', fontWeight: 500 }}>
+                            {' '}
+                            € {item?.opportunity_amount || '--'}
+                          </span>{' '}
                         </div>
-                        </div>
-                        <Box sx={{ ml: 1 }}>
-                          <div style={{ display: 'flex' }}>
-                            <AvatarGroup
-                              // total={2}
-                              max={3}
-                            >
-                              {/* <Tooltip title={con.user.username}> */}
-                              {/* {tag.map((tagData: any, index: any) => ( */}
-                              {item?.team && item?.team?.map((team: any, index: any) => (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp;
+                          {item?.assigned_to?.map(
+                            (assignItem: any, index: any) =>
+                              assignItem.user_details.profile_pic ? (
                                 <Avatar
-                                  alt={team}
-                                  src={team}
+                                  alt="Remy Sharp"
+                                  src={assignItem.user_details.profile_pic}
+                                />
+                              ) : (
+                                <Avatar
+                                  alt="Remy Sharp"
+                                  // size='small'
+                                  // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                                 >
+                                  {assignItem.user_details?.first_name?.charAt(
+                                    0
+                                  )}
+                                </Avatar>
+                              )
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}
+                          >
+                            &nbsp;
+                            {item?.assigned_to
+                              ?.map((assignItem: any, index: number) => {
+                                const { first_name, last_name, email } =
+                                  assignItem?.user_details || {};
+
+                                if (first_name && last_name) {
+                                  return `${first_name} ${last_name}`;
+                                } else if (first_name) {
+                                  return first_name;
+                                } else if (last_name) {
+                                  return last_name;
+                                } else if (email) {
+                                  return email;
+                                }
+                              })
+                              .join(', ') || 'Unassigned'}
+                          </span>
+                          &nbsp;- status:&nbsp;{' '}
+                          <span style={{ color: '#1a3353', fontWeight: 500 }}>
+                            {item?.status || '--'}
+                          </span>
+                        </div>
+                      </div>
+                      <Box sx={{ ml: 1 }}>
+                        <div style={{ display: 'flex' }}>
+                          <AvatarGroup
+                            // total={2}
+                            max={3}
+                          >
+                            {/* <Tooltip title={con.user.username}> */}
+                            {/* {tag.map((tagData: any, index: any) => ( */}
+                            {item?.team &&
+                              item?.team?.map((team: any, index: any) => (
+                                <Avatar alt={team} src={team}>
                                   {team}
                                 </Avatar>
                               ))}
-                              {/* </Tooltip> */}
-                              {/* )} */}
-                            </AvatarGroup>
-                          </div>
-
-                        </Box>
+                            {/* </Tooltip> */}
+                            {/* )} */}
+                          </AvatarGroup>
                         </div>
-                      <div className='lead-row2-col2'>
-                        {/* created on {formatDate(item.created_on)} by   &nbsp;<span> */}
-                        created&nbsp; {FormateTime(item?.created_at)}&nbsp; by
-                        <Avatar
-                          alt={item?.created_by?.first_name}
-                          src={item?.created_by?.profile_pic}
-                          sx={{ ml: 1 }}
+                      </Box>
+                    </div>
+                    <div className="lead-row2-col2">
+                      {/* created on {formatDate(item.created_on)} by   &nbsp;<span> */}
+                      created&nbsp; {FormateTime(item?.created_at)}&nbsp; by
+                      <Avatar
+                        alt={item?.created_by?.first_name}
+                        src={item?.created_by?.profile_pic}
+                        sx={{ ml: 1 }}
                         // style={{
                         //   height: '20px',
                         //   width: '20px'
                         // }}
-                        /> &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;{item?.created_by?.last_name}
-                      
-                        </div>
-                      </Stack>
+                      />{' '}
+                      &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;
+                      {item?.created_by?.last_name}
+                    </div>
+                  </Stack>
                 </Box>
                 {/* Add more details as needed */}
               </Card>
             ))
           )}
         </List>
-        <Stack direction="row" spacing={2} sx={{ mt: 2, justifyContent: 'center' }}>
-          <Button onClick={() => handlePageChange('previous')} disabled={tab === 'open' ? openCurrentPage <= 1 : closedCurrentPage <= 1}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ mt: 2, justifyContent: 'center' }}
+        >
+          <Button
+            onClick={() => handlePageChange('previous')}
+            disabled={
+              tab === 'open' ? openCurrentPage <= 1 : closedCurrentPage <= 1
+            }
+          >
             <FiChevronLeft />
           </Button>
-          <Button onClick={() => handlePageChange('next')} disabled={tab === 'open' ? openCurrentPage >= openTotalPages : closedCurrentPage >= closedTotalPages}>
+          <Button
+            onClick={() => handlePageChange('next')}
+            disabled={
+              tab === 'open'
+                ? openCurrentPage >= openTotalPages
+                : closedCurrentPage >= closedTotalPages
+            }
+          >
             <FiChevronRight />
           </Button>
         </Stack>
