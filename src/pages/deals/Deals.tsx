@@ -1,35 +1,51 @@
-import React, { SyntheticEvent, useState, useEffect, } from 'react';
-import { Box, Button, Tabs } from '@mui/material'
+import React, { SyntheticEvent, useState, useEffect } from 'react';
+import { Box, Button, Tabs } from '@mui/material';
 import Leads from '../leads/Leads';
-import { LeadUrl, OpportunityUrl } from '../../services/ApiUrls';
+import {
+  LeadUrl,
+  OpportunityUrl,
+  MeetingUrl,
+  QualifiedUrl,
+  NegotiationUrl,
+  WonUrl,
+} from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import Opportunities from '../opportunities/Opportunities';
 import Card from './Card';
 import { CustomTab, CustomToolbar } from '../../styles/CssStyled';
-import '../../styles/style.css'
+import '../../styles/style.css';
 import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
 import { useNavigate } from 'react-router-dom';
+import Meeting from './Meeting';
+import Negotiation from './Negotiation';
+import Qualified from './Qualified';
+import Won from './Won';
 
 const Deals: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [selectedComponent, setSelectedComponent] = useState<string | null>(
+    null
+  );
   const [leads, setLeads] = useState<any[]>([]);
+  const [meeting, setMeetings] = useState<any[]>([]);
   const [opportunities, setOpportunities] = useState<any[]>([]);
-  const [contacts, setContacts] = useState([])
-  const [status, setStatus] = useState([])
-  const [source, setSource] = useState([])
-  const [companies, setCompanies] = useState([])
-  const [tags, setTags] = useState([])
-  const [users, setUsers] = useState([])
-  const [countries, setCountries] = useState([])
-  const [industries, setIndustries] = useState([])
-  const [currency, setCurrency] = useState([])
-  const [leadSource, setLeadSource] = useState([])
-  const [account, setAccount] = useState([])
-  const [stage, setStage] = useState([])
-  const [teams, setTeams] = useState([])
-
+  const [qualified, setQualified] = useState<any[]>([]);
+  const [negotiation, setNegotiation] = useState<any[]>([]);
+  const [won, setWon] = useState<any[]>([]);
+  const [contacts, setContacts] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [source, setSource] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [industries, setIndustries] = useState([]);
+  const [currency, setCurrency] = useState([]);
+  const [leadSource, setLeadSource] = useState([]);
+  const [account, setAccount] = useState([]);
+  const [stage, setStage] = useState([]);
+  const [teams, setTeams] = useState([]);
 
   // Define inline styles as JavaScript objects
   const containerStyle: React.CSSProperties = {
@@ -40,7 +56,7 @@ const Deals: React.FC = () => {
 
   const columnsStyle: React.CSSProperties = {
     display: 'flex',
-    gap: '0'
+    gap: '0',
   };
 
   const columnStyle: React.CSSProperties = {
@@ -65,7 +81,7 @@ const Deals: React.FC = () => {
     marginTop: '20px',
     padding: '20px',
     border: '1px solid #1C4D4D',
-    borderRadius: '5px'
+    borderRadius: '5px',
   };
 
   const handleHeaderClick = (component: string) => {
@@ -82,26 +98,38 @@ const Deals: React.FC = () => {
       navigate('/app/leads/add-leads', {
         state: {
           detail: false,
-          contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || []
-          // status: leads.status, source: leads.source, industry: leads.industries, users: leads.users, tags: leads.tags, contacts: leads.contacts 
-        }
-      })
+          contacts: contacts || [],
+          status: status || [],
+          source: source || [],
+          companies: companies || [],
+          tags: tags || [],
+          users: users || [],
+          countries: countries || [],
+          industries: industries || [],
+          // status: leads.status, source: leads.source, industry: leads.industries, users: leads.users, tags: leads.tags, contacts: leads.contacts
+        },
+      });
     }
-  }
+  };
 
   // Function to render the selected component
   const renderComponent = () => {
     if (selectedComponent === 'Leads') return <Leads />;
     if (selectedComponent === 'Opportunities') return <Opportunities />;
-    if (selectedComponent === 'Meeting') return <div>Meeting Component Content</div>;
-    if (selectedComponent === 'Qualified') return <div>Qualified Component Content</div>;
-    if (selectedComponent === 'Negotiation') return <div>Negotiation Component Content</div>;
-    if (selectedComponent === 'Won') return <div>Won Component Content</div>;
+    if (selectedComponent === 'Meeting') return <Meeting />;
+    if (selectedComponent === 'Qualified') return <Qualified />;
+    if (selectedComponent === 'Negotiation') return <Negotiation />;
+    if (selectedComponent === 'Won') return <Won />;
     return null;
   };
 
   useEffect(() => {
     getLeads();
+    getOpportunity();
+    getMeetings();
+    getQualified();
+    getNegotiation();
+    getWon();
   }, []);
 
   const getLeads = async () => {
@@ -115,25 +143,42 @@ const Deals: React.FC = () => {
     try {
       const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
       if (!res.error) {
-        setLeads(res?.open_leads?.open_leads)
-        setContacts(res?.contacts)
-        setStatus(res?.status)
-        setSource(res?.source)
-        setCompanies(res?.companies)
-        setTags(res?.tags)
-        setUsers(res?.users)
-        setCountries(res?.countries)
-        setIndustries(res?.industries)
+        setLeads(res?.open_leads?.open_leads);
+        setContacts(res?.contacts);
+        setStatus(res?.status);
+        setSource(res?.source);
+        setCompanies(res?.companies);
+        setTags(res?.tags);
+        setUsers(res?.users);
+        setCountries(res?.countries);
+        setIndustries(res?.industries);
       }
       setLoading(false); // Set loading to false after data is fetched
     } catch (error) {
       console.error('Error fetching data:', error);
       setLoading(false); // Set loading to false even if there's an error
     }
-  }
-  useEffect(() => {
-    getOpportunity();
-  }, []);
+  };
+
+  const getMeetings = async () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
+    };
+
+    try {
+      const res = await fetchData(`${MeetingUrl}/`, 'GET', null as any, Header);
+      if (!res.error) {
+        setMeetings(res?.meetings);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching meetings data:', error);
+      setLoading(false);
+    }
+  };
 
   const getOpportunity = async () => {
     const Header = {
@@ -144,41 +189,121 @@ const Deals: React.FC = () => {
     };
 
     try {
-      const resop = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
+      const resop = await fetchData(
+        `${OpportunityUrl}/`,
+        'GET',
+        null as any,
+        Header
+      );
       if (!resop.error) {
-        setOpportunities(resop?.opportunities)
-        setContacts(resop?.contacts_list)
-        setAccount(resop?.accounts_list)
-        setCurrency(resop?.currency)
-        setLeadSource(resop?.lead_source)
-        setStage(resop?.stage)
-        setTags(resop?.tags)
-        setTeams(resop?.teams)
-        setUsers(resop?.users)
-        setCountries(resop?.countries)
+        setOpportunities(resop?.opportunities);
+        setContacts(resop?.contacts_list);
+        setAccount(resop?.accounts_list);
+        setCurrency(resop?.currency);
+        setLeadSource(resop?.lead_source);
+        setStage(resop?.stage);
+        setTags(resop?.tags);
+        setTeams(resop?.teams);
+        setUsers(resop?.users);
+        setCountries(resop?.countries);
       }
       setLoading(false);
     } catch (error) {
       console.error('Error fetching opportunity data:', error);
       setLoading(false);
     }
-  }
+  };
+
+  const getQualified = async () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
+    };
+
+    try {
+      const res = await fetchData(
+        `${QualifiedUrl}/`,
+        'GET',
+        null as any,
+        Header
+      );
+      if (!res.error) {
+        setQualified(res?.qualified);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching qualified data:', error);
+      setLoading(false);
+    }
+  };
+
+  const getNegotiation = async () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
+    };
+
+    try {
+      const res = await fetchData(
+        `${NegotiationUrl}/`,
+        'GET',
+        null as any,
+        Header
+      );
+      if (!res.error) {
+        setNegotiation(res?.negotiation);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching negotiation data:', error);
+      setLoading(false);
+    }
+  };
+
+  const getWon = async () => {
+    const Header = {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
+    };
+
+    try {
+      const res = await fetchData(`${WonUrl}/`, 'GET', null as any, Header);
+      if (!res.error) {
+        setWon(res?.won);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching won data:', error);
+      setLoading(false);
+    }
+  };
 
   return (
-    <Box sx={{
-      mt: '60px',
-    }}>
+    <Box
+      sx={{
+        mt: '60px',
+      }}
+    >
       <CustomToolbar>
         <Tabs sx={{ mt: '26px' }}>
-          <CustomTab value="open" label="Open"
+          <CustomTab
+            value="open"
+            label="Open"
             sx={{
               backgroundColor: 'white',
               color: 'darkblue',
-            }} />
+            }}
+          />
         </Tabs>
         <Button
-          variant='contained'
-          startIcon={<FiPlus className='plus-icon' />}
+          variant="contained"
+          startIcon={<FiPlus className="plus-icon" />}
           onClick={onAddHandle}
           className={'add-button'}
         >
@@ -196,15 +321,38 @@ const Deals: React.FC = () => {
         ) : (
           <div style={columnsStyle}>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }} onClick={() => handleHeaderClick('Leads')}>Leads</div>
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }}
+                onClick={() => handleHeaderClick('Leads')}
+              >
+                Leads
+              </div>
               {leads.length > 0 ? (
-                leads.map((lead) => (
-                  console.log(lead),
-                  <Card key={lead?.id} title={lead?.account_name} content={`Value: $${lead?.opportunity_amount}\n
-                                Assignee: ${lead?.assigned_to?.[0]?.user_details?.first_name && lead?.assigned_to?.[0]?.user_details?.last_name ?
-                      lead?.assigned_to?.[0]?.user_details?.first_name + ' ' + lead?.assigned_to?.[0]?.user_details?.last_name :
-                      lead?.assigned_to?.[0]?.user_details?.email || 'Unassigned'}`} />
-                ))
+                leads.map(
+                  (lead) => (
+                    console.log(lead),
+                    (
+                      <Card
+                        key={lead?.id}
+                        title={lead?.account_name}
+                        content={`Value: $${lead?.opportunity_amount}\n
+                                Assignee: ${
+                                  lead?.assigned_to?.[0]?.user_details
+                                    ?.first_name &&
+                                  lead?.assigned_to?.[0]?.user_details
+                                    ?.last_name
+                                    ? lead?.assigned_to?.[0]?.user_details
+                                        ?.first_name +
+                                      ' ' +
+                                      lead?.assigned_to?.[0]?.user_details
+                                        ?.last_name
+                                    : lead?.assigned_to?.[0]?.user_details
+                                        ?.email || 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
               ) : (
                 <div>
                   <p>No leads available</p>
@@ -212,12 +360,50 @@ const Deals: React.FC = () => {
               )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }} onClick={() => handleHeaderClick('Meeting')}>Meeting</div>
-              <Card title="Meeting" content="Meeting details here..." />
-              <Card title="Meeting" content="Meeting details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }}
+                onClick={() => handleHeaderClick('Meeting')}
+              >
+                Meeting
+              </div>
+              {meeting.length > 0 ? (
+                meeting.map(
+                  (meeting) => (
+                    console.log(meeting),
+                    (
+                      <Card
+                        key={meeting?.id}
+                        title={meeting?.lead?.account_name}
+                        content={`Value: $${meeting?.estimated_value}\n
+                                Assignee: ${
+                                  meeting?.lead?.assigned_to?.[0]?.user_details
+                                    ?.first_name &&
+                                  meeting?.lead?.assigned_to?.[0]?.user_details
+                                    ?.last_name
+                                    ? meeting?.lead?.assigned_to?.[0]
+                                        ?.user_details?.first_name +
+                                      ' ' +
+                                      meeting?.lead?.assigned_to?.[0]
+                                        ?.user_details?.last_name
+                                    : 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
+              ) : (
+                <div>
+                  <p>No meetings available</p>
+                </div>
+              )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#3685B5' }}
+                onClick={() => handleHeaderClick('Opportunities')}
+              >
+                Opportunity
+              </div>
               {opportunities.length > 0 ? (
                 opportunities.map((opportunity) => (
                   <Card
@@ -233,25 +419,124 @@ const Deals: React.FC = () => {
               )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#0471A6' }} onClick={() => handleHeaderClick('Qualified')}>Qualified</div>
-              <Card title="Qualified" content="Qualified details here..." />
-              <Card title="Qualified" content="Qualified details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#0471A6' }}
+                onClick={() => handleHeaderClick('Qualified')}
+              >
+                Qualified
+              </div>
+              {qualified.length > 0 ? (
+                qualified.map(
+                  (qualified) => (
+                    console.log(qualified),
+                    (
+                      <Card
+                        key={qualified?.id}
+                        title={qualified?.lead?.account_name}
+                        content={`Value: $${qualified?.offer_value}\n
+                                Assignee: ${
+                                  qualified?.lead?.assigned_to?.[0]
+                                    ?.user_details?.first_name &&
+                                  qualified?.lead?.assigned_to?.[0]
+                                    ?.user_details?.last_name
+                                    ? qualified?.lead?.assigned_to?.[0]
+                                        ?.user_details?.first_name +
+                                      ' ' +
+                                      qualified?.lead?.assigned_to?.[0]
+                                        ?.user_details?.last_name
+                                    : 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
+              ) : (
+                <div>
+                  <p>No qualified leads available</p>
+                </div>
+              )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#023d5a' }} onClick={() => handleHeaderClick('Negotiation')}>Negotiation</div>
-              <Card title="Negotiation" content="Negotiation details here..." />
-              <Card title="Negotiation" content="Negotiation details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#023d5a' }}
+                onClick={() => handleHeaderClick('Negotiation')}
+              >
+                Negotiation
+              </div>
+              {negotiation.length > 0 ? (
+                negotiation.map(
+                  (negotiation) => (
+                    console.log(negotiation),
+                    (
+                      <Card
+                        key={negotiation?.id}
+                        title={negotiation?.lead?.account_name}
+                        content={`Value: $${negotiation?.new_value}\n
+                                Assignee: ${
+                                  negotiation?.lead?.assigned_to?.[0]
+                                    ?.user_details?.first_name &&
+                                  negotiation?.lead?.assigned_to?.[0]
+                                    ?.user_details?.last_name
+                                    ? negotiation?.lead?.assigned_to?.[0]
+                                        ?.user_details?.first_name +
+                                      ' ' +
+                                      negotiation?.lead?.assigned_to?.[0]
+                                        ?.user_details?.last_name
+                                    : 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
+              ) : (
+                <div>
+                  <p>No negotiations available</p>
+                </div>
+              )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#1C4D4D' }} onClick={() => handleHeaderClick('Won')}>Won</div>
-              <Card title="Won" content="Won details here..." />
-              <Card title="Won" content="Won details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#1C4D4D' }}
+                onClick={() => handleHeaderClick('Won')}
+              >
+                Won
+              </div>
+              {won.length > 0 ? (
+                won.map(
+                  (won) => (
+                    console.log(won),
+                    (
+                      <Card
+                        key={won?.id}
+                        title={won?.lead?.account_name}
+                        content={`Value: $${won?.deal_value}\n
+                                Assignee: ${
+                                  won?.lead?.assigned_to?.[0]?.user_details
+                                    ?.first_name &&
+                                  won?.lead?.assigned_to?.[0]?.user_details
+                                    ?.last_name
+                                    ? won?.lead?.assigned_to?.[0]?.user_details
+                                        ?.first_name +
+                                      ' ' +
+                                      won?.lead?.assigned_to?.[0]?.user_details
+                                        ?.last_name
+                                    : 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
+              ) : (
+                <div>
+                  <p>No won leads available</p>
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
     </Box>
   );
-}
+};
 
 export default Deals;
