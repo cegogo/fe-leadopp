@@ -327,7 +327,7 @@ const Deals: React.FC = () => {
               >
                 Leads
               </div>
-              {leads.length > 0 ? (
+              {leads && leads.length > 0 ? (
                 leads.map(
                   (lead) => (
                     console.log(lead),
@@ -366,7 +366,7 @@ const Deals: React.FC = () => {
               >
                 Meeting
               </div>
-              {meeting.length > 0 ? (
+              {meeting && meeting.length > 0 ? (
                 meeting.map(
                   (meeting) => (
                     console.log(meeting),
@@ -404,7 +404,7 @@ const Deals: React.FC = () => {
               >
                 Opportunity
               </div>
-              {opportunities.length > 0 ? (
+              {opportunities && opportunities.length > 0 ? (
                 opportunities.map((opportunity) => (
                   <Card
                     key={opportunity.id}
@@ -425,7 +425,7 @@ const Deals: React.FC = () => {
               >
                 Qualified
               </div>
-              {qualified.length > 0 ? (
+              {qualified && qualified.length > 0 ? (
                 qualified.map(
                   (qualified) => (
                     console.log(qualified),
@@ -463,7 +463,7 @@ const Deals: React.FC = () => {
               >
                 Negotiation
               </div>
-              {negotiation.length > 0 ? (
+              {negotiation && negotiation.length > 0 ? (
                 negotiation.map(
                   (negotiation) => (
                     console.log(negotiation),
@@ -501,7 +501,7 @@ const Deals: React.FC = () => {
               >
                 Won
               </div>
-              {won.length > 0 ? (
+              {won && won.length > 0 ? (
                 won.map(
                   (won) => (
                     console.log(won),
