@@ -107,11 +107,13 @@ interface FormData {
 }
 
 const LEAD_STATUS = [
-  { value: "assigned", label: "Assigned" },
-  { value: "in process", label: "In Process" },
-  { value: "converted", label: "Converted" },
-  { value: "recycled", label: "Recycled" },
-  { value: "closed", label: "Closed" },
+  { value: 'lead', label: 'Lead' },
+  { value: 'meeting', label: 'Meeting' },
+  { value: 'opportunity', label: 'Opportunity' },
+  { value: 'qualified', label: 'Qualified' },
+  { value: 'negotiation', label: 'Negotiation' },
+  { value: 'won', label: 'Won' },
+  { value: 'closed', label: 'Closed' },
 ];
 
 export function AddLeads() {
@@ -121,7 +123,7 @@ export function AddLeads() {
   const initialContentRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  
+
   const autocompleteRef = useRef<any>(null);
   const [error, setError] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
@@ -147,7 +149,7 @@ export function AddLeads() {
     teams: '',
     assigned_to: [],
     contacts: [],
-    status: 'assigned',
+    status: 'lead',
     source: 'call',
     address_line: '',
     street: '',
@@ -212,7 +214,7 @@ export function AddLeads() {
         lead_attachment: file.name,
         file: prevData.file,
       }));
-  
+
       const reader = new FileReader();
       reader.onload = () => {
         setFormData((prevData) => ({
@@ -303,7 +305,7 @@ export function AddLeads() {
       teams: '',
       assigned_to: [],
       contacts: [],
-      status: 'assigned',
+      status: 'lead',
       source: 'call',
       address_line: '',
       street: '',
@@ -489,7 +491,10 @@ export function AddLeads() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl error={!!errors?.assigned_to?.[0]} sx={{ width: '70%' }}>
+                        <FormControl
+                          error={!!errors?.assigned_to?.[0]}
+                          sx={{ width: '70%' }}
+                        >
                           <Autocomplete
                             value={selectedAssignTo}
                             options={state?.users || []}
@@ -525,7 +530,7 @@ export function AddLeads() {
                               </CustomPopupIcon>
                             }
                             renderInput={(params) => (
-                            <TextField
+                              <TextField
                                 {...params}
                                 variant="outlined"
                                 placeholder="Add User"
@@ -543,9 +548,11 @@ export function AddLeads() {
                                   },
                                 }}
                               />
-                            )}                            
-                            />
-                          <FormHelperText>{errors?.assigned_to?.[0] || ''}</FormHelperText>
+                            )}
+                          />
+                          <FormHelperText>
+                            {errors?.assigned_to?.[0] || ''}
+                          </FormHelperText>
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
@@ -585,10 +592,10 @@ export function AddLeads() {
                           >
                             {state?.industries?.length
                               ? state?.industries.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[1]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))
+                                  <MenuItem key={option[0]} value={option[1]}>
+                                    {option[1]}
+                                  </MenuItem>
+                                ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -610,7 +617,9 @@ export function AddLeads() {
                             onChange={handleChange}
                             IconComponent={() => (
                               <div
-                                onClick={() => setStatusSelectOpen(!statusSelectOpen)}
+                                onClick={() =>
+                                  setStatusSelectOpen(!statusSelectOpen)
+                                }
                                 className="select-icon-background"
                               >
                                 {statusSelectOpen ? (
@@ -635,7 +644,7 @@ export function AddLeads() {
                         </FormControl>
                       </div>
                       <div className="fieldSubContainer">
-                      <div className="fieldTitle">Probability</div>
+                        <div className="fieldTitle">Probability</div>
                         <TextField
                           name="probability"
                           value={formData.probability}
@@ -700,10 +709,10 @@ export function AddLeads() {
                           >
                             {state?.source?.length
                               ? state?.source.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[0]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))
+                                  <MenuItem key={option[0]} value={option[0]}>
+                                    {option[1]}
+                                  </MenuItem>
+                                ))
                               : ''}
                           </Select>
                           <FormHelperText>
@@ -901,9 +910,7 @@ export function AddLeads() {
                   >
                     <div className="fieldContainer">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">
-                          Address Line
-                        </div>
+                        <div className="fieldTitle">Address Line</div>
                         <TextField
                           name="address_line"
                           value={formData.address_line}
@@ -1013,10 +1020,10 @@ export function AddLeads() {
                           >
                             {state?.countries?.length
                               ? state?.countries.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[0]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))
+                                  <MenuItem key={option[0]} value={option[0]}>
+                                    {option[1]}
+                                  </MenuItem>
+                                ))
                               : ''}
                           </Select>
                           <FormHelperText>

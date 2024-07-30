@@ -1,35 +1,54 @@
-import React, { SyntheticEvent, useState, useEffect, } from 'react';
-import { Box, Button, Tabs } from '@mui/material'
+import React, { SyntheticEvent, useState, useEffect } from 'react';
+import { Box, Button, Tabs } from '@mui/material';
 import Leads from '../leads/Leads';
-import { LeadUrl, OpportunityUrl } from '../../services/ApiUrls';
+import {
+  LeadUrl,
+  OpportunityUrl,
+  MeetingUrl,
+  QualifiedUrl,
+  NegotiationUrl,
+  WonUrl,
+} from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import Opportunities from '../opportunities/Opportunities';
 import Card from './Card';
 import { CustomTab, CustomToolbar } from '../../styles/CssStyled';
-import '../../styles/style.css'
+import '../../styles/style.css';
 import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
 import { useNavigate } from 'react-router-dom';
+import Meeting from './Meeting';
+import Negotiation from './Negotiation';
+import Qualified from './Qualified';
+import Won from './Won';
 
 const Deals: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
-  const [selectedComponent, setSelectedComponent] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [selectedComponent, setSelectedComponent] = useState<string | null>(
+    null
+  );
   const [leads, setLeads] = useState<any[]>([]);
+  const [meeting, setMeetings] = useState<any[]>([]);
   const [opportunities, setOpportunities] = useState<any[]>([]);
-  const [contacts, setContacts] = useState([])
-  const [status, setStatus] = useState([])
-  const [source, setSource] = useState([])
-  const [companies, setCompanies] = useState([])
-  const [tags, setTags] = useState([])
-  const [users, setUsers] = useState([])
-  const [countries, setCountries] = useState([])
-  const [industries, setIndustries] = useState([])
-  const [currency, setCurrency] = useState([])
-  const [leadSource, setLeadSource] = useState([])
-  const [account, setAccount] = useState([])
-  const [stage, setStage] = useState([])
-  const [teams, setTeams] = useState([])
-
+  const [qualified, setQualified] = useState<any[]>([]);
+  const [negotiation, setNegotiation] = useState<any[]>([]);
+  const [won, setWon] = useState<any[]>([]);
+  const [contacts, setContacts] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [source, setSource] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [industries, setIndustries] = useState([]);
+  const [currency, setCurrency] = useState([]);
+  const [leadSource, setLeadSource] = useState([]);
+  const [account, setAccount] = useState([]);
+  const [stage, setStage] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const filterLeadsByStatus = (status: string) => {
+    return leads.filter((lead) => lead.status === status);
+  };
 
   // Define inline styles as JavaScript objects
   const containerStyle: React.CSSProperties = {
@@ -40,7 +59,7 @@ const Deals: React.FC = () => {
 
   const columnsStyle: React.CSSProperties = {
     display: 'flex',
-    gap: '0'
+    gap: '0',
   };
 
   const columnStyle: React.CSSProperties = {
@@ -65,7 +84,7 @@ const Deals: React.FC = () => {
     marginTop: '20px',
     padding: '20px',
     border: '1px solid #1C4D4D',
-    borderRadius: '5px'
+    borderRadius: '5px',
   };
 
   const handleHeaderClick = (component: string) => {
@@ -82,21 +101,28 @@ const Deals: React.FC = () => {
       navigate('/app/leads/add-leads', {
         state: {
           detail: false,
-          contacts: contacts || [], status: status || [], source: source || [], companies: companies || [], tags: tags || [], users: users || [], countries: countries || [], industries: industries || []
-          // status: leads.status, source: leads.source, industry: leads.industries, users: leads.users, tags: leads.tags, contacts: leads.contacts 
-        }
-      })
+          contacts: contacts || [],
+          status: status || [],
+          source: source || [],
+          companies: companies || [],
+          tags: tags || [],
+          users: users || [],
+          countries: countries || [],
+          industries: industries || [],
+          // status: leads.status, source: leads.source, industry: leads.industries, users: leads.users, tags: leads.tags, contacts: leads.contacts
+        },
+      });
     }
-  }
+  };
 
   // Function to render the selected component
   const renderComponent = () => {
     if (selectedComponent === 'Leads') return <Leads />;
     if (selectedComponent === 'Opportunities') return <Opportunities />;
-    if (selectedComponent === 'Meeting') return <div>Meeting Component Content</div>;
-    if (selectedComponent === 'Qualified') return <div>Qualified Component Content</div>;
-    if (selectedComponent === 'Negotiation') return <div>Negotiation Component Content</div>;
-    if (selectedComponent === 'Won') return <div>Won Component Content</div>;
+    if (selectedComponent === 'Meeting') return <Meeting />;
+    if (selectedComponent === 'Qualified') return <Qualified />;
+    if (selectedComponent === 'Negotiation') return <Negotiation />;
+    if (selectedComponent === 'Won') return <Won />;
     return null;
   };
 
@@ -113,72 +139,45 @@ const Deals: React.FC = () => {
     };
 
     try {
-      const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
+      const res = await fetchData(`${LeadUrl}/?limit=50`, 'GET', null as any, Header); //limit=50 is getting 50 leads, ignoring the pagination of 10.
       if (!res.error) {
-        setLeads(res?.open_leads?.open_leads)
-        setContacts(res?.contacts)
-        setStatus(res?.status)
-        setSource(res?.source)
-        setCompanies(res?.companies)
-        setTags(res?.tags)
-        setUsers(res?.users)
-        setCountries(res?.countries)
-        setIndustries(res?.industries)
+        setLeads(res?.open_leads?.open_leads);
+        setContacts(res?.contacts);
+        setStatus(res?.status);
+        setSource(res?.source);
+        setCompanies(res?.companies);
+        setTags(res?.tags);
+        setUsers(res?.users);
+        setCountries(res?.countries);
+        setIndustries(res?.industries);
       }
       setLoading(false); // Set loading to false after data is fetched
     } catch (error) {
       console.error('Error fetching data:', error);
       setLoading(false); // Set loading to false even if there's an error
     }
-  }
-  useEffect(() => {
-    getOpportunity();
-  }, []);
-
-  const getOpportunity = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const resop = await fetchData(`${OpportunityUrl}/`, 'GET', null as any, Header);
-      if (!resop.error) {
-        setOpportunities(resop?.opportunities)
-        setContacts(resop?.contacts_list)
-        setAccount(resop?.accounts_list)
-        setCurrency(resop?.currency)
-        setLeadSource(resop?.lead_source)
-        setStage(resop?.stage)
-        setTags(resop?.tags)
-        setTeams(resop?.teams)
-        setUsers(resop?.users)
-        setCountries(resop?.countries)
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching opportunity data:', error);
-      setLoading(false);
-    }
-  }
+  };
 
   return (
-    <Box sx={{
-      mt: '60px',
-    }}>
+    <Box
+      sx={{
+        mt: '60px',
+      }}
+    >
       <CustomToolbar>
         <Tabs sx={{ mt: '26px' }}>
-          <CustomTab value="open" label="Open"
+          <CustomTab
+            value="open"
+            label="Open"
             sx={{
               backgroundColor: 'white',
               color: 'darkblue',
-            }} />
+            }}
+          />
         </Tabs>
         <Button
-          variant='contained'
-          startIcon={<FiPlus className='plus-icon' />}
+          variant="contained"
+          startIcon={<FiPlus className="plus-icon" />}
           onClick={onAddHandle}
           className={'add-button'}
         >
@@ -196,62 +195,198 @@ const Deals: React.FC = () => {
         ) : (
           <div style={columnsStyle}>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }} onClick={() => handleHeaderClick('Leads')}>Leads</div>
-              {leads.length > 0 ? (
-                leads.map((lead) => (
-                  console.log(lead),
-                  <Card key={lead?.id} title={lead?.account_name} content={`Value: $${lead?.opportunity_amount}\n
-                                Assignee: ${lead?.assigned_to?.[0]?.user_details?.first_name && lead?.assigned_to?.[0]?.user_details?.last_name ?
-                      lead?.assigned_to?.[0]?.user_details?.first_name + ' ' + lead?.assigned_to?.[0]?.user_details?.last_name :
-                      lead?.assigned_to?.[0]?.user_details?.email || 'Unassigned'}`} />
-                ))
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }}
+                onClick={() => handleHeaderClick('Leads')}
+              >
+                Leads
+              </div>
+              {leads && leads.length > 0 ? (
+              filterLeadsByStatus('lead').map((lead) => (
+                <Card
+                  key={lead.id}
+                  title={lead.account_name}
+                  content={`Value: €${lead.opportunity_amount || "---"}\nAssignee: ${
+                    lead.assigned_to?.[0]?.user_details?.first_name &&
+                    lead.assigned_to?.[0]?.user_details?.last_name
+                      ? lead.assigned_to?.[0]?.user_details?.first_name +
+                        ' ' +
+                        lead.assigned_to?.[0]?.user_details?.last_name
+                      : lead.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                  }`}
+                />
+              ))
+            ) : (
+              <div>
+                <p>No leads available</p>
+              </div>
+            )}
+          </div>
+            <div style={columnStyle}>
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }}
+                onClick={() => handleHeaderClick('Meeting')}
+              >
+                Meeting
+              </div>
+              {filterLeadsByStatus('meeting').length > 0 ? (
+                filterLeadsByStatus('meeting').map((meeting) => (
+                    console.log(meeting),
+                    (
+                      <Card
+                        key={meeting?.id}
+                        title={meeting?.account_name}
+                        content={`Value: €${meeting.opportunity_amount|| "---"}\nAssignee: ${
+                          meeting.assigned_to?.[0]?.user_details?.first_name &&
+                          meeting.assigned_to?.[0]?.user_details?.last_name
+                            ? meeting.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              meeting.assigned_to?.[0]?.user_details?.last_name
+                            : meeting.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                                }`}
+                      />
+                    )
+                  )
+                )
               ) : (
                 <div>
-                  <p>No leads available</p>
+                  <p>No meetings available</p>
                 </div>
               )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }} onClick={() => handleHeaderClick('Meeting')}>Meeting</div>
-              <Card title="Meeting" content="Meeting details here..." />
-              <Card title="Meeting" content="Meeting details here..." />
-            </div>
-            <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#3685B5' }} onClick={() => handleHeaderClick('Opportunities')}>Opportunity</div>
-              {opportunities.length > 0 ? (
-                opportunities.map((opportunity) => (
-                  <Card
-                    key={opportunity.id}
-                    title={opportunity.name}
-                    content={`Value: $${opportunity?.amount}\nStage: ${opportunity?.stage}`}
-                  />
-                ))
-              ) : (
-                <div>
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#3685B5' }}
+                onClick={() => handleHeaderClick('Opportunities')}
+              >
+                Opportunity
+              </div>
+              {filterLeadsByStatus('opportunity').length > 0 ? (
+                filterLeadsByStatus('opportunity').map((opportunity) => (
+                    console.log(opportunity),
+                    (
+                      <Card
+                        key={opportunity?.id}
+                        title={opportunity?.account_name}
+                        content={`Value: €${opportunity.opportunity_amount|| "---"}\nAssignee: ${
+                          opportunity.assigned_to?.[0]?.user_details?.first_name &&
+                          opportunity.assigned_to?.[0]?.user_details?.last_name
+                            ? opportunity.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              opportunity.assigned_to?.[0]?.user_details?.last_name
+                            : opportunity.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
+                    )
+                  ) : (
+                    <div>
                   <p>No opportunities available</p>
                 </div>
               )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#0471A6' }} onClick={() => handleHeaderClick('Qualified')}>Qualified</div>
-              <Card title="Qualified" content="Qualified details here..." />
-              <Card title="Qualified" content="Qualified details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#0471A6' }}
+                onClick={() => handleHeaderClick('Qualified')}
+              >
+                Qualified
+              </div>
+              {filterLeadsByStatus('qualified').length > 0 ? (
+                filterLeadsByStatus('qualified').map((qualified) => (
+                    console.log(qualified),
+                    (
+                      <Card
+                        key={qualified?.id}
+                        title={qualified?.account_name}
+                        content={`Value: €${qualified.opportunity_amount|| "---"}\nAssignee: ${
+                          qualified.assigned_to?.[0]?.user_details?.first_name &&
+                          qualified.assigned_to?.[0]?.user_details?.last_name
+                            ? qualified.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              qualified.assigned_to?.[0]?.user_details?.last_name
+                            : qualified.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
+                    )
+                  ) : (
+                    <div>
+                  <p>No qualified leads available</p>
+                </div>
+              )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#023d5a' }} onClick={() => handleHeaderClick('Negotiation')}>Negotiation</div>
-              <Card title="Negotiation" content="Negotiation details here..." />
-              <Card title="Negotiation" content="Negotiation details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#023d5a' }}
+                onClick={() => handleHeaderClick('Negotiation')}
+              >
+                Negotiation
+              </div>
+              {filterLeadsByStatus('negotiation').length > 0 ? (
+                filterLeadsByStatus('negotiation').map((negotiation) => (
+                    console.log(negotiation),
+                    (
+                      <Card
+                        key={negotiation?.id}
+                        title={negotiation?.account_name}
+                        content={`Value: €${negotiation.opportunity_amount|| "---"}\nAssignee: ${
+                          negotiation.assigned_to?.[0]?.user_details?.first_name &&
+                          negotiation.assigned_to?.[0]?.user_details?.last_name
+                            ? negotiation.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              negotiation.assigned_to?.[0]?.user_details?.last_name
+                            : negotiation.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
+                    )
+                  ) : (
+                    <div>
+                  <p>No negotiations available</p>
+                </div>
+              )}
             </div>
             <div style={columnStyle}>
-              <div style={{ ...headerStyleBase, backgroundColor: '#1C4D4D' }} onClick={() => handleHeaderClick('Won')}>Won</div>
-              <Card title="Won" content="Won details here..." />
-              <Card title="Won" content="Won details here..." />
+              <div
+                style={{ ...headerStyleBase, backgroundColor: '#1C4D4D' }}
+                onClick={() => handleHeaderClick('Won')}
+              >
+                Won
+              </div>
+              {filterLeadsByStatus('won').length > 0 ? (
+                filterLeadsByStatus('won').map((won) => (
+                    console.log(won),
+                    (
+                      <Card
+                        key={won?.id}
+                        title={won?.account_name}
+                        content={`Value: €${won.opportunity_amount|| "---"}\nAssignee: ${
+                          won.assigned_to?.[0]?.user_details?.first_name &&
+                          won.assigned_to?.[0]?.user_details?.last_name
+                            ? won.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              won.assigned_to?.[0]?.user_details?.last_name
+                            : won.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
+                    )
+                  ) : (
+                    <div>
+                  <p>No won leads available</p>
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
     </Box>
   );
-}
+};
 
 export default Deals;
