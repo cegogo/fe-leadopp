@@ -206,7 +206,7 @@ const Deals: React.FC = () => {
                 <Card
                   key={lead.id}
                   title={lead.account_name}
-                  content={`Value: $${lead.opportunity_amount}\nAssignee: ${
+                  content={`Value: €${lead.opportunity_amount || "---"}\nAssignee: ${
                     lead.assigned_to?.[0]?.user_details?.first_name &&
                     lead.assigned_to?.[0]?.user_details?.last_name
                       ? lead.assigned_to?.[0]?.user_details?.first_name +
@@ -236,7 +236,7 @@ const Deals: React.FC = () => {
                       <Card
                         key={meeting?.id}
                         title={meeting?.account_name}
-                        content={`Value: $${meeting.opportunity_amount}\nAssignee: ${
+                        content={`Value: €${meeting.opportunity_amount|| "---"}\nAssignee: ${
                           meeting.assigned_to?.[0]?.user_details?.first_name &&
                           meeting.assigned_to?.[0]?.user_details?.last_name
                             ? meeting.assigned_to?.[0]?.user_details?.first_name +
@@ -268,7 +268,7 @@ const Deals: React.FC = () => {
                       <Card
                         key={opportunity?.id}
                         title={opportunity?.account_name}
-                        content={`Value: $${opportunity.opportunity_amount}\nAssignee: ${
+                        content={`Value: €${opportunity.opportunity_amount|| "---"}\nAssignee: ${
                           opportunity.assigned_to?.[0]?.user_details?.first_name &&
                           opportunity.assigned_to?.[0]?.user_details?.last_name
                             ? opportunity.assigned_to?.[0]?.user_details?.first_name +
@@ -300,7 +300,7 @@ const Deals: React.FC = () => {
                       <Card
                         key={qualified?.id}
                         title={qualified?.account_name}
-                        content={`Value: $${qualified.opportunity_amount}\nAssignee: ${
+                        content={`Value: €${qualified.opportunity_amount|| "---"}\nAssignee: ${
                           qualified.assigned_to?.[0]?.user_details?.first_name &&
                           qualified.assigned_to?.[0]?.user_details?.last_name
                             ? qualified.assigned_to?.[0]?.user_details?.first_name +
@@ -332,7 +332,7 @@ const Deals: React.FC = () => {
                       <Card
                         key={negotiation?.id}
                         title={negotiation?.account_name}
-                        content={`Value: $${negotiation.opportunity_amount}\nAssignee: ${
+                        content={`Value: €${negotiation.opportunity_amount|| "---"}\nAssignee: ${
                           negotiation.assigned_to?.[0]?.user_details?.first_name &&
                           negotiation.assigned_to?.[0]?.user_details?.last_name
                             ? negotiation.assigned_to?.[0]?.user_details?.first_name +
@@ -364,7 +364,7 @@ const Deals: React.FC = () => {
                       <Card
                         key={won?.id}
                         title={won?.account_name}
-                        content={`Value: $${won.opportunity_amount}\nAssignee: ${
+                        content={`Value: €${won.opportunity_amount|| "---"}\nAssignee: ${
                           won.assigned_to?.[0]?.user_details?.first_name &&
                           won.assigned_to?.[0]?.user_details?.last_name
                             ? won.assigned_to?.[0]?.user_details?.first_name +
