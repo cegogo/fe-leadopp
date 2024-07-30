@@ -139,7 +139,7 @@ const Deals: React.FC = () => {
     };
 
     try {
-      const res = await fetchData(`${LeadUrl}/`, 'GET', null as any, Header);
+      const res = await fetchData(`${LeadUrl}/?limit=50`, 'GET', null as any, Header); //limit=50 is getting 50 leads, ignoring the pagination of 10.
       if (!res.error) {
         setLeads(res?.open_leads?.open_leads);
         setContacts(res?.contacts);
