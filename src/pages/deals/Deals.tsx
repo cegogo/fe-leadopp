@@ -46,6 +46,9 @@ const Deals: React.FC = () => {
   const [account, setAccount] = useState([]);
   const [stage, setStage] = useState([]);
   const [teams, setTeams] = useState([]);
+  const filterLeadsByStatus = (status: string) => {
+    return leads.filter((lead) => lead.status === status);
+  };
 
   // Define inline styles as JavaScript objects
   const containerStyle: React.CSSProperties = {
@@ -125,11 +128,6 @@ const Deals: React.FC = () => {
 
   useEffect(() => {
     getLeads();
-    getOpportunity();
-    getMeetings();
-    getQualified();
-    getNegotiation();
-    getWon();
   }, []);
 
   const getLeads = async () => {
@@ -157,130 +155,6 @@ const Deals: React.FC = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
       setLoading(false); // Set loading to false even if there's an error
-    }
-  };
-
-  const getMeetings = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const res = await fetchData(`${MeetingUrl}/`, 'GET', null as any, Header);
-      if (!res.error) {
-        setMeetings(res?.meetings);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching meetings data:', error);
-      setLoading(false);
-    }
-  };
-
-  const getOpportunity = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const resop = await fetchData(
-        `${OpportunityUrl}/`,
-        'GET',
-        null as any,
-        Header
-      );
-      if (!resop.error) {
-        setOpportunities(resop?.opportunities);
-        setContacts(resop?.contacts_list);
-        setAccount(resop?.accounts_list);
-        setCurrency(resop?.currency);
-        setLeadSource(resop?.lead_source);
-        setStage(resop?.stage);
-        setTags(resop?.tags);
-        setTeams(resop?.teams);
-        setUsers(resop?.users);
-        setCountries(resop?.countries);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching opportunity data:', error);
-      setLoading(false);
-    }
-  };
-
-  const getQualified = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const res = await fetchData(
-        `${QualifiedUrl}/`,
-        'GET',
-        null as any,
-        Header
-      );
-      if (!res.error) {
-        setQualified(res?.qualified);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching qualified data:', error);
-      setLoading(false);
-    }
-  };
-
-  const getNegotiation = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const res = await fetchData(
-        `${NegotiationUrl}/`,
-        'GET',
-        null as any,
-        Header
-      );
-      if (!res.error) {
-        setNegotiation(res?.negotiation);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching negotiation data:', error);
-      setLoading(false);
-    }
-  };
-
-  const getWon = async () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token') || '',
-      org: localStorage.getItem('org') || '',
-    };
-
-    try {
-      const res = await fetchData(`${WonUrl}/`, 'GET', null as any, Header);
-      if (!res.error) {
-        setWon(res?.won);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching won data:', error);
-      setLoading(false);
     }
   };
 
@@ -328,37 +202,26 @@ const Deals: React.FC = () => {
                 Leads
               </div>
               {leads && leads.length > 0 ? (
-                leads.map(
-                  (lead) => (
-                    console.log(lead),
-                    (
-                      <Card
-                        key={lead?.id}
-                        title={lead?.account_name}
-                        content={`Value: $${lead?.opportunity_amount}\n
-                                Assignee: ${
-                                  lead?.assigned_to?.[0]?.user_details
-                                    ?.first_name &&
-                                  lead?.assigned_to?.[0]?.user_details
-                                    ?.last_name
-                                    ? lead?.assigned_to?.[0]?.user_details
-                                        ?.first_name +
-                                      ' ' +
-                                      lead?.assigned_to?.[0]?.user_details
-                                        ?.last_name
-                                    : lead?.assigned_to?.[0]?.user_details
-                                        ?.email || 'Unassigned'
-                                }`}
-                      />
-                    )
-                  )
-                )
-              ) : (
-                <div>
-                  <p>No leads available</p>
-                </div>
-              )}
-            </div>
+              filterLeadsByStatus('lead').map((lead) => (
+                <Card
+                  key={lead.id}
+                  title={lead.account_name}
+                  content={`Value: $${lead.opportunity_amount}\nAssignee: ${
+                    lead.assigned_to?.[0]?.user_details?.first_name &&
+                    lead.assigned_to?.[0]?.user_details?.last_name
+                      ? lead.assigned_to?.[0]?.user_details?.first_name +
+                        ' ' +
+                        lead.assigned_to?.[0]?.user_details?.last_name
+                      : lead.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                  }`}
+                />
+              ))
+            ) : (
+              <div>
+                <p>No leads available</p>
+              </div>
+            )}
+          </div>
             <div style={columnStyle}>
               <div
                 style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }}
@@ -366,26 +229,20 @@ const Deals: React.FC = () => {
               >
                 Meeting
               </div>
-              {meeting && meeting.length > 0 ? (
-                meeting.map(
-                  (meeting) => (
+              {filterLeadsByStatus('meeting').length > 0 ? (
+                filterLeadsByStatus('meeting').map((meeting) => (
                     console.log(meeting),
                     (
                       <Card
                         key={meeting?.id}
-                        title={meeting?.lead?.account_name}
-                        content={`Value: $${meeting?.estimated_value}\n
-                                Assignee: ${
-                                  meeting?.lead?.assigned_to?.[0]?.user_details
-                                    ?.first_name &&
-                                  meeting?.lead?.assigned_to?.[0]?.user_details
-                                    ?.last_name
-                                    ? meeting?.lead?.assigned_to?.[0]
-                                        ?.user_details?.first_name +
-                                      ' ' +
-                                      meeting?.lead?.assigned_to?.[0]
-                                        ?.user_details?.last_name
-                                    : 'Unassigned'
+                        title={meeting?.account_name}
+                        content={`Value: $${meeting.opportunity_amount}\nAssignee: ${
+                          meeting.assigned_to?.[0]?.user_details?.first_name &&
+                          meeting.assigned_to?.[0]?.user_details?.last_name
+                            ? meeting.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              meeting.assigned_to?.[0]?.user_details?.last_name
+                            : meeting.assigned_to?.[0]?.user_details?.email || 'Unassigned'
                                 }`}
                       />
                     )
@@ -404,16 +261,27 @@ const Deals: React.FC = () => {
               >
                 Opportunity
               </div>
-              {opportunities && opportunities.length > 0 ? (
-                opportunities.map((opportunity) => (
-                  <Card
-                    key={opportunity.id}
-                    title={opportunity.name}
-                    content={`Value: $${opportunity?.amount}\nStage: ${opportunity?.stage}`}
-                  />
-                ))
-              ) : (
-                <div>
+              {filterLeadsByStatus('opportunity').length > 0 ? (
+                filterLeadsByStatus('opportunity').map((opportunity) => (
+                    console.log(opportunity),
+                    (
+                      <Card
+                        key={opportunity?.id}
+                        title={opportunity?.account_name}
+                        content={`Value: $${opportunity.opportunity_amount}\nAssignee: ${
+                          opportunity.assigned_to?.[0]?.user_details?.first_name &&
+                          opportunity.assigned_to?.[0]?.user_details?.last_name
+                            ? opportunity.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              opportunity.assigned_to?.[0]?.user_details?.last_name
+                            : opportunity.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
+                    )
+                  ) : (
+                    <div>
                   <p>No opportunities available</p>
                 </div>
               )}
@@ -425,33 +293,27 @@ const Deals: React.FC = () => {
               >
                 Qualified
               </div>
-              {qualified && qualified.length > 0 ? (
-                qualified.map(
-                  (qualified) => (
+              {filterLeadsByStatus('qualified').length > 0 ? (
+                filterLeadsByStatus('qualified').map((qualified) => (
                     console.log(qualified),
                     (
                       <Card
                         key={qualified?.id}
-                        title={qualified?.lead?.account_name}
-                        content={`Value: $${qualified?.offer_value}\n
-                                Assignee: ${
-                                  qualified?.lead?.assigned_to?.[0]
-                                    ?.user_details?.first_name &&
-                                  qualified?.lead?.assigned_to?.[0]
-                                    ?.user_details?.last_name
-                                    ? qualified?.lead?.assigned_to?.[0]
-                                        ?.user_details?.first_name +
-                                      ' ' +
-                                      qualified?.lead?.assigned_to?.[0]
-                                        ?.user_details?.last_name
-                                    : 'Unassigned'
-                                }`}
-                      />
+                        title={qualified?.account_name}
+                        content={`Value: $${qualified.opportunity_amount}\nAssignee: ${
+                          qualified.assigned_to?.[0]?.user_details?.first_name &&
+                          qualified.assigned_to?.[0]?.user_details?.last_name
+                            ? qualified.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              qualified.assigned_to?.[0]?.user_details?.last_name
+                            : qualified.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
                     )
-                  )
-                )
-              ) : (
-                <div>
+                  ) : (
+                    <div>
                   <p>No qualified leads available</p>
                 </div>
               )}
@@ -463,33 +325,27 @@ const Deals: React.FC = () => {
               >
                 Negotiation
               </div>
-              {negotiation && negotiation.length > 0 ? (
-                negotiation.map(
-                  (negotiation) => (
+              {filterLeadsByStatus('negotiation').length > 0 ? (
+                filterLeadsByStatus('negotiation').map((negotiation) => (
                     console.log(negotiation),
                     (
                       <Card
                         key={negotiation?.id}
-                        title={negotiation?.lead?.account_name}
-                        content={`Value: $${negotiation?.new_value}\n
-                                Assignee: ${
-                                  negotiation?.lead?.assigned_to?.[0]
-                                    ?.user_details?.first_name &&
-                                  negotiation?.lead?.assigned_to?.[0]
-                                    ?.user_details?.last_name
-                                    ? negotiation?.lead?.assigned_to?.[0]
-                                        ?.user_details?.first_name +
-                                      ' ' +
-                                      negotiation?.lead?.assigned_to?.[0]
-                                        ?.user_details?.last_name
-                                    : 'Unassigned'
-                                }`}
-                      />
+                        title={negotiation?.account_name}
+                        content={`Value: $${negotiation.opportunity_amount}\nAssignee: ${
+                          negotiation.assigned_to?.[0]?.user_details?.first_name &&
+                          negotiation.assigned_to?.[0]?.user_details?.last_name
+                            ? negotiation.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              negotiation.assigned_to?.[0]?.user_details?.last_name
+                            : negotiation.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
                     )
-                  )
-                )
-              ) : (
-                <div>
+                  ) : (
+                    <div>
                   <p>No negotiations available</p>
                 </div>
               )}
@@ -501,33 +357,27 @@ const Deals: React.FC = () => {
               >
                 Won
               </div>
-              {won && won.length > 0 ? (
-                won.map(
-                  (won) => (
+              {filterLeadsByStatus('won').length > 0 ? (
+                filterLeadsByStatus('won').map((won) => (
                     console.log(won),
                     (
                       <Card
                         key={won?.id}
-                        title={won?.lead?.account_name}
-                        content={`Value: $${won?.deal_value}\n
-                                Assignee: ${
-                                  won?.lead?.assigned_to?.[0]?.user_details
-                                    ?.first_name &&
-                                  won?.lead?.assigned_to?.[0]?.user_details
-                                    ?.last_name
-                                    ? won?.lead?.assigned_to?.[0]?.user_details
-                                        ?.first_name +
-                                      ' ' +
-                                      won?.lead?.assigned_to?.[0]?.user_details
-                                        ?.last_name
-                                    : 'Unassigned'
-                                }`}
-                      />
+                        title={won?.account_name}
+                        content={`Value: $${won.opportunity_amount}\nAssignee: ${
+                          won.assigned_to?.[0]?.user_details?.first_name &&
+                          won.assigned_to?.[0]?.user_details?.last_name
+                            ? won.assigned_to?.[0]?.user_details?.first_name +
+                              ' ' +
+                              won.assigned_to?.[0]?.user_details?.last_name
+                            : won.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }`}
+                          />
+                        )
+                      )
                     )
-                  )
-                )
-              ) : (
-                <div>
+                  ) : (
+                    <div>
                   <p>No won leads available</p>
                 </div>
               )}
