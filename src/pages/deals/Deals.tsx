@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState, useEffect } from 'react';
-import { Box, Button, Tabs } from '@mui/material';
+import { Avatar, Box, Button, Tabs } from '@mui/material';
 import Leads from '../leads/Leads';
 import {
   LeadUrl,
@@ -11,7 +11,7 @@ import {
 } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import Opportunities from '../opportunities/Opportunities';
-import Card from './Card';
+import PipelineCard from './Card';
 import { CustomTab, CustomToolbar } from '../../styles/CssStyled';
 import '../../styles/style.css';
 import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
@@ -202,26 +202,54 @@ const Deals: React.FC = () => {
                 Leads
               </div>
               {leads && leads.length > 0 ? (
-              filterLeadsByStatus('lead').map((lead) => (
-                <Card
-                  key={lead.id}
-                  title={lead.account_name}
-                  content={`Value: €${lead.opportunity_amount || "---"}\nAssignee: ${
-                    lead.assigned_to?.[0]?.user_details?.first_name &&
-                    lead.assigned_to?.[0]?.user_details?.last_name
-                      ? lead.assigned_to?.[0]?.user_details?.first_name +
-                        ' ' +
-                        lead.assigned_to?.[0]?.user_details?.last_name
-                      : lead.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                  }`}
-                />
-              ))
-            ) : (
-              <div>
-                <p>No leads available</p>
-              </div>
-            )}
-          </div>
+                filterLeadsByStatus('lead').map((lead) => (
+                  console.log(lead),
+                  <PipelineCard
+                    key={lead.id}
+                    title={lead.account_name}
+                    content={
+                      <>
+                        <div>
+                          Value:  <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}>€{lead.opportunity_amount || '---'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {lead.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={lead.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {lead.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{lead.assigned_to?.[0]?.user_details?.first_name &&
+                            lead.assigned_to?.[0]?.user_details?.last_name
+                            ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                            : lead.assigned_to?.[0]?.user_details?.email || 'Unassigned'
+                          }
+                          </span>
+                        </div>
+                        <div>
+                          Probability:  <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}> {lead.probability || '---'}%</span>
+                        </div>
+                      </>
+                    }
+                    />
+                ))
+              ) : (
+                <div>
+                  <p>No leads available</p>
+                </div>
+              )}
+            </div>
             <div style={columnStyle}>
               <div
                 style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }}
@@ -231,23 +259,43 @@ const Deals: React.FC = () => {
               </div>
               {filterLeadsByStatus('meeting').length > 0 ? (
                 filterLeadsByStatus('meeting').map((meeting) => (
-                    console.log(meeting),
-                    (
-                      <Card
-                        key={meeting?.id}
-                        title={meeting?.account_name}
-                        content={`Value: €${meeting.opportunity_amount|| "---"}\nAssignee: ${
-                          meeting.assigned_to?.[0]?.user_details?.first_name &&
-                          meeting.assigned_to?.[0]?.user_details?.last_name
-                            ? meeting.assigned_to?.[0]?.user_details?.first_name +
-                              ' ' +
-                              meeting.assigned_to?.[0]?.user_details?.last_name
+                  <PipelineCard
+                    key={meeting?.id}
+                    title={meeting?.account_name}
+                    content={
+                      <>
+                        <div>
+                          Value: <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}>€{meeting.opportunity_amount || '---'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {meeting.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={meeting.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {meeting.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{meeting.assigned_to?.[0]?.user_details?.first_name &&
+                            meeting.assigned_to?.[0]?.user_details?.last_name
+                            ? `${meeting.assigned_to[0].user_details.first_name} ${meeting.assigned_to[0].user_details.last_name}`
                             : meeting.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                                }`}
-                      />
-                    )
-                  )
-                )
+                          }
+                          </span>
+                        </div>
+                      </>
+                    }
+                  />
+                ))
               ) : (
                 <div>
                   <p>No meetings available</p>
@@ -263,25 +311,45 @@ const Deals: React.FC = () => {
               </div>
               {filterLeadsByStatus('opportunity').length > 0 ? (
                 filterLeadsByStatus('opportunity').map((opportunity) => (
-                    console.log(opportunity),
-                    (
-                      <Card
-                        key={opportunity?.id}
-                        title={opportunity?.account_name}
-                        content={`Value: €${opportunity.opportunity_amount|| "---"}\nAssignee: ${
-                          opportunity.assigned_to?.[0]?.user_details?.first_name &&
-                          opportunity.assigned_to?.[0]?.user_details?.last_name
-                            ? opportunity.assigned_to?.[0]?.user_details?.first_name +
-                              ' ' +
-                              opportunity.assigned_to?.[0]?.user_details?.last_name
+                  <PipelineCard
+                    key={opportunity?.id}
+                    title={opportunity?.account_name}
+                    content={
+                      <>
+                        <div>
+                          Value: <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}>€{opportunity.opportunity_amount || '---'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {opportunity.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={opportunity.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {opportunity.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{opportunity.assigned_to?.[0]?.user_details?.first_name &&
+                            opportunity.assigned_to?.[0]?.user_details?.last_name
+                            ? `${opportunity.assigned_to[0].user_details.first_name} ${opportunity.assigned_to[0].user_details.last_name}`
                             : opportunity.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                          }`}
-                          />
-                        )
-                      )
-                    )
-                  ) : (
-                    <div>
+                          }
+                          </span>
+                        </div>
+                      </>
+                    }
+                  />
+                ))
+              ) : (
+                <div>
                   <p>No opportunities available</p>
                 </div>
               )}
@@ -295,25 +363,45 @@ const Deals: React.FC = () => {
               </div>
               {filterLeadsByStatus('qualified').length > 0 ? (
                 filterLeadsByStatus('qualified').map((qualified) => (
-                    console.log(qualified),
-                    (
-                      <Card
-                        key={qualified?.id}
-                        title={qualified?.account_name}
-                        content={`Value: €${qualified.opportunity_amount|| "---"}\nAssignee: ${
-                          qualified.assigned_to?.[0]?.user_details?.first_name &&
-                          qualified.assigned_to?.[0]?.user_details?.last_name
-                            ? qualified.assigned_to?.[0]?.user_details?.first_name +
-                              ' ' +
-                              qualified.assigned_to?.[0]?.user_details?.last_name
+                  <PipelineCard
+                    key={qualified?.id}
+                    title={qualified?.account_name}
+                    content={
+                      <>
+                        <div>
+                          Value: <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}>€{qualified.opportunity_amount || '---'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {qualified.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={qualified.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {qualified.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{qualified.assigned_to?.[0]?.user_details?.first_name &&
+                            qualified.assigned_to?.[0]?.user_details?.last_name
+                            ? `${qualified.assigned_to[0].user_details.first_name} ${qualified.assigned_to[0].user_details.last_name}`
                             : qualified.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                          }`}
-                          />
-                        )
-                      )
-                    )
-                  ) : (
-                    <div>
+                          }
+                          </span>
+                        </div>
+                      </>
+                    }
+                  />
+                ))
+              ) : (
+                <div>
                   <p>No qualified leads available</p>
                 </div>
               )}
@@ -327,25 +415,45 @@ const Deals: React.FC = () => {
               </div>
               {filterLeadsByStatus('negotiation').length > 0 ? (
                 filterLeadsByStatus('negotiation').map((negotiation) => (
-                    console.log(negotiation),
-                    (
-                      <Card
-                        key={negotiation?.id}
-                        title={negotiation?.account_name}
-                        content={`Value: €${negotiation.opportunity_amount|| "---"}\nAssignee: ${
-                          negotiation.assigned_to?.[0]?.user_details?.first_name &&
-                          negotiation.assigned_to?.[0]?.user_details?.last_name
-                            ? negotiation.assigned_to?.[0]?.user_details?.first_name +
-                              ' ' +
-                              negotiation.assigned_to?.[0]?.user_details?.last_name
+                  <PipelineCard
+                    key={negotiation?.id}
+                    title={negotiation?.account_name}
+                    content={
+                      <>
+                        <div>
+                          Value: <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}> €{negotiation.opportunity_amount || '---'}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {negotiation.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={negotiation.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {negotiation.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{negotiation.assigned_to?.[0]?.user_details?.first_name &&
+                            negotiation.assigned_to?.[0]?.user_details?.last_name
+                            ? `${negotiation.assigned_to[0].user_details.first_name} ${negotiation.assigned_to[0].user_details.last_name}`
                             : negotiation.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                          }`}
-                          />
-                        )
-                      )
-                    )
-                  ) : (
-                    <div>
+                          }
+                          </span>
+                        </div>
+                      </>
+                    }
+                  />
+                ))
+              ) : (
+                <div>
                   <p>No negotiations available</p>
                 </div>
               )}
@@ -359,25 +467,46 @@ const Deals: React.FC = () => {
               </div>
               {filterLeadsByStatus('won').length > 0 ? (
                 filterLeadsByStatus('won').map((won) => (
-                    console.log(won),
-                    (
-                      <Card
-                        key={won?.id}
-                        title={won?.account_name}
-                        content={`Value: €${won.opportunity_amount|| "---"}\nAssignee: ${
-                          won.assigned_to?.[0]?.user_details?.first_name &&
-                          won.assigned_to?.[0]?.user_details?.last_name
-                            ? won.assigned_to?.[0]?.user_details?.first_name +
-                              ' ' +
-                              won.assigned_to?.[0]?.user_details?.last_name
+                  <PipelineCard
+                    key={won?.id}
+                    title={won?.account_name}
+                    content={
+                      <>
+                        <div>
+                              Value: 
+                              <span style={{color: '#1a3353',fontWeight: 500, textTransform: 'none', }}> €{won.opportunity_amount || '---'} </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          Assignee:&nbsp; {won.assigned_to?.[0]?.user_details?.profile_pic ? (
+                            <Avatar
+                              alt="Profile Picture"
+                              src={won.assigned_to?.[0]?.user_details?.profile_pic}
+                              style={{ marginRight: '8px' }}
+                            />
+                          ) : (
+                            <Avatar alt="Profile Initial">
+                              {won.assigned_to?.[0]?.user_details?.profile_pic?.charAt(0)}
+                            </Avatar>
+                          )}
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                            }}>
+                          &nbsp;{won.assigned_to?.[0]?.user_details?.first_name &&
+                            won.assigned_to?.[0]?.user_details?.last_name
+                            ? `${won.assigned_to[0].user_details.first_name} ${won.assigned_to[0].user_details.last_name}`
                             : won.assigned_to?.[0]?.user_details?.email || 'Unassigned'
-                          }`}
-                          />
-                        )
-                      )
-                    )
-                  ) : (
-                    <div>
+                          }
+                          </span>
+                        </div>
+                      </>
+                    }
+                  />
+                ))
+              ) : (
+                <div>
                   <p>No won leads available</p>
                 </div>
               )}
@@ -388,5 +517,6 @@ const Deals: React.FC = () => {
     </Box>
   );
 };
+
 
 export default Deals;
