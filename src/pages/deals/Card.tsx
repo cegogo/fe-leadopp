@@ -4,7 +4,7 @@ import React from 'react';
 
 interface CardProps {
     title: string;
-    content: JSX.Element;
+    content: React.ReactNode;
 }
 
 const PipelineCard: React.FC<CardProps> = ({ title, content }) => {
@@ -21,7 +21,7 @@ const PipelineCard: React.FC<CardProps> = ({ title, content }) => {
         marginRight: '10px',
         marginLeft: '30px',
         width: '75%',
-            };
+    };
 
     const titleStyle: React.CSSProperties = {
         color: 'rgb(26, 51, 83)',
@@ -29,15 +29,15 @@ const PipelineCard: React.FC<CardProps> = ({ title, content }) => {
         fontWeight: '500',
         cursor: 'pointer',
         marginLeft: '10px',
-            };
-        
+    };
+
     const contentStyle: React.CSSProperties = {
         lineHeight: '1.5',
         color: 'gray',
         fontSize: '16px',
         textTransform: 'capitalize',
         marginLeft: '10px',
-            };
+    };
 
     return (
         <div style={cardStyle}>
