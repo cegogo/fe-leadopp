@@ -88,11 +88,11 @@ const Deals: React.FC = () => {
   };
 
   const getColorForProbability = (probability: number) => {
-    if (probability <= 20) return '#FF4D4D'; // Red
-    if (probability <= 40) return '#FFA500'; // Orange
-    if (probability <= 60) return '#FFFF00'; // Yellow
-    if (probability <= 80) return '#90EE90'; // Light green
-    return '#00FF00'; // Green
+    if (probability <= 20) return '#da2700'; // Red
+    if (probability <= 40) return '#fe8701'; // Orange
+    if (probability <= 60) return '#fcf000'; // Yellow
+    if (probability <= 80) return '#87ea00'; // Light green
+    return '#00b308'; // Green
   };
 
   const handleHeaderClick = (component: string) => {
