@@ -37,6 +37,7 @@ import {
   FabRight,
 } from '../../styles/CssStyled';
 import '../../styles/style.css';
+import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
 
 interface UserDetails {
   first_name?: string;
@@ -147,8 +148,8 @@ export default function Leads(props: any) {
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'probability' | 'value'>('probability');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState('');
+  const [sortDirection, setSortDirection] = useState('');
   const [showUnassignedOnly, setShowUnassignedOnly] = useState(false);
   const [openLeads, setOpenLeads] = useState<Lead[]>([]);
   const [closedLeads, setClosedLeads] = useState<Lead[]>([]);
@@ -182,6 +183,20 @@ export default function Leads(props: any) {
     if (probability <= 60) return '#fcf000'; // Yellow
     if (probability <= 80) return '#87ea00'; // Light green
     return '#00b308'; // Green
+  };
+
+  const handleSortClick = (criteria: 'probability' | 'value') => {
+    if (sortBy === criteria) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortBy('');
+        setSortDirection('asc');
+      }
+    } else {
+      setSortBy(criteria);
+      setSortDirection('asc');
+    }
   };
 
   useEffect(() => {
@@ -440,11 +455,37 @@ export default function Leads(props: any) {
           />
 
           <div>
-            <button onClick={() => { setSortBy('probability'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-              Sort by Probability {sortDirection === 'asc' ? '🔼' : '🔽'}
+            <button style={{
+              width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
+              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: '400',
+              fontSize: '1rem', justifyContent: 'center',
+            }}
+              onClick={() => handleSortClick('probability')}>
+              Sort by Probability
+              {sortBy === 'probability' && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', transition: 'transform 0.5s ease',
+                  transform: sortDirection === 'asc' ? 'rotate(0deg)' : 'rotate(180deg)',
+                }}>
+                  <ArrowUpward />
+                </span>
+              )}
             </button>
-            <button onClick={() => { setSortBy('value'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
-              Sort by Value {sortDirection === 'asc' ? '🔼' : '🔽'}
+            <button style={{
+              width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
+              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: '400',
+              fontSize: '1rem', justifyContent: 'center',
+            }}
+              onClick={() => handleSortClick('value')}>
+              Sort by Value
+              {sortBy === 'value' && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', transition: 'transform 0.5s ease',
+                  transform: sortDirection === 'asc' ? 'rotate(0deg)' : 'rotate(180deg)',
+                }}>
+                  <ArrowUpward />
+                </span>
+              )}
             </button>
           </div>
 
