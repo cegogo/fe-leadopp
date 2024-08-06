@@ -59,6 +59,7 @@ interface Lead {
   created_at?: string;
   team?: string[];
   id?: string[];
+  probability?: number;
 }
 
 export const CustomTablePagination = styled(TablePagination)`
@@ -172,6 +173,14 @@ export default function Leads(props: any) {
   const [selectedContacts, setSelectedContacts] = useState();
   const [workloadCount, setWorkloadCount] = useState(0); // New state for workload count
 
+  const getColorForProbability = (probability: number) => {
+    if (probability <= 20) return '#da2700'; // Red
+    if (probability <= 40) return '#fe8701'; // Orange
+    if (probability <= 60) return '#fcf000'; // Yellow
+    if (probability <= 80) return '#87ea00'; // Light green
+    return '#00b308'; // Green
+  };
+  
   useEffect(() => {
     getLeads();
   }, [
@@ -593,6 +602,23 @@ export default function Leads(props: any) {
                           &nbsp;- status:&nbsp;{' '}
                           <span style={{ color: '#1a3353', fontWeight: 500 }}>
                             {item?.status || '--'}
+                          </span>
+
+                          <span>
+                          &nbsp; - Probability:&nbsp;
+                          </span>
+                          <div style={{ flexGrow: 1, height: '10px', backgroundColor: '#e0e0e0', borderRadius: '5px', overflow: 'hidden', width: '100px', }}>
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${item?.probability || 0}%`,
+                                backgroundColor: getColorForProbability(item?.probability || 0),
+                                transition: 'width 0.5s ease',
+                              }}
+                            />
+                          </div>
+                          <span style={{ color: '#1a3353', fontWeight: 500, textTransform: 'none', marginLeft: '10px' }}>
+                            {item?.probability || '---'}%
                           </span>
                         </div>
                       </div>
