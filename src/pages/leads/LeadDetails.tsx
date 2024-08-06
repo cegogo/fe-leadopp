@@ -359,7 +359,7 @@ function LeadDetails(props: any) {
   const id = open ? 'simple-popover' : undefined;
   // console.log(attachedFiles, 'dsfsd', attachmentList, 'aaaaa', attachments);
 
-  const module = 'Leads';
+  const module = 'Deals';
   const crntPage = 'Lead Details';
   const backBtn = 'Back To Leads';
   // console.log(tags, countries, source, status, industries, users, contacts, 'leaddetail')

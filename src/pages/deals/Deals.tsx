@@ -214,6 +214,7 @@ const Deals: React.FC = () => {
                   console.log(lead),
                   <PipelineCard
                     key={lead.id}
+                    leadId={lead?.id}
                     title={lead.account_name}
                     content={
                       <>
@@ -288,6 +289,7 @@ const Deals: React.FC = () => {
                 filterLeadsByStatus('meeting').map((meeting) => (
                   <PipelineCard
                     key={meeting?.id}
+                    leadId={meeting?.id}
                     title={meeting?.account_name}
                     content={
                       <>
@@ -362,6 +364,7 @@ const Deals: React.FC = () => {
                 filterLeadsByStatus('opportunity').map((opportunity) => (
                   <PipelineCard
                     key={opportunity?.id}
+                    leadId={opportunity?.id}
                     title={opportunity?.account_name}
                     content={
                       <>
@@ -436,6 +439,7 @@ const Deals: React.FC = () => {
                 filterLeadsByStatus('qualified').map((qualified) => (
                   <PipelineCard
                     key={qualified?.id}
+                    leadId={qualified?.id}
                     title={qualified?.account_name}
                     content={
                       <>
@@ -510,6 +514,7 @@ const Deals: React.FC = () => {
                 filterLeadsByStatus('negotiation').map((negotiation) => (
                   <PipelineCard
                     key={negotiation?.id}
+                    leadId={negotiation?.id}
                     title={negotiation?.account_name}
                     content={
                       <>
@@ -584,6 +589,7 @@ const Deals: React.FC = () => {
                 filterLeadsByStatus('won').map((won) => (
                   <PipelineCard
                     key={won?.id}
+                    leadId={won?.id}
                     title={won?.account_name}
                     content={
                       <>

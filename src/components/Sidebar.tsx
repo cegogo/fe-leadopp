@@ -361,6 +361,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/leads/add-leads' element={<AddLeads />} />
                             <Route path='/app/leads/edit-lead' element={<EditLead />} />
                             <Route path='/app/leads/lead-details' element={<LeadDetails />} />
+                            <Route path='/app/deals/lead-details' element={<LeadDetails />} />
                             <Route path='/app/opportunities' element={<Opportunities />} />
                             <Route path='/app/opportunities/add-opportunity' element={<AddOpportunity />} />
                             <Route path='/app/opportunities/opportunity-details' element={<OpportunityDetails />} />
