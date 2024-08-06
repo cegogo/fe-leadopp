@@ -70,14 +70,39 @@ const Deals: React.FC = () => {
     position: 'relative',
   };
 
-  const headerStyleBase: React.CSSProperties = {
+  const firstHeaderStyleBase: React.CSSProperties = {
     textAlign: 'center',
     paddingLeft: '18%',
     padding: '9px',
     color: 'white',
     position: 'relative',
-    clipPath: 'polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%, 25% 50%)',
+    clipPath: 'polygon(75% 0%,100% 50%,75% 100%,0% 100%,0% 51%,0% 0%)',
     cursor: 'pointer',
+    fontWeight: 'bold',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 1)',
+    letterSpacing: '2px',
+    height: '50px',
+    fontSize: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const headerStyleBase: React.CSSProperties = {
+    paddingLeft: '18%',
+    padding: '9px',
+    color: 'white',
+    position: 'relative',
+    clipPath: 'polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%)',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.9)',
+    letterSpacing: '2px',
+    height: '50px',
+    fontSize: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   };
 
   const displayAreaStyle: React.CSSProperties = {
@@ -204,10 +229,10 @@ const Deals: React.FC = () => {
           <div style={columnsStyle}>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#AC80A0' }}
+                style={{ ...firstHeaderStyleBase, backgroundColor: '#87c7e5', marginLeft: '30px', }}
                 onClick={() => handleHeaderClick('Leads')}
               >
-                Leads
+                <span style={{marginRight: '15%',}}>Leads</span>
               </div>
               {leads && leads.length > 0 ? (
                 filterLeadsByStatus('lead').map((lead) => (
@@ -280,7 +305,7 @@ const Deals: React.FC = () => {
             </div>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#89AAE6' }}
+                style={{ ...headerStyleBase, backgroundColor: '#2ebafb' }}
                 onClick={() => handleHeaderClick('Meeting')}
               >
                 Meeting
@@ -355,7 +380,7 @@ const Deals: React.FC = () => {
             </div>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#3685B5' }}
+                style={{ ...headerStyleBase, backgroundColor: '#0993f3' }}
                 onClick={() => handleHeaderClick('Opportunities')}
               >
                 Opportunity
@@ -430,7 +455,7 @@ const Deals: React.FC = () => {
             </div>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#0471A6' }}
+                style={{ ...headerStyleBase, backgroundColor: '#0763e5' }}
                 onClick={() => handleHeaderClick('Qualified')}
               >
                 Qualified
@@ -505,7 +530,7 @@ const Deals: React.FC = () => {
             </div>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#023d5a' }}
+                style={{ ...headerStyleBase, backgroundColor: '#0e458b' }}
                 onClick={() => handleHeaderClick('Negotiation')}
               >
                 Negotiation
@@ -580,7 +605,7 @@ const Deals: React.FC = () => {
             </div>
             <div style={columnStyle}>
               <div
-                style={{ ...headerStyleBase, backgroundColor: '#1C4D4D' }}
+                style={{ ...headerStyleBase, backgroundColor: '#1A3353', marginRight: '30px' }}
                 onClick={() => handleHeaderClick('Won')}
               >
                 Won
