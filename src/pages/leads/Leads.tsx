@@ -147,6 +147,9 @@ export default function Leads(props: any) {
   const [loading, setLoading] = useState(true);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'probability' | 'value'>('probability');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [showUnassignedOnly, setShowUnassignedOnly] = useState(false);
   const [openLeads, setOpenLeads] = useState<Lead[]>([]);
   const [closedLeads, setClosedLeads] = useState<Lead[]>([]);
   const [openClosedCount, setClosedLeadsCount] = useState(0);
@@ -180,7 +183,7 @@ export default function Leads(props: any) {
     if (probability <= 80) return '#87ea00'; // Light green
     return '#00b308'; // Green
   };
-  
+
   useEffect(() => {
     getLeads();
   }, [
@@ -202,10 +205,8 @@ export default function Leads(props: any) {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
       const response = await fetchData(
-        `${LeadUrl}/?offset=${
-          tab === 'open' ? openOffset : closeOffset
-        }&limit=${
-          tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
+        `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset
+        }&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
         }&search=${searchQuery}`,
         'GET',
         null as any,
@@ -346,7 +347,7 @@ export default function Leads(props: any) {
           setWorkloadCount((prevCount) => prevCount - 1);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -370,21 +371,32 @@ export default function Leads(props: any) {
 
   const filteredLeads = (tab === 'open' ? openLeads : closedLeads).filter(
     (lead) => {
-      const fullName = `${
-        lead.assigned_to?.[0]?.user_details?.first_name || ''
-      } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
+      const fullName = `${lead.assigned_to?.[0]?.user_details?.first_name || ''
+        } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
       const email =
         lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
       const accountName = lead.account_name?.toLowerCase() || '';
       const search = searchQuery.toLowerCase();
 
-      return (
+      const matchesSearch =
         fullName.includes(search) ||
         email.includes(search) ||
-        accountName.includes(search)
-      );
-    }
-  );
+        accountName.includes(search);
+
+      const matchesUnassignedFilter = !showUnassignedOnly || !lead.assigned_to?.length;
+
+      return matchesSearch && matchesUnassignedFilter;
+    })
+    .sort((a, b) => {
+      const aValue = sortBy === 'value' ? parseFloat(String(a.opportunity_amount)) || 0 : a.probability || 0;
+      const bValue = sortBy === 'value' ? parseFloat(String(b.opportunity_amount)) || 0 : b.probability || 0;
+
+      if (sortDirection === 'asc') {
+        return aValue - bValue;
+      } else {
+        return bValue - aValue;
+      }
+    });
 
   return (
     <Box sx={{ mt: '60px' }}>
@@ -424,6 +436,27 @@ export default function Leads(props: any) {
               minWidth: '250px',
             }}
           />
+
+          <div>
+            <button onClick={() => { setSortBy('probability'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+              Sort by Probability {sortDirection === 'asc' ? '🔼' : '🔽'}
+            </button>
+            <button onClick={() => { setSortBy('value'); setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc'); }}>
+              Sort by Value {sortDirection === 'asc' ? '🔼' : '🔽'}
+            </button>
+          </div>
+
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={showUnassignedOnly}
+                onChange={() => setShowUnassignedOnly(prev => !prev)}
+              />
+              Show Unassigned Only
+            </label>
+          </div>
+
           <Select
             value={tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}
             onChange={(e: any) => handleRecordsPerPage(e)}
@@ -567,8 +600,8 @@ export default function Leads(props: any) {
                               ) : (
                                 <Avatar
                                   alt="Remy Sharp"
-                                  // size='small'
-                                  // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
+                                // size='small'
+                                // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                                 >
                                   {assignItem.user_details?.first_name?.charAt(
                                     0
@@ -607,7 +640,7 @@ export default function Leads(props: any) {
                           </span>
 
                           <span>
-                          &nbsp; - Probability:&nbsp;
+                            &nbsp; - Probability:&nbsp;
                           </span>
                           <div style={{ flexGrow: 1, height: '10px', backgroundColor: '#e0e0e0', borderRadius: '5px', overflow: 'hidden', width: '100px', }}>
                             <div
@@ -651,10 +684,10 @@ export default function Leads(props: any) {
                         alt={item?.created_by?.first_name}
                         src={item?.created_by?.profile_pic}
                         sx={{ ml: 1 }}
-                        // style={{
-                        //   height: '20px',
-                        //   width: '20px'
-                        // }}
+                      // style={{
+                      //   height: '20px',
+                      //   width: '20px'
+                      // }}
                       />{' '}
                       &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;
                       {item?.created_by?.last_name}
