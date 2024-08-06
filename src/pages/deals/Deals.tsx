@@ -96,7 +96,7 @@ const Deals: React.FC = () => {
   };
 
   const handleHeaderClick = (component: string) => {
-    navigate(`/app/${component}`);
+    navigate(`/app/deals/${component}`);
   };
 
   // Function to handle back click to show the columns again

@@ -221,7 +221,7 @@ function LeadDetails(props: any) {
   };
 
   const backbtnHandle = () => {
-    navigate('/app/leads');
+    navigate('/app/deals/leads');
   };
   const resetForm = () => {
     setNote('');

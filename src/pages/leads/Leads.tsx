@@ -318,8 +318,8 @@ export default function Leads(props: any) {
     setDeleteLeadModal(false);
     setSelectedId('');
   };
-  const modalDialog = 'Are You Sure You want to delete selected Lead?';
-  const modalTitle = 'Delete Lead';
+  const modalDialog = 'Are you sure you want to delete the selected Deal?';
+  const modalTitle = 'Delete Deal';
 
   const deleteItem = () => {
     const Header = {
