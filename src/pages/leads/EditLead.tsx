@@ -143,6 +143,16 @@ interface FormData {
   file: string | null;
 }
 
+const LEAD_STATUS = [
+  { value: 'lead', label: 'Lead' },
+  { value: 'meeting', label: 'Meeting' },
+  { value: 'opportunity', label: 'Opportunity' },
+  { value: 'qualified', label: 'Qualified' },
+  { value: 'negotiation', label: 'Negotiation' },
+  { value: 'won', label: 'Won' },
+  { value: 'closed', label: 'Closed' },
+];
+
 export function EditLead() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -218,7 +228,12 @@ export function EditLead() {
   }, [quill, hasInitialFocus]);
 
   useEffect(() => {
-    setFormData(state?.value);
+    if (state) {
+      setFormData((prev) => ({
+        ...prev,
+        ...state.value, // Ensure state.value matches FormData structure
+      }));
+    }
   }, [state?.id]);
 
   useEffect(() => {
@@ -817,12 +832,11 @@ export function EditLead() {
                             onChange={handleChange}
                             error={!!errors?.status?.[0]}
                           >
-                            {state?.status?.length &&
-                              state?.status.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[1]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))}
+                            {LEAD_STATUS.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
                           </Select>
                           <FormHelperText>
                             {errors?.status?.[0] ? errors?.status[0] : ''}
