@@ -550,7 +550,9 @@ export default function Leads(props: any) {
                           value:{' '}
                           <span style={{ color: '#1a3353', fontWeight: 500 }}>
                             {' '}
-                            € {item?.opportunity_amount || '--'}
+                            {item?.opportunity_amount
+                              ? `€${parseFloat(String(item.opportunity_amount)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                              : '---'}
                           </span>{' '}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
