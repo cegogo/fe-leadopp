@@ -37,7 +37,7 @@ import {
   FabRight,
 } from '../../styles/CssStyled';
 import '../../styles/style.css';
-import { ArrowUpward } from '@mui/icons-material';
+import { ArrowUpward, } from '@mui/icons-material';
 
 interface UserDetails {
   first_name?: string;
@@ -457,8 +457,8 @@ export default function Leads(props: any) {
           <div>
             <button style={{
               width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
-              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: '400',
-              fontSize: '1rem', justifyContent: 'center',
+              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: 'bold',
+              fontSize: '1rem', justifyContent: 'center', cursor: 'pointer', color: '#4c4c4c',
             }}
               onClick={() => handleSortClick('probability')}>
               Sort by Probability
@@ -473,8 +473,8 @@ export default function Leads(props: any) {
             </button>
             <button style={{
               width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
-              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: '400',
-              fontSize: '1rem', justifyContent: 'center',
+              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: 'bold',
+              fontSize: '1rem', justifyContent: 'center', cursor: 'pointer', color: '#4c4c4c',
             }}
               onClick={() => handleSortClick('value')}>
               Sort by Value
@@ -489,14 +489,15 @@ export default function Leads(props: any) {
             </button>
           </div>
 
-          <div>
-            <label>
+          <div style={{alignItems: 'center', display: 'flex' }}>
+            <label style={{color: 'white', marginRight: '20px', display: 'flex', alignItems: 'center'}}>
               <input
                 type="checkbox"
                 checked={showUnassignedOnly}
                 onChange={() => setShowUnassignedOnly(prev => !prev)}
+                style={{cursor: 'pointer',  width: '20px', height: '20px', marginRight: '10px', }}
               />
-              Show Unassigned Only
+              Show Unassigned only
             </label>
           </div>
 
