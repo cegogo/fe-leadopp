@@ -37,7 +37,7 @@ import {
   FabRight,
 } from '../../styles/CssStyled';
 import '../../styles/style.css';
-import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { ArrowUpward } from '@mui/icons-material';
 
 interface UserDetails {
   first_name?: string;
