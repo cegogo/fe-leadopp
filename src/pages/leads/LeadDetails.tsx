@@ -505,61 +505,32 @@ function LeadDetails(props: any) {
                   </div>
                 </div>
               </div>
-              <div
-                style={{
-                  padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginTop: '10px',
-                }}
-              >
-                <div className="title2">
-                  <Stack
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      mt: 1,
-                      marginRight: '20px',
-                    }}
-                  >
-                    <div style={{ width: '32%', marginRight: '100px' }}>
-                      <div className="title2">Assigned To</div>
-                      <div className="title3">
-                        {assignedUser?.user_details?.email || 'Not assigned'}
-                      </div>
-                    </div>
-
-                    <div style={{ width: '32%', marginRight: '100px' }}>
-                      <div className="title2">Status</div>
-                      <div
-                        className="title3"
-                        style={{ textTransform: 'capitalize' }}
-                      >
-                        {leadDetails?.status}
-                      </div>
-                    </div>
-                    <div style={{ width: '32%', marginRight: '100px' }}>
-                      <div className="title2">Teams</div>
-                      <div className="title3">Coming Sooon!</div>
-                    </div>
-                    {/* {
+              <div>
+                <Stack
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    mt: 1,
+                  }}
+                >
+                  {/* {
                                                 lead.assigned_to && lead.assigned_to.map((assignItem) => (
                                                     assignItem.user_details.profile_pic
                                                         ? */}
 
-                    {usersDetails?.length
-                      ? usersDetails.map((val: any, i: any) => (
-                          <Avatar
-                            key={i}
-                            alt={val?.user_details?.email}
-                            src={val?.user_details?.profile_pic}
-                            sx={{ mr: 1 }}
-                          />
-                        ))
-                      : ''}
-                  </Stack>
-                </div>
+                  {usersDetails?.length
+                    ? usersDetails.map((val: any, i: any) => (
+                        <Avatar
+                          key={i}
+                          alt={val?.user_details?.email}
+                          src={val?.user_details?.profile_pic}
+                          sx={{ mr: 1 }}
+                        />
+                      ))
+                    : ''}
+                </Stack>
+
                 <Stack
                   sx={{
                     display: 'flex',
@@ -574,6 +545,35 @@ function LeadDetails(props: any) {
                       ))
                     : ''}
                 </Stack>
+              </div>
+              <div
+                style={{
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Assigned To</div>
+                  <div className="title3">
+                    {assignedUser?.user_details?.email || 'Not assigned'}
+                  </div>
+                </div>
+
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Status</div>
+                  <div
+                    className="title3"
+                    style={{ textTransform: 'capitalize' }}
+                  >
+                    {leadDetails?.status}
+                  </div>
+                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Teams</div>
+                  <div className="title3">Coming Soon!</div>
+                </div>
               </div>
               <div
                 style={{
