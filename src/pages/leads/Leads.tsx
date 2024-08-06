@@ -192,6 +192,8 @@ export default function Leads(props: any) {
     closedCurrentPage,
     closedRecordsPerPage,
     searchQuery,
+    sortDirection,
+    showUnassignedOnly,
   ]);
 
   const getLeads = async () => {
