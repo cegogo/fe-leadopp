@@ -175,11 +175,6 @@ export default function Leads(props: any) {
   const [selectedAssignTo, setSelectedAssignTo] = useState();
   const [selectedContacts, setSelectedContacts] = useState();
   const [workloadCount, setWorkloadCount] = useState(0); // New state for workload count
-  
-  const handleRecordsPerPage = (event: any) => {
-    setOpenRecordsPerPage(event.target.value);
-    setOpenCurrentPage(1); // Reset current page when number of records per page changes
-  };
 
   const getColorForProbability = (probability: number) => {
     if (probability <= 20) return '#da2700'; // Red
