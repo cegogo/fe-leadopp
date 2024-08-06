@@ -111,7 +111,7 @@ type response = {
   website: string;
   description: string | '';
   teams: string;
-  assigned_to: string;
+  assigned_to: AssignedTo[];
   contacts: string;
   status: string;
   source: string;
@@ -133,6 +133,39 @@ type response = {
   created_from_site: boolean;
   id: string;
 };
+
+interface UserDetails {
+  email: string;
+  first_name: string | null;
+  id: string;
+  is_active: boolean;
+  job_title: string;
+  last_name: string | null;
+  profile_pic: string | null;
+}
+
+interface AssignedTo {
+  address: string | null;
+  alternate_phone: string;
+  date_of_joining: string;
+  expertise: string;
+  has_marketing_access: boolean;
+  has_sales_access: boolean;
+  has_sales_representative_access: boolean;
+  id: string;
+  is_active: boolean;
+  is_organization_admin: boolean;
+  phone: string;
+  role: string;
+  user_details: UserDetails;
+  workload: number;
+}
+
+interface LeadDetails {
+  assigned_to: AssignedTo[];
+  // Add other properties of LeadDetails if necessary
+}
+
 function LeadDetails(props: any) {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -164,8 +197,10 @@ function LeadDetails(props: any) {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [selectedAssignTo, setSelectedAssignTo] = useState();
+  const [assignTo, setAssignTo] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState();
+
+  const assignedUser = leadDetails?.assigned_to?.[0];
 
   useEffect(() => {
     getLeadDetails(state.leadId);
@@ -194,7 +229,7 @@ function LeadDetails(props: any) {
           setSelectedContacts(res?.lead_obj.contacts[0]);
           setTeams(res?.teams);
           setComments(res?.comments);
-          setSelectedAssignTo(res?.lead_obj.assigned_to[0]);
+          setAssignTo(res?.lead_obj.assigned_to[0]);
           console.log(res, 'this is res');
         }
       })
@@ -275,7 +310,7 @@ function LeadDetails(props: any) {
       }
     }
     console.log(selectedContacts, 'This is preNavigate selectedContacts');
-    console.log(selectedAssignTo, 'This is preNavigate selectedAssignTo');
+
     navigate('/app/leads/edit-lead', {
       state: {
         value: {
@@ -321,10 +356,9 @@ function LeadDetails(props: any) {
         selectedContacts: selectedContacts,
         teams,
         comments,
-        selectedAssignTo: selectedAssignTo,
       },
     });
-    console.log(selectedAssignTo, 'This is selectedAssignTo LeadDetails');
+    console.log(assignTo, 'This is AssignTo LeadDetails');
     console.log(selectedContacts, 'This is selectedContacts LeadDetails');
     console.log(state, 'This is state LeadDetails');
   };
@@ -486,8 +520,29 @@ function LeadDetails(props: any) {
                       flexDirection: 'row',
                       alignItems: 'center',
                       mt: 1,
+                      marginRight: '20px',
                     }}
                   >
+                    <div style={{ width: '32%', marginRight: '100px' }}>
+                      <div className="title2">Assigned To</div>
+                      <div className="title3">
+                        {assignedUser?.user_details?.email || 'Not assigned'}
+                      </div>
+                    </div>
+
+                    <div style={{ width: '32%', marginRight: '100px' }}>
+                      <div className="title2">Status</div>
+                      <div
+                        className="title3"
+                        style={{ textTransform: 'capitalize' }}
+                      >
+                        {leadDetails?.status}
+                      </div>
+                    </div>
+                    <div style={{ width: '32%', marginRight: '100px' }}>
+                      <div className="title2">Teams</div>
+                      <div className="title3">Coming Sooon!</div>
+                    </div>
                     {/* {
                                                 lead.assigned_to && lead.assigned_to.map((assignItem) => (
                                                     assignItem.user_details.profile_pic
