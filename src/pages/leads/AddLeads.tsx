@@ -278,7 +278,7 @@ export function AddLeads() {
       .then((res) => {
         if (!res.error) {
           setSuccessMessage('Lead added successfully!');
-          navigate('/app/leads');
+          navigate('/app/deals/leads');
         } else {
           setError(true);
           setErrors(res.errors || {});
@@ -331,7 +331,7 @@ export function AddLeads() {
   };
 
   const backbtnHandle = () => {
-    navigate('/app/leads');
+    navigate('/app/deals/leads');
   };
 
   const module = 'Leads';

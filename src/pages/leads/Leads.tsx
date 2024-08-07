@@ -37,7 +37,7 @@ import {
   FabRight,
 } from '../../styles/CssStyled';
 import '../../styles/style.css';
-import { ArrowUpward, } from '@mui/icons-material';
+import { ArrowUpward } from '@mui/icons-material';
 
 interface UserDetails {
   first_name?: string;
@@ -222,8 +222,10 @@ export default function Leads(props: any) {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
       const response = await fetchData(
-        `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset
-        }&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
+        `${LeadUrl}/?offset=${
+          tab === 'open' ? openOffset : closeOffset
+        }&limit=${
+          tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
         }&search=${searchQuery}`,
         'GET',
         null as any,
@@ -364,7 +366,7 @@ export default function Leads(props: any) {
           setWorkloadCount((prevCount) => prevCount - 1);
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -386,10 +388,11 @@ export default function Leads(props: any) {
     }
   };
 
-  const filteredLeads = (tab === 'open' ? openLeads : closedLeads).filter(
-    (lead) => {
-      const fullName = `${lead.assigned_to?.[0]?.user_details?.first_name || ''
-        } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
+  const filteredLeads = (tab === 'open' ? openLeads : closedLeads)
+    .filter((lead) => {
+      const fullName = `${
+        lead.assigned_to?.[0]?.user_details?.first_name || ''
+      } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
       const email =
         lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
       const accountName = lead.account_name?.toLowerCase() || '';
@@ -400,13 +403,21 @@ export default function Leads(props: any) {
         email.includes(search) ||
         accountName.includes(search);
 
-      const matchesUnassignedFilter = !showUnassignedOnly || !lead.assigned_to?.length;
+      const matchesUnassignedFilter =
+        !showUnassignedOnly || !lead.assigned_to?.length;
+      const matchesStatusFilter = lead.status === 'lead';
 
-      return matchesSearch && matchesUnassignedFilter;
+      return matchesSearch && matchesUnassignedFilter && matchesStatusFilter;
     })
     .sort((a, b) => {
-      const aValue = sortBy === 'value' ? parseFloat(String(a.opportunity_amount)) || 0 : a.probability || 0;
-      const bValue = sortBy === 'value' ? parseFloat(String(b.opportunity_amount)) || 0 : b.probability || 0;
+      const aValue =
+        sortBy === 'value'
+          ? parseFloat(String(a.opportunity_amount)) || 0
+          : a.probability || 0;
+      const bValue =
+        sortBy === 'value'
+          ? parseFloat(String(b.opportunity_amount)) || 0
+          : b.probability || 0;
 
       if (sortDirection === 'asc') {
         return aValue - bValue;
@@ -455,47 +466,99 @@ export default function Leads(props: any) {
           />
 
           <div>
-            <button style={{
-              width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
-              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: 'bold',
-              fontSize: '1rem', justifyContent: 'center', cursor: 'pointer', color: '#4c4c4c',
-            }}
-              onClick={() => handleSortClick('probability')}>
+            <button
+              style={{
+                width: '10%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginRight: '16px',
+                padding: '0 10px',
+                backgroundColor: '#c7dde5',
+                borderRadius: '4px',
+                height: '40px',
+                minWidth: '200px',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#4c4c4c',
+              }}
+              onClick={() => handleSortClick('probability')}
+            >
               Sort by Probability
               {sortBy === 'probability' && (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', transition: 'transform 0.5s ease',
-                  transform: sortDirection === 'asc' ? 'rotate(0deg)' : 'rotate(180deg)',
-                }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    transition: 'transform 0.5s ease',
+                    transform:
+                      sortDirection === 'asc'
+                        ? 'rotate(0deg)'
+                        : 'rotate(180deg)',
+                  }}
+                >
                   <ArrowUpward />
                 </span>
               )}
             </button>
-            <button style={{
-              width: '10%', display: 'inline-flex', alignItems: 'center', marginRight: '16px', padding: '0 10px',
-              backgroundColor: '#c7dde5', borderRadius: '4px', height: '40px', minWidth: '200px', fontWeight: 'bold',
-              fontSize: '1rem', justifyContent: 'center', cursor: 'pointer', color: '#4c4c4c',
-            }}
-              onClick={() => handleSortClick('value')}>
+            <button
+              style={{
+                width: '10%',
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginRight: '16px',
+                padding: '0 10px',
+                backgroundColor: '#c7dde5',
+                borderRadius: '4px',
+                height: '40px',
+                minWidth: '200px',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#4c4c4c',
+              }}
+              onClick={() => handleSortClick('value')}
+            >
               Sort by Value
               {sortBy === 'value' && (
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', transition: 'transform 0.5s ease',
-                  transform: sortDirection === 'asc' ? 'rotate(0deg)' : 'rotate(180deg)',
-                }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    transition: 'transform 0.5s ease',
+                    transform:
+                      sortDirection === 'asc'
+                        ? 'rotate(0deg)'
+                        : 'rotate(180deg)',
+                  }}
+                >
                   <ArrowUpward />
                 </span>
               )}
             </button>
           </div>
 
-          <div style={{alignItems: 'center', display: 'flex' }}>
-            <label style={{color: 'white', marginRight: '20px', display: 'flex', alignItems: 'center'}}>
+          <div style={{ alignItems: 'center', display: 'flex' }}>
+            <label
+              style={{
+                color: 'white',
+                marginRight: '20px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <input
                 type="checkbox"
                 checked={showUnassignedOnly}
-                onChange={() => setShowUnassignedOnly(prev => !prev)}
-                style={{cursor: 'pointer',  width: '20px', height: '20px', marginRight: '10px', }}
+                onChange={() => setShowUnassignedOnly((prev) => !prev)}
+                style={{
+                  cursor: 'pointer',
+                  width: '20px',
+                  height: '20px',
+                  marginRight: '10px',
+                }}
               />
               Show Unassigned only
             </label>
@@ -628,7 +691,12 @@ export default function Leads(props: any) {
                           <span style={{ color: '#1a3353', fontWeight: 500 }}>
                             {' '}
                             {item?.opportunity_amount
-                              ? `€${parseFloat(String(item.opportunity_amount)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                              ? `€${parseFloat(
+                                  String(item.opportunity_amount)
+                                ).toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}`
                               : '---'}
                           </span>{' '}
                         </div>
@@ -644,8 +712,8 @@ export default function Leads(props: any) {
                               ) : (
                                 <Avatar
                                   alt="Remy Sharp"
-                                // size='small'
-                                // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
+                                  // size='small'
+                                  // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                                 >
                                   {assignItem.user_details?.first_name?.charAt(
                                     0
@@ -682,21 +750,36 @@ export default function Leads(props: any) {
                           <span style={{ color: '#1a3353', fontWeight: 500 }}>
                             {item?.status || '--'}
                           </span>
-
-                          <span>
-                            &nbsp; - Probability:&nbsp;
-                          </span>
-                          <div style={{ flexGrow: 1, height: '10px', backgroundColor: '#e0e0e0', borderRadius: '5px', overflow: 'hidden', width: '100px', }}>
+                          <span>&nbsp; - Probability:&nbsp;</span>
+                          <div
+                            style={{
+                              flexGrow: 1,
+                              height: '10px',
+                              backgroundColor: '#e0e0e0',
+                              borderRadius: '5px',
+                              overflow: 'hidden',
+                              width: '100px',
+                            }}
+                          >
                             <div
                               style={{
                                 height: '100%',
                                 width: `${item?.probability || 0}%`,
-                                backgroundColor: getColorForProbability(item?.probability || 0),
+                                backgroundColor: getColorForProbability(
+                                  item?.probability || 0
+                                ),
                                 transition: 'width 0.5s ease',
                               }}
                             />
                           </div>
-                          <span style={{ color: '#1a3353', fontWeight: 500, textTransform: 'none', marginLeft: '10px' }}>
+                          <span
+                            style={{
+                              color: '#1a3353',
+                              fontWeight: 500,
+                              textTransform: 'none',
+                              marginLeft: '10px',
+                            }}
+                          >
                             {item?.probability || '---'}%
                           </span>
                         </div>
@@ -728,10 +811,10 @@ export default function Leads(props: any) {
                         alt={item?.created_by?.first_name}
                         src={item?.created_by?.profile_pic}
                         sx={{ ml: 1 }}
-                      // style={{
-                      //   height: '20px',
-                      //   width: '20px'
-                      // }}
+                        // style={{
+                        //   height: '20px',
+                        //   width: '20px'
+                        // }}
                       />{' '}
                       &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;
                       {item?.created_by?.last_name}
