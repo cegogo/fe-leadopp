@@ -74,6 +74,7 @@ import Interactions from '../pages/interactions/Interactions';
 import AddInteraction from '../pages/interactions/AddInteraction';
 import InteractionDetails from '../pages/interactions/InteractionDetail';
 import EditInteraction from '../pages/interactions/EditInteraction';
+import TeamsPanel from '../pages/teams/TeamsPanel';
 import MeetingPipe from '../pages/deals/MeetingPipe';
 import NegotiationPipe from '../pages/deals/NegotiationPipe';
 import WonPipe from '../pages/deals/WonPipe';
@@ -177,6 +178,7 @@ export default function Sidebar(props: any) {
     'accounts',
     'companies',
     'cases',
+    'teams',
   ];
   {
     /* Admin items list shown only if role stored in selected organization is ADMIN */
@@ -257,6 +259,14 @@ export default function Sidebar(props: any) {
           <FaUserFriends
             style={
               screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
+            }
+          />
+        );
+      case 'teams':
+        return (
+          <FaUsers
+            style={
+              screen === 'teams' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
             }
           />
         );
@@ -382,20 +392,21 @@ export default function Sidebar(props: any) {
                 <ListItem disablePadding>
                   <StyledListItemButton
                     onClick={() => {
-                      clearCache();
-                      navigate('/login');
+                      setAnchorEl(null);
+                      navigate('/app/profile');
                     }}
                   >
                     <ListItemIcon>
                       {' '}
-                      <FaSignOutAlt fill="#3e79f7" />
+                      <FaUser fill="#3e79f7" />
                     </ListItemIcon>
                     <StyledListItemText
-                      primary={'Sign out'}
+                      primary={'My Profile'}
                       sx={{ ml: '-20px', color: '#3e79f7' }}
                     />
                   </StyledListItemButton>
                 </ListItem>
+
                 <ListItem disablePadding>
                   <StyledListItemButton
                     onClick={() => setOrganizationModal(!organizationModal)}
@@ -414,16 +425,16 @@ export default function Sidebar(props: any) {
                 <ListItem disablePadding>
                   <StyledListItemButton
                     onClick={() => {
-                      setAnchorEl(null);
-                      navigate('/app/profile');
+                      clearCache();
+                      navigate('/login');
                     }}
                   >
                     <ListItemIcon>
                       {' '}
-                      <FaUser fill="#3e79f7" />
+                      <FaSignOutAlt fill="#3e79f7" />
                     </ListItemIcon>
                     <StyledListItemText
-                      primary={'My Profile'}
+                      primary={'Sign out'}
                       sx={{ ml: '-20px', color: '#3e79f7' }}
                     />
                   </StyledListItemButton>
@@ -545,6 +556,10 @@ export default function Sidebar(props: any) {
               <Route path="/app/dashboard" element={<Dashboard />} />
               <Route path="/app/deals" element={<Deals />} />
               <Route path="/app/deals/leads" element={<Leads />} />
+              <Route path="/app/leads/add-leads" element={<AddLeads />} />
+              <Route path="/app/leads/edit-lead" element={<EditLead />} />
+              <Route path="/app/leads/lead-details" element={<LeadDetails />} />
+              <Route path="/app/deals/lead-details" element={<LeadDetails />} />
               <Route path="/app/deals/meeting" element={<MeetingPipe />} />
               <Route
                 path="/app/deals/negotiation"
@@ -556,10 +571,6 @@ export default function Sidebar(props: any) {
                 element={<OpportunityPipe />}
               />
               <Route path="/app/deals/qualified" element={<QualifiedPipe />} />
-              <Route path="/app/leads/add-leads" element={<AddLeads />} />
-              <Route path="/app/leads/edit-lead" element={<EditLead />} />
-              <Route path="/app/leads/lead-details" element={<LeadDetails />} />
-              <Route path="/app/deals/lead-details" element={<LeadDetails />} />
               <Route path="/app/companies" element={<Company />} />
               <Route
                 path="/app/companies/add-company"
@@ -626,6 +637,7 @@ export default function Sidebar(props: any) {
                 path="/app/interactions/interaction-details"
                 element={<InteractionDetails />}
               />
+              <Route path="/app/teams" element={<TeamsPanel />} />
             </Routes>
           </Box>
         </MyContext.Provider>
