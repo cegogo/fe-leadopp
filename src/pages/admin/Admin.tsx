@@ -461,8 +461,8 @@ export default function Admin() {
                     </Box>
                 </Box>
             </Container>
-            <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex', flexDirection: 'column', marginTop: '20px' }}>
-                <Accordion defaultExpanded sx={{ width: '100%', marginTop: '10px' }}>
+            <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex', flexDirection: 'column', marginTop: '20px', padding: '20px', }}>
+                <Accordion defaultExpanded sx={{ width: '100%', marginTop: '10px', }} >
                     <AccordionSummary
                         expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
                     >
