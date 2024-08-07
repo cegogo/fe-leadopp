@@ -242,7 +242,7 @@ const GetTeams: React.FC = () => {
         onClose={deleteRowModalClose}
         open={deleteRowModal}
         id={selectedId}
-        modalDialog="Are You Sure you want to delete this team?"
+        modalDialog="Are you sure you want to delete the selected Team?"
         modalTitle="Delete Team"
         DeleteItem={DeleteItem}
       />

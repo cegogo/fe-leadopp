@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { SERVER, ProfileUrl, TeamsUrl } from '../../services/ApiUrls';
+import { FaUsers } from 'react-icons/fa';
 
 interface UserDetails {
     email: string;
@@ -134,6 +135,10 @@ export function UserTeams() {
         }
     };
 
+    const userTeams = teams.filter(team =>
+        team.users.some(user => user.user_details.email === userProfile?.user_details.email)
+    );
+
     useEffect(() => {
         fetchUserProfile();
         fetchTeams();
@@ -147,13 +152,22 @@ export function UserTeams() {
         return <Typography color="error">{error}</Typography>;
     }
 
-    if (!userProfile) {
-        return <Typography>No user profile found</Typography>;
+    if (userTeams.length === 0) {
+        return (
+            <Card sx={{ mt: '20px', ml: '20px', p: '20px', borderRadius: '7px', mb: '20px', backgroundColor: '#fff', width: '66%' }}>
+                <Typography sx={{ fontWeight: 600, fontSize: '18px', color: '#1a3353f0', mb: '10px' }}>
+                My Teams
+            </Typography>
+            <Divider sx={{ mb: '20px' }} />
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
+                    <FaUsers style={{fontSize: '5rem', color: "gray"}} />
+                    <Typography sx={{ mt: '20px', color: 'gray' }}>
+                        You are not part of any teams yet.
+                    </Typography>
+                </Box>
+            </Card>
+        );
     }
-
-    const userTeams = teams.filter(team =>
-        team.users.some(user => user.user_details.email === userProfile?.user_details.email)
-    );
 
     return (
 
