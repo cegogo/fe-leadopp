@@ -405,7 +405,7 @@ export default function Leads(props: any) {
 
       const matchesUnassignedFilter =
         !showUnassignedOnly || !lead.assigned_to?.length;
-      const matchesStatusFilter = lead.status === 'lead';
+      const matchesStatusFilter = lead.status === 'negotiation';
 
       return matchesSearch && matchesUnassignedFilter && matchesStatusFilter;
     })
