@@ -137,10 +137,10 @@ type response = {
 interface UserDetails {
   email: string;
   first_name: string | null;
+  last_name: string | null;
   id: string;
   is_active: boolean;
   job_title: string;
-  last_name: string | null;
   profile_pic: string | null;
 }
 
@@ -284,6 +284,15 @@ function LeadDetails(props: any) {
         }
       })
       .catch(() => {});
+  };
+
+  const getFullName = (user: AssignedTo | undefined): string => {
+    if (!user) return 'Not assigned';
+    const firstName = user.user_details.first_name || '';
+    const lastName = user.user_details.last_name || '';
+    return firstName || lastName
+      ? `${firstName} ${lastName}`.trim()
+      : user.user_details.email || 'Not assigned';
   };
 
   const backbtnHandle = () => {
@@ -556,9 +565,7 @@ function LeadDetails(props: any) {
               >
                 <div style={{ width: '32%' }}>
                   <div className="title2">Assigned To</div>
-                  <div className="title3">
-                    {assignedUser?.user_details?.email || 'Not assigned'}
-                  </div>
+                  <div className="title3">{getFullName(assignedUser)}</div>
                 </div>
 
                 <div style={{ width: '32%' }}>
