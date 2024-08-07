@@ -287,12 +287,12 @@ function LeadDetails(props: any) {
   };
 
   const getFullName = (user: AssignedTo | undefined): string => {
-    if (!user) return 'Not assigned';
+    if (!user) return 'Unassigned';
     const firstName = user.user_details.first_name || '';
     const lastName = user.user_details.last_name || '';
     return firstName || lastName
       ? `${firstName} ${lastName}`.trim()
-      : user.user_details.email || 'Not assigned';
+      : user.user_details.email || 'Unassigned';
   };
 
   const backbtnHandle = () => {
