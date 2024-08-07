@@ -244,12 +244,12 @@ const Deals: React.FC = () => {
 
         // Handle user-specific logic
         if (userRole === 'ADMIN') {
-          setLeads(res?.open_leads?.open_leads); // Get the newest 5 leads
+          setLeads(res?.open_leads?.open_leads);
         } else {
           const userLeads = res?.open_leads?.open_leads?.filter(
             (lead: any) => lead.assigned_to?.[0]?.id === profileId
           );
-          setLeads(userLeads); // Get the newest 5 leads assigned to the user
+          setLeads(userLeads);
         }
       }
       setLoading(false); // Set loading to false after data is fetched
