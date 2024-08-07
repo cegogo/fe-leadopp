@@ -44,6 +44,7 @@ import Interactions from '../pages/interactions/Interactions';
 import AddInteraction from '../pages/interactions/AddInteraction';
 import InteractionDetails from '../pages/interactions/InteractionDetail';
 import EditInteraction from '../pages/interactions/EditInteraction';
+import TeamsPanel from '../pages/teams/TeamsPanel';
 
 
 interface UserDetails {
@@ -99,12 +100,12 @@ export default function Sidebar(props: any) {
         const fetchUserProfile = async () => {
             const token = localStorage.getItem('Token');
             const org = localStorage.getItem('org');
-    
+
             if (!token || !org) {
                 // Handle missing token or org as needed
                 return;
             }
-    
+
             try {
                 const response = await fetch(`${SERVER}${ProfileUrl}/`, {
                     method: 'GET',
@@ -114,18 +115,18 @@ export default function Sidebar(props: any) {
                         'org': org, // Include org in headers
                     },
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`Error fetching profile: ${response.statusText}`);
                 }
-    
+
                 const data = await response.json();
                 setUserProfile(data.user_obj);
             } catch (error: any) {
                 // Handle error
             }
         };
-    
+
         fetchUserProfile();
     }, []);
 
@@ -135,7 +136,7 @@ export default function Sidebar(props: any) {
         setScreen(path || 'dashboard');
     };
 
-    const navList = ['dashboard', 'deals', 'contacts', 'interactions', 'accounts', 'companies', 'cases'];
+    const navList = ['dashboard', 'deals', 'contacts', 'interactions', 'accounts', 'companies', 'cases', 'teams',];
     {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
     const adminNavList = ['admin'];
 
@@ -158,6 +159,8 @@ export default function Sidebar(props: any) {
                 return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'users':
                 return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'teams':
+                return <FaUsers style={screen === 'teams' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             case 'admin':
                 return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
             default:
@@ -249,22 +252,6 @@ export default function Sidebar(props: any) {
                         >
                             <List disablePadding>
                                 <ListItem disablePadding>
-                                    <StyledListItemButton onClick={() => {
-                                        clearCache();
-                                        navigate('/login')
-                                    }}>
-                                        <ListItemIcon > <FaSignOutAlt fill='#3e79f7' /></ListItemIcon>
-                                        <StyledListItemText primary={'Sign out'} sx={{ ml: '-20px', color: '#3e79f7' }} />
-                                    </StyledListItemButton>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <StyledListItemButton onClick={() => setOrganizationModal(!organizationModal)}>
-                                        <ListItemIcon > <FaIndustry fill='#3e79f7' /></ListItemIcon>
-                                        <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
-                                    </StyledListItemButton>
-                                </ListItem>
-
-                               <ListItem disablePadding>
 
                                     <StyledListItemButton onClick={() => {
                                         setAnchorEl(null);
@@ -273,6 +260,23 @@ export default function Sidebar(props: any) {
                                     }}>
                                         <ListItemIcon > <FaUser fill='#3e79f7' /></ListItemIcon>
                                         <StyledListItemText primary={'My Profile'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                    </StyledListItemButton>
+                                </ListItem>
+
+                                <ListItem disablePadding>
+                                    <StyledListItemButton onClick={() => setOrganizationModal(!organizationModal)}>
+                                        <ListItemIcon > <FaIndustry fill='#3e79f7' /></ListItemIcon>
+                                        <StyledListItemText primary={'Organization'} sx={{ ml: '-20px', color: '#3e79f7' }} />
+                                    </StyledListItemButton>
+                                </ListItem>
+
+                                <ListItem disablePadding>
+                                    <StyledListItemButton onClick={() => {
+                                        clearCache();
+                                        navigate('/login')
+                                    }}>
+                                        <ListItemIcon > <FaSignOutAlt fill='#3e79f7' /></ListItemIcon>
+                                        <StyledListItemText primary={'Sign out'} sx={{ ml: '-20px', color: '#3e79f7' }} />
                                     </StyledListItemButton>
                                 </ListItem>
                             </List>
@@ -393,6 +397,7 @@ export default function Sidebar(props: any) {
                             <Route path='/app/interactions/add-interactions' element={<AddInteraction />} />
                             <Route path='/app/interactions/edit-interaction' element={<EditInteraction />} />
                             <Route path='/app/interactions/interaction-details' element={<InteractionDetails />} />
+                            <Route path='/app/teams' element={<TeamsPanel />} />
                         </Routes>
                     </Box>
                 </MyContext.Provider>
