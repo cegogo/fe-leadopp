@@ -15,7 +15,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { SelectChangeEvent } from '@mui/material'
+import { SelectChangeEvent, Divider } from '@mui/material'
 import { InvitationUrl } from '../services/ApiUrls';
 import { fetchData } from './FetchData';
 
@@ -46,23 +46,23 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
     setTeammates([...teammates, { email: '', roles: ['USER'] }]);
   };
 
-/*  const handleEmailChange = (index: number, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (event.target instanceof HTMLInputElement) {
-      // Handle input element event (update email)
-    } else if (event.target instanceof HTMLTextAreaElement) {
-      // Handle textarea element event (might not be relevant for email)
-    }
-  }; */
+  /*  const handleEmailChange = (index: number, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (event.target instanceof HTMLInputElement) {
+        // Handle input element event (update email)
+      } else if (event.target instanceof HTMLTextAreaElement) {
+        // Handle textarea element event (might not be relevant for email)
+      }
+    }; */
 
   const handleRoleChange = (index: number, event: SelectChangeEvent<string[]>) => {
-      const updatedRoles = Array.isArray(event.target.value) ? event.target.value : [event.target.value]; // Ensure roles is always an array
-      setTeammates(
-        teammates.map((teammate, i) => (i === index ? { ...teammate, roles: updatedRoles } : teammate))
-      );
+    const updatedRoles = Array.isArray(event.target.value) ? event.target.value : [event.target.value]; // Ensure roles is always an array
+    setTeammates(
+      teammates.map((teammate, i) => (i === index ? { ...teammate, roles: updatedRoles } : teammate))
+    );
   };
 
   let token = localStorage.getItem('Token')?.split(' ')[1]
-  
+
   useEffect(() => {
     const invitation = () => {
       for (let i = 0; i < teammates.length; i++) {
@@ -80,13 +80,13 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
             invitee_email: teammates[i].email
           }
           console.log(Body);
-  
+
           fetchData(`${InvitationUrl}`, 'POST', JSON.stringify(Body), Header)
             .then((res: any) => {
               console.log(res, 'res');
               if (!res.error) {
                 const data = res?.data
-  
+
               }
             })
         }
@@ -104,9 +104,16 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
   };
 
   return (
-    <Box sx={{ mt: '24px', width: '50%' , mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
-      <Box sx={{ mt: '60px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left'}}>
-        <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Invite New Users control</Typography>
+    <Box sx={{ mt: '24px', width: '50%', mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
+      <Typography className="accordion-header">
+        Access Control Panel
+      </Typography>
+      <div style={{ marginTop: '20px', }}>
+        <Divider className="divider" />
+      </div>
+      <Box sx={{ mt: '40px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left' }}>
+        <div style={{ marginTop: '20px', }}> </div>
+        <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Invite New Users </Typography>
         {teammates.map((teammate, index) => (
           <Grid container spacing={2} alignItems={"center"} key={index} sx={{ mb: 2 }}>
             <Grid item xs={ 8 }>
@@ -137,9 +144,9 @@ const InviteTeammates: React.FC<InviteTeammatesProps> = () => {
             </Grid>
           </Grid>
         ))}
-        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ mb:2 }}>
-          <Button variant="text" onClick={handleAddTeammate} startIcon={<AddIcon />} color='primary' sx={{ textTransform: 'none', fontWeight: 'bold'}}>
-            Add another
+        <Box display="flex" justifyContent="flex-start" alignItems="center" sx={{ mb: 2 }}>
+          <Button variant="text" onClick={handleAddTeammate} startIcon={<AddIcon />} color='primary' sx={{ textTransform: 'none', fontWeight: 'bold' }}>
+            Add User
           </Button>
         </Box>
         <Button variant="contained" onClick={handleSendInvitations} disabled={teammates.length === 0} fullWidth>

@@ -81,6 +81,7 @@ import WonPipe from '../pages/deals/WonPipe';
 import OpportunityPipe from '../pages/deals/OpportunityPipe';
 import QualifiedPipe from '../pages/deals/QualifiedPipe';
 
+
 interface UserDetails {
   email: string;
   is_active: boolean;
@@ -130,158 +131,82 @@ export default function Sidebar(props: any) {
   useEffect(() => {
     toggleScreen();
   }, [navigate]);
+  
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const token = localStorage.getItem('Token');
+            const org = localStorage.getItem('org');
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem('Token');
-      const org = localStorage.getItem('org');
+            if (!token || !org) {
+                // Handle missing token or org as needed
+                return;
+            }
 
-      if (!token || !org) {
-        // Handle missing token or org as needed
-        return;
-      }
+            try {
+                const response = await fetch(`${SERVER}${ProfileUrl}/`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': token, // Use token directly without 'Bearer'
+                        'org': org, // Include org in headers
+                    },
+                });
 
-      try {
-        const response = await fetch(`${SERVER}${ProfileUrl}/`, {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            Authorization: token, // Use token directly without 'Bearer'
-            org: org, // Include org in headers
-          },
-        });
+                if (!response.ok) {
+                    throw new Error(`Error fetching profile: ${response.statusText}`);
+                }
 
-        if (!response.ok) {
-          throw new Error(`Error fetching profile: ${response.statusText}`);
-        }
+                const data = await response.json();
+                setUserProfile(data.user_obj);
+            } catch (error: any) {
+                // Handle error
+            }
+        };
 
-        const data = await response.json();
-        setUserProfile(data.user_obj);
-      } catch (error: any) {
-        // Handle error
-      }
-    };
+        fetchUserProfile();
+    }, []);
 
-    fetchUserProfile();
-  }, []);
 
   const toggleScreen = () => {
     const path = location.pathname.split('/')[2];
     setScreen(path || 'dashboard');
   };
 
-  const navList = [
-    'dashboard',
-    'deals',
-    'contacts',
-    'interactions',
-    'accounts',
-    'companies',
-    'cases',
-    'teams',
-  ];
-  {
-    /* Admin items list shown only if role stored in selected organization is ADMIN */
-  }
-  const adminNavList = ['admin'];
+    const navList = ['dashboard', 'deals', 'contacts', 'interactions', 'accounts', 'companies', 'cases', 'teams',];
+    {/* Admin items list shown only if role stored in selected organization is ADMIN */ }
+    const adminNavList = ['admin'];
 
-  const navIcons = (text: any, screen: any): React.ReactNode => {
-    const iconStyle = { fontSize: '30px' };
-    switch (text) {
-      case 'dashboard':
-        return (
-          <FaChartLine
-            style={
-              screen === 'dashboard'
-                ? { ...iconStyle, fill: '#3e79f7' }
-                : iconStyle
-            }
-          />
-        );
-      case 'deals':
-        return (
-          <FaHandshake
-            style={
-              screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
-            }
-          />
-        );
-      case 'contacts':
-        return (
-          <FaAddressBook
-            style={
-              screen === 'contacts'
-                ? { ...iconStyle, fill: '#3e79f7' }
-                : iconStyle
-            }
-          />
-        );
-      case 'interactions':
-        return (
-          <FaCalendarCheck
-            style={
-              screen === 'interactions'
-                ? { ...iconStyle, fill: '#3e79f7' }
-                : iconStyle
-            }
-          />
-        );
-      case 'accounts':
-        return (
-          <FaBuilding
-            style={
-              screen === 'accounts'
-                ? { ...iconStyle, fill: '#3e79f7' }
-                : iconStyle
-            }
-          />
-        );
-      case 'companies':
-        return (
-          <FaIndustry
-            style={
-              screen === 'companies'
-                ? { ...iconStyle, fill: '#3e79f7' }
-                : iconStyle
-            }
-          />
-        );
-      case 'cases':
-        return (
-          <FaBriefcase
-            style={
-              screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
-            }
-          />
-        );
-      case 'users':
-        return (
-          <FaUserFriends
-            style={
-              screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
-            }
-          />
-        );
-      case 'teams':
-        return (
-          <FaUsers
-            style={
-              screen === 'teams' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
-            }
-          />
-        );
-      case 'admin':
-        return (
-          <FaUserEdit
-            style={
-              screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle
-            }
-          />
-        );
-      default:
-        return <FaChartLine style={{ ...iconStyle, fill: '#3e79f7' }} />;
+    const navIcons = (text: any, screen: any): React.ReactNode => {
+        const iconStyle = { fontSize: '30px' };
+        switch (text) {
+            case 'dashboard':
+                return <FaChartLine style={screen === 'dashboard' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'deals':
+                return <FaHandshake style={screen === 'deals' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'contacts':
+                return <FaAddressBook style={screen === 'contacts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'interactions':
+                return <FaCalendarCheck style={screen === 'interactions' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'accounts':
+                return <FaBuilding style={screen === 'accounts' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'companies':
+                return <FaIndustry style={screen === 'companies' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'cases':
+                return <FaBriefcase style={screen === 'cases' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'users':
+                return <FaUserFriends style={screen === 'users' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'teams':
+                return <FaUsers style={screen === 'teams' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            case 'admin':
+                return <FaUserEdit style={screen === 'admin' ? { ...iconStyle, fill: '#3e79f7' } : iconStyle} />
+            default:
+                return <FaChartLine style={{ ...iconStyle, fill: '#3e79f7' }} />
+        }
     }
-  };
+   
+
+
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -313,6 +238,7 @@ export default function Sidebar(props: any) {
   const capitalizeFirstLetter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
+
 
   return (
     <>

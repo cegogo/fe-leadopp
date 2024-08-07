@@ -13,9 +13,7 @@ import { fetchData } from '../../components/FetchData';
 import { UsersUrl, UserUrl, AdminUrl, OrgUrl } from '../../services/ApiUrls';
 import { CustomTab, CustomToolbar, FabLeft, FabRight } from '../../styles/CssStyled';
 import Users from '../users/Users';
-import InviteTeammates from '../../components/InviteTeammates'
-import AddTeam from '../teams/AddTeams';
-import GetTeams from '../teams/Teams';
+import InviteTeammates from '../../components/InviteTeammates';
 
 interface HeadCell {
     disablePadding: boolean;
@@ -447,72 +445,35 @@ export default function Admin() {
             <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex' }}>
                 <InviteTeammates />
                 <Box sx={{ mt: '24px', width: '50%', mx: '24px', mr: '24px', p: 3, borderRadius: 1, boxShadow: 2, backgroundColor: 'white' }}>
-                    <Box sx={{ mt: '60px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left' }}>
-                        <Typography mt="-60px" variant="h6" component="h1" gutterBottom textAlign="left" sx={{ fontWeight: 'bold' }}>Google Auth control</Typography>
-                        <TableContainer>
-                            <Table>
-                                <EnhancedTableHead
-                                    numSelected={selected.length}
-                                    order={order}
-                                    orderBy={orderBy}
-                                    onSelectAllClick={handleSelectAllClick}
-                                    onRequestSort={handleRequestSort}
-                                    rowCount={tab === 'active' ? activeUsers?.length : inactiveUsers?.length}
-                                    numSelectedId={selectedId}
-                                    isSelectedId={isSelectedId}
-                                    headCells={headCells}
-                                />
-                                <TableBody>
-                                    {/* Display organization name and toggle switch directly */}
-                                    <TableRow>
-                                        <TableCell colSpan={8}>
-                                            Google Authentication
-                                        </TableCell>
-                                        <TableCell>
-                                            <FormControlLabel
-                                                control={<Switch checked={authData.google_authentication} onChange={handleToggleChange} />}
-                                                label=""
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                    {/* Existing table rows */}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                    <Typography className="accordion-header">
+                        Google Auth Control
+                    </Typography>
+                    <div style={{ marginTop: '20px', }}>
+                        <Divider className="divider" />
+                    </div>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: '0px', maxWidth: '100%', mx: 'auto', ml: '0', p: 3, borderRadius: 2, textAlign: 'left' }}>
+                        <Typography variant="body1">Google Authentication</Typography>
+                        <FormControlLabel
+                            control={<Switch checked={authData.google_authentication} onChange={handleToggleChange} />}
+                            label=""
+                            sx={{ marginLeft: '20px' }} // Add spacing between the text and switch
+                        />
                     </Box>
                 </Box>
             </Container>
-            <Accordion defaultExpanded style={{ width: '100%', marginTop: '10px' }}>
-                <AccordionSummary
-                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
-                >
-                    <Typography className="accordion-header">
-                        Teams control pannel
-                    </Typography>
-                </AccordionSummary>
-                <Divider className="divider" />
-                <AddTeam />
-                <GetTeams />
-            </Accordion>
-            <DeleteModal
-                onClose={deleteRowModalClose}
-                open={deleteRowModal}
-                id={selectedId}
-                modalDialog={modalDialog}
-                modalTitle={modalTitle}
-                DeleteItem={DeleteItem}
-            />
-            <Accordion defaultExpanded style={{ width: '100%', marginTop: '10px' }}>
-                <AccordionSummary
-                    expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
-                >
-                    <Typography className="accordion-header">
-                        Users control pannel
-                    </Typography>
-                </AccordionSummary>
-                <Divider className="divider" />
-                <Users />
-            </Accordion>
+            <Container sx={{ maxWidth: '100%', minWidth: '100%', display: 'flex', flexDirection: 'column', marginTop: '20px', padding: '20px', }}>
+                <Accordion defaultExpanded sx={{ width: '100%', marginTop: '10px', }} >
+                    <AccordionSummary
+                        expandIcon={<FiChevronDown style={{ fontSize: '25px' }} />}
+                    >
+                        <Typography className="accordion-header">
+                            Users Control Panel
+                        </Typography>
+                    </AccordionSummary>
+                    <Divider className="divider" />
+                    <Users />
+                </Accordion>
+            </Container>
         </Box>
     );
 
