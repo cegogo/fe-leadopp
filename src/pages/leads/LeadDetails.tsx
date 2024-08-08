@@ -110,7 +110,7 @@ type response = {
   opportunity_amount: string;
   website: string;
   description: string | '';
-  teams: string;
+  teams: Team[];
   assigned_to: AssignedTo[];
   contacts: string;
   status: string;
@@ -161,6 +161,12 @@ interface AssignedTo {
   workload: number;
 }
 
+interface Team {
+  id: string;
+  name: string;
+  // other properties if needed
+}
+
 interface LeadDetails {
   assigned_to: AssignedTo[];
   // Add other properties of LeadDetails if necessary
@@ -188,7 +194,7 @@ function LeadDetails(props: any) {
   const [industries, setIndustries] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [teams, setTeams] = useState([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [comments, setComments] = useState([]);
   const [commentList, setCommentList] = useState('Recent Last');
   const [note, setNote] = useState('');
@@ -579,7 +585,13 @@ function LeadDetails(props: any) {
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Teams</div>
-                  <div className="title3">Coming Soon!</div>
+                  <div className="title3">
+                    {leadDetails?.teams?.length
+                      ? leadDetails?.teams.map((team: Team) => (
+                          <div key={team.id}>{team.name}</div>
+                        ))
+                      : 'No teams assigned'}
+                  </div>
                 </div>
               </div>
               <div
