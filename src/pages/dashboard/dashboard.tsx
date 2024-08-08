@@ -31,13 +31,13 @@ const Dashboard: React.FC = () => {
         const fetchUserProfile = async () => {
             const token = localStorage.getItem('Token');
             const org = localStorage.getItem('org');
-    
+
             if (!token || !org) {
                 setError('Missing token or organization ID in localStorage');
                 setLoading(false);
                 return;
             }
-    
+
             try {
                 const response = await fetch(`${SERVER}${ProfileUrl}/`, {
                     method: 'GET',
@@ -47,11 +47,11 @@ const Dashboard: React.FC = () => {
                         'Authorization': token,
                     },
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`Error fetching profile: ${response.statusText}`);
                 }
-    
+
                 const profileData = await response.json();
                 console.log(profileData)
                 setProfileId(profileData.user_obj.id);
@@ -102,6 +102,8 @@ const Dashboard: React.FC = () => {
             });
         }
     }, [sortConfig]);
+
+    const isAdmin = userRole === 'ADMIN';
 
     const fetchLeadsData = async () => {
         const Header = {
@@ -167,10 +169,12 @@ const Dashboard: React.FC = () => {
         height: '90%',
     };
 
-    const progressBarStyle = {
-        backgroundColor: '#C7DDE5',
-        height: '12px',
-        borderRadius: '4px',
+    const getColorForProbability = (probability: number) => {
+        if (probability <= 20) return '#da2700'; // Red
+        if (probability <= 40) return '#fe8701'; // Orange
+        if (probability <= 60) return '#fcf000'; // Yellow
+        if (probability <= 80) return '#87ea00'; // Light green
+        return '#00b308'; // Green
     };
 
     return (
@@ -227,8 +231,8 @@ const Dashboard: React.FC = () => {
                             <Typography variant="h5" gutterBottom>Team Members</Typography>
                             {teamMembers.map((member) => (
                                 <Typography key={member.id} variant="body1">{member.name}</Typography>
-                            ))} 
-                            
+                            ))}
+
                         </CardContent>
                     </Card>
                 </Grid>
@@ -283,61 +287,103 @@ const Dashboard: React.FC = () => {
                                                 </Typography>
                                             </TableSortLabel>
                                         </TableCell>
-                                        <TableCell>
-                                            <TableSortLabel
-                                                sx={{
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    alignItems: 'center',
-                                                }}
-                                                active={sortConfig.key === 'assigned_to.name'}
-                                                direction={sortConfig.direction}
-                                                onClick={() => requestSort('assigned_to.name')}
-                                            >
-                                                <Typography variant="subtitle1" fontWeight="bold" color="black" >
-                                                    Assignee
-                                                </Typography>
-                                            </TableSortLabel>
-                                        </TableCell>
+                                        {!isAdmin && (
+                                            <TableCell>
+                                                <TableSortLabel
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}
+                                                    active={sortConfig.key === 'status'}
+                                                    direction={sortConfig.direction}
+                                                    onClick={() => requestSort('status')}
+                                                >
+                                                    <Typography variant="subtitle1" fontWeight="bold" color="black">
+                                                        Status
+                                                    </Typography>
+                                                </TableSortLabel>
+                                            </TableCell>
+                                        )}
+                                        {isAdmin && (
+                                            <TableCell>
+                                                <TableSortLabel
+                                                    sx={{
+                                                        display: 'flex',
+                                                        justifyContent: 'center',
+                                                        alignItems: 'center',
+                                                    }}
+                                                    active={sortConfig.key === 'assigned_to.name'}
+                                                    direction={sortConfig.direction}
+                                                    onClick={() => requestSort('assigned_to.name')}
+                                                >
+                                                    <Typography variant="subtitle1" fontWeight="bold" color="black">
+                                                        Assignee
+                                                    </Typography>
+                                                </TableSortLabel>
+                                            </TableCell>
+                                        )}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {newLeads.map((lead) => (
                                         <TableRow key={lead.id}>
                                             <TableCell>{lead.account_name}</TableCell>
-                                            <TableCell>{`€${lead.opportunity_amount}`}</TableCell>
                                             <TableCell>
-                                                <Box sx={{ width: '100%', position: 'relative', display: 'inline-flex', alignItems: 'center'}}>
+                                                {lead.opportunity_amount ? `€ ${parseFloat(lead.opportunity_amount).toLocaleString(undefined, {
+                                                    minimumFractionDigits: 2, maximumFractionDigits: 2,
+                                                })}`
+                                                    : '---'}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box sx={{ width: '100%', position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
                                                     <LinearProgress
                                                         variant="determinate"
                                                         value={lead.probability}
-                                                        style={{ width: '80%', marginRight: '8px', ...progressBarStyle }}
+                                                        sx={{
+                                                            height: '12px',
+                                                            borderRadius: '4px',
+                                                            width: '80%',
+                                                            marginRight: '8px',
+                                                            backgroundColor: 'rgb(224, 224, 224)',
+                                                            '& .MuiLinearProgress-bar': {
+                                                                backgroundColor: getColorForProbability(lead.probability),
+                                                            },
+                                                        }}
                                                     />
                                                     <Typography
                                                         variant="body2"
                                                         color="textSecondary"
-                                                        style={{
+                                                        sx={{
                                                             position: 'absolute',
                                                             left: '50%',
-                                                            transform: 'translateX(-50%)',
+                                                            top: '50%',
+                                                            transform: 'translate(-100%, -50%)', // Center horizontally and vertically
                                                             color: '#000',
-                                                            fontSize: '0.75rem'
+                                                            fontSize: '0.75rem',
+                                                            whiteSpace: 'nowrap', // Prevent text wrapping
+                                                            fontWeight: 'bold',
                                                         }}
                                                     >
                                                         {`${lead.probability}%`}
                                                     </Typography>
                                                 </Box>
                                             </TableCell>
-                                            <TableCell>
-                                            {lead?.assigned_to?.[0]?.user_details?.first_name && lead?.assigned_to?.[0]?.user_details?.last_name
-                                            ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
-                                            : lead?.assigned_to?.[0]?.user_details?.email || 'Unassigned'}
-                                            </TableCell>
+                                            {!isAdmin && (
+                                                <TableCell sx={{textTransform:'capitalize' }}>{lead.status}</TableCell>
+                                            )}
+                                            {isAdmin && (
+                                                <TableCell>
+                                                    {lead?.assigned_to?.[0]?.user_details?.first_name && lead?.assigned_to?.[0]?.user_details?.last_name
+                                                        ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                                                        : lead?.assigned_to?.[0]?.user_details?.email || 'Unassigned'}
+                                                </TableCell>
+                                            )}
                                         </TableRow>
                                     ))}
                                 </TableBody>
                             </Table>
-                            {loading && <LinearProgress sx={{ marginTop: '10px' }} style={progressBarStyle} />}
+                            {loading && <LinearProgress sx={{ marginTop: '10px' }} />}
                         </CardContent>
                     </Card>
                 </Grid>
