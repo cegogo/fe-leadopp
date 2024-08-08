@@ -177,7 +177,7 @@ const Deals: React.FC = () => {
 
   const onAddHandle = () => {
     if (!loading) {
-      navigate('/app/leads/add-leads', {
+      navigate('/app/deals/add-leads', {
         state: {
           detail: false,
           contacts: contacts || [],
@@ -424,9 +424,7 @@ const Deals: React.FC = () => {
                   )
                 )
               ) : (
-                <div>
-                 {/* <p>No leads available</p> */}
-                </div>
+                <div>{/* <p>No leads available</p> */}</div>
               )}
             </div>
             <div style={columnStyle}>
@@ -549,9 +547,7 @@ const Deals: React.FC = () => {
                   />
                 ))
               ) : (
-                <div>
-                 {/* <p>No meetings available</p> */}
-                </div>
+                <div>{/* <p>No meetings available</p> */}</div>
               )}
             </div>
             <div style={columnStyle}>
@@ -675,9 +671,7 @@ const Deals: React.FC = () => {
                   />
                 ))
               ) : (
-                <div>
-                {/*  <p>No opportunities available</p> */}
-                </div>
+                <div>{/*  <p>No opportunities available</p> */}</div>
               )}
             </div>
             <div style={columnStyle}>
@@ -800,9 +794,7 @@ const Deals: React.FC = () => {
                   />
                 ))
               ) : (
-                <div>
-                 {/* <p>No qualified leads available</p> */}
-                </div>
+                <div>{/* <p>No qualified leads available</p> */}</div>
               )}
             </div>
             <div style={columnStyle}>
@@ -926,9 +918,7 @@ const Deals: React.FC = () => {
                   />
                 ))
               ) : (
-                <div>
-                  {/*<p>No negotiations available</p> */}
-                </div>
+                <div>{/*<p>No negotiations available</p> */}</div>
               )}
             </div>
             <div style={columnStyle}>
@@ -1052,9 +1042,7 @@ const Deals: React.FC = () => {
                   />
                 ))
               ) : (
-                <div>
-                 {/* <p>No won leads available</p> */}
-                </div>
+                <div>{/* <p>No won leads available</p> */}</div>
               )}
             </div>
           </div>
