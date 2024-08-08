@@ -440,7 +440,7 @@ function LeadDetails(props: any) {
   // console.log(attachedFiles, 'dsfsd', attachmentList, 'aaaaa', attachments);
 
   const module = 'Deals';
-  const crntPage = 'Lead Details';
+  const crntPage = 'Deal Details';
   const backBtn = 'Back To Leads';
   // console.log(tags, countries, source, status, industries, users, contacts, 'leaddetail')
   return (
@@ -487,7 +487,7 @@ function LeadDetails(props: any) {
                     color: '#1a3353f0',
                   }}
                 >
-                  Lead Information
+                  Deal Information
                 </div>
                 <div
                   style={{
@@ -627,7 +627,9 @@ function LeadDetails(props: any) {
                 <div style={{ width: '32%' }}>
                   <div className="title2">Probability</div>
                   <div className="title3">
-                    {leadDetails?.probability || '---'}
+                    {leadDetails?.probability
+                      ? `${leadDetails.probability}%`
+                      : '---'}
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
