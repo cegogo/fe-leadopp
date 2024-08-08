@@ -368,6 +368,7 @@ export function AddLeads() {
     setSelectedContacts([]);
     setSelectedAssignTo([]);
     setSelectedTags([]);
+    setSelectedTeams([]);
   };
 
   const onCancel = () => {
@@ -534,7 +535,7 @@ export function AddLeads() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
-                        <div className="fieldTitle">Teams</div>
+                        <div className="fieldTitle">Team</div>
                         <FormControl
                           error={!!errors?.teams?.[0]}
                           sx={{ width: '70%' }}
@@ -576,7 +577,7 @@ export function AddLeads() {
                             renderInput={(params: any) => (
                               <TextField
                                 {...params}
-                                placeholder="Add Teams"
+                                placeholder="Select a Team"
                                 variant="outlined"
                                 error={!!errors?.teams?.[0]}
                                 InputProps={{
