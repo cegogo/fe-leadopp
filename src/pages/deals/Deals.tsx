@@ -425,7 +425,7 @@ const Deals: React.FC = () => {
                 )
               ) : (
                 <div>
-                  <p>No leads available</p>
+                 {/* <p>No leads available</p> */}
                 </div>
               )}
             </div>
@@ -550,7 +550,7 @@ const Deals: React.FC = () => {
                 ))
               ) : (
                 <div>
-                  <p>No meetings available</p>
+                 {/* <p>No meetings available</p> */}
                 </div>
               )}
             </div>
@@ -676,7 +676,7 @@ const Deals: React.FC = () => {
                 ))
               ) : (
                 <div>
-                  <p>No opportunities available</p>
+                {/*  <p>No opportunities available</p> */}
                 </div>
               )}
             </div>
@@ -801,7 +801,7 @@ const Deals: React.FC = () => {
                 ))
               ) : (
                 <div>
-                  <p>No qualified leads available</p>
+                 {/* <p>No qualified leads available</p> */}
                 </div>
               )}
             </div>
@@ -927,7 +927,7 @@ const Deals: React.FC = () => {
                 ))
               ) : (
                 <div>
-                  <p>No negotiations available</p>
+                  {/*<p>No negotiations available</p> */}
                 </div>
               )}
             </div>
@@ -1053,7 +1053,7 @@ const Deals: React.FC = () => {
                 ))
               ) : (
                 <div>
-                  <p>No won leads available</p>
+                 {/* <p>No won leads available</p> */}
                 </div>
               )}
             </div>
