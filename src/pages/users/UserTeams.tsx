@@ -13,6 +13,7 @@ import {
 import { FiChevronDown } from '@react-icons/all-files/fi/FiChevronDown';
 import { SERVER, ProfileUrl, TeamsUrl } from '../../services/ApiUrls';
 import { FaUsers } from 'react-icons/fa';
+import { FiMail, FiPhone } from 'react-icons/fi';
 
 interface UserDetails {
     email: string;
@@ -52,6 +53,7 @@ interface User {
     user_details: UserDetails;
     workload: string;
     expertise: string;
+    phone: string;
 }
 
 interface Team {
@@ -190,19 +192,33 @@ export function UserTeams() {
                     <AccordionDetails>
                         {team.users.length > 0 ? (
                             team.users.map((user, userIndex) => (
-                                <Box key={userIndex} sx={{ display: 'flex', alignItems: 'center', mb: '10px', ml: '20px' }}>
-                                    <Avatar
-                                        src={user.user_details.profile_pic || ''}
-                                        sx={{ width: 28, height: 28, mr: '10px' }}
-                                    >
-                                        {!user.user_details.profile_pic && <Avatar />}
-                                    </Avatar>
-                                    <Typography>
-                                        {user.user_details.first_name || user.user_details.last_name
-                                            ? `${user.user_details.first_name ?? ''} ${user.user_details.last_name ?? ''}`
-                                            : user.user_details.email}
+                                <Accordion key={userIndex} sx={{ boxShadow: 'none', mb: '10px' }}>
+                                <AccordionSummary
+                                    expandIcon={<FiChevronDown style={{ fontSize: '20px' }} />}
+                                    aria-controls={`panel-${team.id}-${userIndex}-content`}
+                                    id={`panel-${team.id}-${userIndex}-header`}
+                                >
+                                    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                        <Avatar
+                                            src={user.user_details.profile_pic || ''}
+                                            sx={{ width: 28, height: 28, mr: '10px' }}
+                                        >
+                                            {!user.user_details.profile_pic && <Avatar />}
+                                        </Avatar>
+                                        <Typography>
+                                            {user.user_details.first_name || user.user_details.last_name
+                                                ? `${user.user_details.first_name ?? ''} ${user.user_details.last_name ?? ''}`
+                                                : user.user_details.email}
+                                        </Typography>
+                                    </Box>
+                                </AccordionSummary>
+                                <AccordionDetails sx={{ padding: '0 20px' }}>
+                                    <Typography sx={{ display: 'flex', alignItems: 'flex-start', }}>
+                                    <strong> <FiPhone style={{ fontSize: '20px', color: '#1976d2', marginLeft: '30px' }}/> </strong> &nbsp; {user.phone}
+                                    <strong> <FiMail style={{ fontSize: '20px', color: '#1976d2', marginLeft: '30px' }}/> </strong> &nbsp; {user.user_details.email}
                                     </Typography>
-                                </Box>
+                                </AccordionDetails>
+                            </Accordion>
                             ))
                         ) : (
                             <Typography>No members in this team.</Typography>
