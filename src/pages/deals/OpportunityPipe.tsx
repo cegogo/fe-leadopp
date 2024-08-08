@@ -452,7 +452,7 @@ export default function Leads(props: any) {
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <InputBase
-            placeholder="Search leads"
+            placeholder="Search in deals..."
             value={searchQuery}
             onChange={handleSearchChange}
             sx={{
