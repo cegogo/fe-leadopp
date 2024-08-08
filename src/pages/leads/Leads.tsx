@@ -215,7 +215,7 @@ export default function Leads(props: any) {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [profileId]);
 
   const getColorForProbability = (probability: number) => {
     if (probability <= 20) return '#da2700'; // Red
@@ -250,40 +250,40 @@ export default function Leads(props: any) {
     sortDirection,
     showUnassignedOnly,
     userRole,
+    profileId,
   ]);
 
   const getLeads = async () => {
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token'),
-      org: localStorage.getItem('org'),
+      Authorization: localStorage.getItem('Token') || '',
+      org: localStorage.getItem('org') || '',
     };
+  
     try {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
-      const response = await fetchData(
-        `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset
-        }&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
-        }&search=${searchQuery}`,
-        'GET',
-        null as any,
-        Header
-      );
-
+  
+      let url = `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset}&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}&search=${searchQuery}`;
+  
+      if (userRole !== 'ADMIN') {
+        url += `&assigned_to=${profileId}`;
+      }
+  
+      const response = await fetchData(url, 'GET', null as any, Header);
+  
       if (!response.error) {
         setOpenLeads(response?.open_leads?.open_leads || []);
         setClosedLeads(response?.close_leads?.close_leads || []);
+        
         setOpenTotalPages(
-          Math.ceil(
-            (response?.open_leads?.leads_count || 0) / openRecordsPerPage
-          )
+          Math.ceil((response?.open_leads?.leads_count || 0) / openRecordsPerPage)
         );
         setClosedTotalPages(
-          Math.ceil(
-            (response?.close_leads?.leads_count || 0) / closedRecordsPerPage
-          )
+          Math.ceil((response?.close_leads?.leads_count || 0) / closedRecordsPerPage)
         );
+
         setContacts(response?.contacts || []);
         setStatus(response?.status || []);
         setSource(response?.source || []);
@@ -294,23 +294,6 @@ export default function Leads(props: any) {
         setIndustries(response?.industries || []);
         setWorkloadCount(response?.workload_count || 0);
         setLoading(false);
-
-        // Handle user-specific logic
-        if (userRole === 'ADMIN') {
-          setOpenLeads(response?.open_leads?.open_leads || []);
-          setClosedLeads(response?.close_leads?.close_leads || []);
-        } else {
-          const userOpenLeads = response?.open_leads?.open_leads?.filter(
-            (lead: any) => lead.assigned_to?.[0]?.id === profileId
-          ) || [];
-          const userClosedLeads = response?.close_leads?.close_leads?.filter(
-            (lead: any) => lead.assigned_to?.[0]?.id === profileId
-          ) || [];
-
-          setOpenLeads(userOpenLeads);
-          setClosedLeads(userClosedLeads);
-        }
-
       }
     } catch (error) {
       console.error('Error fetching data:', error);
