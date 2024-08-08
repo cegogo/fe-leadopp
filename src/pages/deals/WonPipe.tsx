@@ -19,7 +19,7 @@ import {
   InputBase,
 } from '@mui/material';
 import styled from '@emotion/styled';
-import { LeadUrl } from '../../services/ApiUrls';
+import { SERVER, LeadUrl, ProfileUrl } from '../../services/ApiUrls';
 import { DeleteModal } from '../../components/DeleteModal';
 import { Label } from '../../components/Label';
 import { fetchData } from '../../components/FetchData';
@@ -176,6 +176,46 @@ export default function Leads(props: any) {
   const [selectedAssignTo, setSelectedAssignTo] = useState();
   const [selectedContacts, setSelectedContacts] = useState();
   const [workloadCount, setWorkloadCount] = useState(0); // New state for workload count
+  const [userRole, setUserRole] = useState<string>(localStorage.getItem('role') || '');
+  const [profileId, setProfileId] = useState<string>('');
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem('Token');
+      const org = localStorage.getItem('org');
+
+      if (!token || !org) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${SERVER}${ProfileUrl}/`, {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            org: org,
+            Authorization: token,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching profile: ${response.statusText}`);
+        }
+
+        const profileData = await response.json();
+        console.log(profileData);
+        setProfileId(profileData.user_obj.id);
+        setUserRole(profileData.user_obj.role);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const getColorForProbability = (probability: number) => {
     if (probability <= 20) return '#da2700'; // Red
@@ -209,6 +249,7 @@ export default function Leads(props: any) {
     searchQuery,
     sortDirection,
     showUnassignedOnly,
+    userRole,
   ]);
 
   const getLeads = async () => {
@@ -255,6 +296,24 @@ export default function Leads(props: any) {
         setIndustries(response?.industries || []);
         setWorkloadCount(response?.workload_count || 0);
         setLoading(false);
+        
+        
+        // Handle user-specific logic
+        if (userRole === 'ADMIN') {
+          setOpenLeads(response?.open_leads?.open_leads || []);
+          setClosedLeads(response?.close_leads?.close_leads || []);
+        } else {
+          const userOpenLeads = response?.open_leads?.open_leads?.filter(
+            (lead: any) => lead.assigned_to?.[0]?.id === profileId
+          ) || [];
+          const userClosedLeads = response?.close_leads?.close_leads?.filter(
+            (lead: any) => lead.assigned_to?.[0]?.id === profileId
+          ) || [];
+
+          setOpenLeads(userOpenLeads);
+          setClosedLeads(userClosedLeads);
+        }
+
       }
     } catch (error) {
       console.error('Error fetching data:', error);
