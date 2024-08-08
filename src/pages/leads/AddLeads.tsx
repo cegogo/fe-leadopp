@@ -23,7 +23,7 @@ import {
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
 import '../../styles/style.css';
-import { LeadUrl } from '../../services/ApiUrls';
+import { LeadUrl, SERVER, TeamsUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import {
@@ -123,7 +123,8 @@ export function AddLeads() {
   const initialContentRef = useRef(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-
+  const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const autocompleteRef = useRef<any>(null);
   const [error, setError] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState<any[]>([]);
@@ -166,6 +167,43 @@ export function AddLeads() {
   });
 
   useEffect(() => {
+    const fetchTeams = async () => {
+      const token = localStorage.getItem('Token');
+      const org = localStorage.getItem('org');
+
+      if (!token || !org) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${SERVER}${TeamsUrl}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: token,
+            org: org,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error fetching teams: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setSelectedTeams(data.teams);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
+  useEffect(() => {
     if (quill) {
       initialContentRef.current = quillRef.current.firstChild.innerHTML;
     }
@@ -178,6 +216,12 @@ export function AddLeads() {
         contacts: val.length > 0 ? val.map((item: any) => item.id) : [],
       });
       setSelectedContacts(val);
+    } else if (title === 'teams') {
+      setFormData({
+        ...formData,
+        teams: val.length > 0 ? val.map((item: any) => item.id) : [],
+      });
+      setSelectedTeams(val);
     } else if (title === 'assigned_to') {
       setFormData({
         ...formData,
@@ -490,6 +534,72 @@ export function AddLeads() {
                     </div>
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
+                        <div className="fieldTitle">Teams</div>
+                        <FormControl
+                          error={!!errors?.teams?.[0]}
+                          sx={{ width: '70%' }}
+                        >
+                          <Autocomplete
+                            multiple
+                            limitTags={2}
+                            options={selectedTeams}
+                            getOptionLabel={(option: any) =>
+                              option?.name || option
+                            }
+                            onChange={(e: any, value: any) =>
+                              handleChange2('teams', value)
+                            }
+                            size="small"
+                            filterSelectedOptions
+                            renderTags={(value: any, getTagProps: any) =>
+                              value.map((option: any, index: any) => (
+                                <Chip
+                                  key={index}
+                                  deleteIcon={
+                                    <FaTimes style={{ width: '9px' }} />
+                                  }
+                                  sx={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                                    height: '18px',
+                                  }}
+                                  variant="outlined"
+                                  label={option?.name || option}
+                                  {...getTagProps({ index })}
+                                />
+                              ))
+                            }
+                            popupIcon={
+                              <CustomPopupIcon>
+                                <FaPlus className="input-plus-icon" />
+                              </CustomPopupIcon>
+                            }
+                            renderInput={(params: any) => (
+                              <TextField
+                                {...params}
+                                placeholder="Add Teams"
+                                variant="outlined"
+                                error={!!errors?.teams?.[0]}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  sx: {
+                                    '& .MuiAutocomplete-popupIndicator': {
+                                      '&:hover': { backgroundColor: 'white' },
+                                    },
+                                    '& .MuiAutocomplete-endAdornment': {
+                                      mt: '0px',
+                                      mr: '-8px',
+                                    },
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                          <FormHelperText>
+                            {errors?.teams?.[0] || ''}
+                          </FormHelperText>
+                        </FormControl>
+                      </div>
+                      <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
                         <FormControl
                           error={!!errors?.assigned_to?.[0]}
@@ -552,54 +662,6 @@ export function AddLeads() {
                           />
                           <FormHelperText>
                             {errors?.assigned_to?.[0] || ''}
-                          </FormHelperText>
-                        </FormControl>
-                      </div>
-                      <div className="fieldSubContainer">
-                        <div className="fieldTitle">Industry</div>
-                        <FormControl sx={{ width: '70%' }}>
-                          <Select
-                            name="industry"
-                            value={formData.industry}
-                            open={industrySelectOpen}
-                            onClick={() =>
-                              setIndustrySelectOpen(!industrySelectOpen)
-                            }
-                            IconComponent={() => (
-                              <div
-                                onClick={() =>
-                                  setIndustrySelectOpen(!industrySelectOpen)
-                                }
-                                className="select-icon-background"
-                              >
-                                {industrySelectOpen ? (
-                                  <FiChevronUp className="select-icon" />
-                                ) : (
-                                  <FiChevronDown className="select-icon" />
-                                )}
-                              </div>
-                            )}
-                            className={'select'}
-                            onChange={handleChange}
-                            error={!!errors?.industry?.[0]}
-                            MenuProps={{
-                              PaperProps: {
-                                style: {
-                                  height: '200px',
-                                },
-                              },
-                            }}
-                          >
-                            {state?.industries?.length
-                              ? state?.industries.map((option: any) => (
-                                  <MenuItem key={option[0]} value={option[1]}>
-                                    {option[1]}
-                                  </MenuItem>
-                                ))
-                              : ''}
-                          </Select>
-                          <FormHelperText>
-                            {errors?.industry?.[0] ? errors?.industry[0] : ''}
                           </FormHelperText>
                         </FormControl>
                       </div>
@@ -720,6 +782,56 @@ export function AddLeads() {
                           </FormHelperText>
                         </FormControl>
                       </div>
+                      <div className="fieldSubContainer">
+                        <div className="fieldTitle">Industry</div>
+                        <FormControl sx={{ width: '70%' }}>
+                          <Select
+                            name="industry"
+                            value={formData.industry}
+                            open={industrySelectOpen}
+                            onClick={() =>
+                              setIndustrySelectOpen(!industrySelectOpen)
+                            }
+                            IconComponent={() => (
+                              <div
+                                onClick={() =>
+                                  setIndustrySelectOpen(!industrySelectOpen)
+                                }
+                                className="select-icon-background"
+                              >
+                                {industrySelectOpen ? (
+                                  <FiChevronUp className="select-icon" />
+                                ) : (
+                                  <FiChevronDown className="select-icon" />
+                                )}
+                              </div>
+                            )}
+                            className={'select'}
+                            onChange={handleChange}
+                            error={!!errors?.industry?.[0]}
+                            MenuProps={{
+                              PaperProps: {
+                                style: {
+                                  height: '200px',
+                                },
+                              },
+                            }}
+                          >
+                            {state?.industries?.length
+                              ? state?.industries.map((option: any) => (
+                                  <MenuItem key={option[0]} value={option[1]}>
+                                    {option[1]}
+                                  </MenuItem>
+                                ))
+                              : ''}
+                          </Select>
+                          <FormHelperText>
+                            {errors?.industry?.[0] ? errors?.industry[0] : ''}
+                          </FormHelperText>
+                        </FormControl>
+                      </div>
+                    </div>
+                    <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Lead Attachment</div>
                         <TextField

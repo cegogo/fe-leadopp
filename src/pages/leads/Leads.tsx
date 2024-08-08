@@ -358,7 +358,7 @@ export default function Leads(props: any) {
   };
   const onAddHandle = () => {
     if (!loading) {
-      navigate('/app/leads/add-leads', {
+      navigate('/app/deals/add-leads', {
         state: {
           detail: false,
           contacts: contacts || [],
