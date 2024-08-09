@@ -570,7 +570,7 @@ function LeadDetails(props: any) {
                 }}
               >
                 <div style={{ width: '32%' }}>
-                  <div className="title2">Assigned To</div>
+                  <div className="title2">Assignee</div>
                   <div className="title3">{getFullName(assignedUser)}</div>
                 </div>
 
@@ -584,13 +584,13 @@ function LeadDetails(props: any) {
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
-                  <div className="title2">Teams</div>
+                  <div className="title2">Team</div>
                   <div className="title3">
                     {leadDetails?.teams?.length
                       ? leadDetails?.teams.map((team: Team) => (
                           <div key={team.id}>{team.name}</div>
                         ))
-                      : 'No teams assigned'}
+                      : '---'}
                   </div>
                 </div>
               </div>
