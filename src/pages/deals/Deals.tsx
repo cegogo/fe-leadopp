@@ -356,7 +356,7 @@ const Deals: React.FC = () => {
                                 />
                               ) : (
                                 <Avatar alt="Profile Initial">
-                                  {lead.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                                  {lead.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                     0
                                   )}
                                 </Avatar>
@@ -481,7 +481,7 @@ const Deals: React.FC = () => {
                             />
                           ) : (
                             <Avatar alt="Profile Initial">
-                              {meeting.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                              {meeting.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                 0
                               )}
                             </Avatar>
@@ -604,7 +604,7 @@ const Deals: React.FC = () => {
                             />
                           ) : (
                             <Avatar alt="Profile Initial">
-                              {opportunity.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                              {opportunity.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                 0
                               )}
                             </Avatar>
@@ -728,7 +728,7 @@ const Deals: React.FC = () => {
                             />
                           ) : (
                             <Avatar alt="Profile Initial">
-                              {qualified.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                              {qualified.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                 0
                               )}
                             </Avatar>
@@ -851,7 +851,7 @@ const Deals: React.FC = () => {
                             />
                           ) : (
                             <Avatar alt="Profile Initial">
-                              {negotiation.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                              {negotiation.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                 0
                               )}
                             </Avatar>
@@ -977,7 +977,7 @@ const Deals: React.FC = () => {
                             />
                           ) : (
                             <Avatar alt="Profile Initial">
-                              {won.assigned_to?.[0]?.user_details?.profile_pic?.charAt(
+                              {won.assigned_to?.[0]?.user_details?.first_name?.charAt(
                                 0
                               )}
                             </Avatar>
