@@ -560,7 +560,7 @@ export default function Sidebar(props: any) {
               <Route path="/app/deals/add-leads" element={<AddLeads />} />
               <Route path="/app/leads/edit-lead" element={<EditLead />} />
               <Route path="/app/leads/lead-details" element={<LeadDetails />} />
-              <Route path="/app/deals/lead-details" element={<LeadDetails />} />
+              <Route path="/app/deals/deal-details" element={<LeadDetails />} />
               <Route path="/app/deals/meeting" element={<MeetingPipe />} />
               <Route
                 path="/app/deals/negotiation"

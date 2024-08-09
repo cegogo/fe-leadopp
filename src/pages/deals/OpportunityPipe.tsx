@@ -358,7 +358,7 @@ export default function Leads(props: any) {
   };
 
   const selectLeadList = (leadId: any) => {
-    navigate(`/app/leads/lead-details`, {
+    navigate(`/app/deals/deal-details`, {
       state: {
         leadId,
         detail: true,
