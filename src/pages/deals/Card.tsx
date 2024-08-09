@@ -25,7 +25,7 @@ const PipelineCard: React.FC<CardProps> = ({ title, content, leadId }) => {
     const [selectedContacts, setSelectedContacts] = useState<any>(); // Define the type if known
 
     const handleClick = () => {
-        navigate(`/app/deals/lead-details`, {
+        navigate(`/app/deals/deal-details`, {
             state: {
                 leadId,
                 detail: true,

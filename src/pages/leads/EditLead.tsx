@@ -487,7 +487,7 @@ export function EditLead() {
   //     }
   // };
   const backbtnHandle = () => {
-    navigate('/app/leads/lead-details', {
+    navigate('/app/deals/deal-details', {
       state: {
         leadId: state?.id,
         detail: true,
@@ -499,9 +499,9 @@ export function EditLead() {
     // navigate('/app/leads')
   };
 
-  const module = 'Leads';
-  const crntPage = 'Edit Lead';
-  const backBtn = 'Back To Lead Details';
+  const module = 'Deals';
+  const crntPage = 'Edit Deal';
+  const backBtn = 'Back To Deal Details';
 
   // console.log(formData, 'leadsform')
   return (
