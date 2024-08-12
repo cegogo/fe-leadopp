@@ -143,6 +143,16 @@ interface FormData {
   file: string | null;
 }
 
+const LEAD_STATUS = [
+  { value: 'lead', label: 'Lead' },
+  { value: 'meeting', label: 'Meeting' },
+  { value: 'opportunity', label: 'Opportunity' },
+  { value: 'qualified', label: 'Qualified' },
+  { value: 'negotiation', label: 'Negotiation' },
+  { value: 'won', label: 'Won' },
+  { value: 'closed', label: 'Closed' },
+];
+
 export function EditLead() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -158,7 +168,7 @@ export function EditLead() {
   const [reset, setReset] = useState(false);
   const [error, setError] = useState(false);
   //const [selectedContacts, setSelectedContacts] = useState<any[]>([] || '');
-  const [selectedContacts, setSelectedContacts] = useState('');  
+  const [selectedContacts, setSelectedContacts] = useState('');
   const [selectedAssignTo, setSelectedAssignTo] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<any[]>([] || '');
   const [selectedCountry, setSelectedCountry] = useState<any[]>([] || '');
@@ -218,7 +228,12 @@ export function EditLead() {
   }, [quill, hasInitialFocus]);
 
   useEffect(() => {
-    setFormData(state?.value);
+    if (state) {
+      setFormData((prev) => ({
+        ...prev,
+        ...state.value, // Ensure state.value matches FormData structure
+      }));
+    }
   }, [state?.id]);
 
   useEffect(() => {
@@ -230,7 +245,7 @@ export function EditLead() {
     // Log selectedAssignTo after it has been updated
     console.log(selectedAssignTo, 'This is selectedAssignTo Edit');
     console.log(selectedContacts, 'This is selectedContacts Edit');
-  }, [selectedAssignTo,selectedContacts]);
+  }, [selectedAssignTo, selectedContacts]);
 
   useEffect(() => {
     if (reset) {
@@ -375,12 +390,12 @@ export function EditLead() {
       'Content-Type': 'application/json',
       Authorization: localStorage.getItem('Token'),
       org: localStorage.getItem('org'),
-    }
-    
+    };
+
     // console.log(data, 'edit')
     fetchData(`${LeadUrl}/${state?.id}/`, 'PUT', JSON.stringify(data), Header)
       .then((res: any) => {
-         console.log('Form data:', res);
+        console.log('Form data:', res);
         if (!res.error) {
           backbtnHandle();
           // setResponceError(data.error)
@@ -472,16 +487,21 @@ export function EditLead() {
   //     }
   // };
   const backbtnHandle = () => {
-    navigate('/app/leads/lead-details', {
-      state: { leadId: state?.id, detail: true, selectedAssignTo:selectedAssignTo, selectedContacts:selectedContacts },
+    navigate('/app/deals/deal-details', {
+      state: {
+        leadId: state?.id,
+        detail: true,
+        selectedAssignTo: selectedAssignTo,
+        selectedContacts: selectedContacts,
+      },
     });
-    console.log(state, 'This is backbutton')
+    console.log(state, 'This is backbutton');
     // navigate('/app/leads')
   };
 
-  const module = 'Leads';
-  const crntPage = 'Edit Lead';
-  const backBtn = 'Back To Lead Details';
+  const module = 'Deals';
+  const crntPage = 'Edit Deal';
+  const backBtn = 'Back To Deal Details';
 
   // console.log(formData, 'leadsform')
   return (
@@ -637,20 +657,20 @@ export function EditLead() {
                     <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
-                        <FormControl 
+                        <FormControl
                           error={!!errors?.assigned_to?.[0]}
                           sx={{ width: '70%' }}
                         >
                           <Autocomplete
                             // ref={autocompleteRef}
-                            //multiple                          
+                            //multiple
                             //value={formData.assigned_to || ''}
                             value={state.selectedAssignTo}
                             // name='contacts'
                             //limitTags={2}
                             options={state?.users || []}
                             //options={state?.users?.filter(
-                              //(user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
+                            //(user :any) => !selectedAssignTo.map((item) => item.id).includes(user.id)
                             //)}
                             // options={state.contacts ? state.contacts.map((option: any) => option) : ['']}
                             getOptionLabel={(option: any) =>
@@ -812,12 +832,11 @@ export function EditLead() {
                             onChange={handleChange}
                             error={!!errors?.status?.[0]}
                           >
-                            {state?.status?.length &&
-                              state?.status.map((option: any) => (
-                                <MenuItem key={option[0]} value={option[1]}>
-                                  {option[1]}
-                                </MenuItem>
-                              ))}
+                            {LEAD_STATUS.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
                           </Select>
                           <FormHelperText>
                             {errors?.status?.[0] ? errors?.status[0] : ''}
@@ -851,7 +870,9 @@ export function EditLead() {
                           style={{ width: '70%' }}
                           size="small"
                           helperText={
-                            errors?.probability?.[0] ? errors?.probability[0] : ''
+                            errors?.probability?.[0]
+                              ? errors?.probability[0]
+                              : ''
                           }
                           error={!!errors?.probability?.[0]}
                         />
@@ -951,8 +972,8 @@ export function EditLead() {
                           }
                           error={!!errors?.lead_attachment?.[0]}
                         />
-                      </div> 
-                    </div>                   
+                      </div>
+                    </div>
                     {/* <div className='fieldContainer2'>
                       <div className='fieldSubContainer'>
                         <div className='fieldTitle'> Close Date</div>

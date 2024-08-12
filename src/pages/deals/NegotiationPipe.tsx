@@ -405,7 +405,7 @@ export default function Leads(props: any) {
           setWorkloadCount((prevCount) => prevCount - 1);
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   };
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -429,8 +429,9 @@ export default function Leads(props: any) {
 
   const filteredLeads = (tab === 'open' ? openLeads : closedLeads)
     .filter((lead) => {
-      const fullName = `${lead.assigned_to?.[0]?.user_details?.first_name || ''
-        } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
+      const fullName = `${
+        lead.assigned_to?.[0]?.user_details?.first_name || ''
+      } ${lead.assigned_to?.[0]?.user_details?.last_name || ''}`.toLowerCase();
       const email =
         lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
       const accountName = lead.account_name?.toLowerCase() || '';
@@ -443,7 +444,7 @@ export default function Leads(props: any) {
 
       const matchesUnassignedFilter =
         !showUnassignedOnly || !lead.assigned_to?.length;
-      const matchesStatusFilter = lead.status === 'lead';
+      const matchesStatusFilter = lead.status === 'negotiation';
 
       return matchesSearch && matchesUnassignedFilter && matchesStatusFilter;
     })
@@ -730,11 +731,11 @@ export default function Leads(props: any) {
                             {' '}
                             {item?.opportunity_amount
                               ? `€${parseFloat(
-                                String(item.opportunity_amount)
-                              ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}`
+                                  String(item.opportunity_amount)
+                                ).toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}`
                               : '---'}
                           </span>{' '}
                         </div>
@@ -750,8 +751,8 @@ export default function Leads(props: any) {
                               ) : (
                                 <Avatar
                                   alt="Remy Sharp"
-                                // size='small'
-                                // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
+                                  // size='small'
+                                  // sx={{ backgroundColor: 'deepOrange', color: 'white', textTransform: 'capitalize', mt: '-20px', ml: '10px' }}
                                 >
                                   {assignItem.user_details?.first_name?.charAt(
                                     0
@@ -849,10 +850,10 @@ export default function Leads(props: any) {
                         alt={item?.created_by?.first_name}
                         src={item?.created_by?.profile_pic}
                         sx={{ ml: 1 }}
-                      // style={{
-                      //   height: '20px',
-                      //   width: '20px'
-                      // }}
+                        // style={{
+                        //   height: '20px',
+                        //   width: '20px'
+                        // }}
                       />{' '}
                       &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;
                       {item?.created_by?.last_name}

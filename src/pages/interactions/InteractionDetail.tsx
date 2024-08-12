@@ -128,7 +128,7 @@ export default function InteractionDetails() {
     }
 
     const selectLeadList = (leadId: any) => {
-        navigate(`/app/leads/lead-details`, { state: { leadId, detail: true } })
+        navigate(`/app/deals/deal-details`, { state: { leadId, detail: true } })
     }
 
     return (

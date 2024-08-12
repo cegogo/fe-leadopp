@@ -1,15 +1,47 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Card, Link, Button, Avatar, Divider, TextField, Box, MenuItem, Snackbar,
-  Alert, Stack, List, ListItem, ListItemAvatar, ListItemText, Typography, IconButton, 
-  Grid, Popover, ListItemIcon } from '@mui/material';
-import { FaEllipsisV, FaPaperclip, FaPlus, FaRegAddressCard, FaStar, FaTimes } from 'react-icons/fa';
+import {
+  Card,
+  Link,
+  Button,
+  Avatar,
+  Divider,
+  TextField,
+  Box,
+  MenuItem,
+  Snackbar,
+  Alert,
+  Stack,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+  IconButton,
+  Grid,
+  Popover,
+  ListItemIcon,
+} from '@mui/material';
+import {
+  FaEllipsisV,
+  FaPaperclip,
+  FaPlus,
+  FaRegAddressCard,
+  FaStar,
+  FaTimes,
+} from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LeadUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { Label } from '../../components/Label';
-import { AntSwitch, CustomInputBoxWrapper, CustomSelectField, CustomSelectField1,
-  StyledListItemButton, StyledListItemText } from '../../styles/CssStyled';
+import {
+  AntSwitch,
+  CustomInputBoxWrapper,
+  CustomSelectField,
+  CustomSelectField1,
+  StyledListItemButton,
+  StyledListItemText,
+} from '../../styles/CssStyled';
 import FormateTime from '../../components/FormateTime';
 import { formatFileSize } from '../../components/FormatSize';
 import '../../styles/style.css';
@@ -57,6 +89,8 @@ type response = {
   created_by: {
     email: string;
     id: string;
+    first_name: string;
+    last_name: string;
     profile_pic: string;
   };
   user_details: {
@@ -69,8 +103,6 @@ type response = {
   created_on_arrow: string;
   date_of_birth: string;
   title: string;
-  first_name: string;
-  last_name: string;
   account_name: string;
   phone: string;
   email: string;
@@ -78,8 +110,8 @@ type response = {
   opportunity_amount: string;
   website: string;
   description: string | '';
-  teams: string;
-  assigned_to: string;
+  teams: Team[];
+  assigned_to: AssignedTo[];
   contacts: string;
   status: string;
   source: string;
@@ -101,6 +133,45 @@ type response = {
   created_from_site: boolean;
   id: string;
 };
+
+interface UserDetails {
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  id: string;
+  is_active: boolean;
+  job_title: string;
+  profile_pic: string | null;
+}
+
+interface AssignedTo {
+  address: string | null;
+  alternate_phone: string;
+  date_of_joining: string;
+  expertise: string;
+  has_marketing_access: boolean;
+  has_sales_access: boolean;
+  has_sales_representative_access: boolean;
+  id: string;
+  is_active: boolean;
+  is_organization_admin: boolean;
+  phone: string;
+  role: string;
+  user_details: UserDetails;
+  workload: number;
+}
+
+interface Team {
+  id: string;
+  name: string;
+  // other properties if needed
+}
+
+interface LeadDetails {
+  assigned_to: AssignedTo[];
+  // Add other properties of LeadDetails if necessary
+}
+
 function LeadDetails(props: any) {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -123,7 +194,7 @@ function LeadDetails(props: any) {
   const [industries, setIndustries] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [users, setUsers] = useState([]);
-  const [teams, setTeams] = useState([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [comments, setComments] = useState([]);
   const [commentList, setCommentList] = useState('Recent Last');
   const [note, setNote] = useState('');
@@ -132,9 +203,10 @@ function LeadDetails(props: any) {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [selectedAssignTo, setSelectedAssignTo] = useState();  
-  const [selectedContacts, setSelectedContacts] = useState();  
- 
+  const [assignTo, setAssignTo] = useState([]);
+  const [selectedContacts, setSelectedContacts] = useState();
+
+  const assignedUser = leadDetails?.assigned_to?.[0];
 
   useEffect(() => {
     getLeadDetails(state.leadId);
@@ -163,8 +235,8 @@ function LeadDetails(props: any) {
           setSelectedContacts(res?.lead_obj.contacts[0]);
           setTeams(res?.teams);
           setComments(res?.comments);
-          setSelectedAssignTo(res?.lead_obj.assigned_to[0])
-          console.log(res,'this is res')
+          setAssignTo(res?.lead_obj.assigned_to[0]);
+          console.log(res, 'this is res');
         }
       })
       .catch((err) => {
@@ -213,15 +285,24 @@ function LeadDetails(props: any) {
         if (!res.error) {
           resetForm();
           getLeadDetails(state?.leadId);
-        }  else {
-           setErrors(res.errors || {});
+        } else {
+          setErrors(res.errors || {});
         }
       })
       .catch(() => {});
   };
 
+  const getFullName = (user: AssignedTo | undefined): string => {
+    if (!user) return 'Unassigned';
+    const firstName = user.user_details.first_name || '';
+    const lastName = user.user_details.last_name || '';
+    return firstName || lastName
+      ? `${firstName} ${lastName}`.trim()
+      : user.user_details.email || 'Unassigned';
+  };
+
   const backbtnHandle = () => {
-    navigate('/app/leads');
+    navigate('/app/deals/leads');
   };
   const resetForm = () => {
     setNote('');
@@ -243,14 +324,14 @@ function LeadDetails(props: any) {
         break;
       }
     }
-    console.log(selectedContacts,'This is preNavigate selectedContacts')
-    console.log(selectedAssignTo,'This is preNavigate selectedAssignTo')
+    console.log(selectedContacts, 'This is preNavigate selectedContacts');
+
     navigate('/app/leads/edit-lead', {
       state: {
         value: {
           title: leadDetails?.title,
-          first_name: leadDetails?.first_name,
-          last_name: leadDetails?.last_name,
+          first_name: leadDetails?.created_by?.first_name,
+          last_name: leadDetails?.created_by?.last_name,
           account_name: leadDetails?.account_name,
           phone: leadDetails?.phone,
           email: leadDetails?.email,
@@ -286,16 +367,15 @@ function LeadDetails(props: any) {
         status,
         industries,
         users,
-        contacts:state.contacts || [],
+        contacts: state.contacts || [],
         selectedContacts: selectedContacts,
         teams,
         comments,
-        selectedAssignTo: selectedAssignTo,
       },
     });
-    console.log(selectedAssignTo, 'This is selectedAssignTo LeadDetails')
-    console.log(selectedContacts, 'This is selectedContacts LeadDetails')
-    console.log(state, 'This is state LeadDetails')
+    console.log(assignTo, 'This is AssignTo LeadDetails');
+    console.log(selectedContacts, 'This is selectedContacts LeadDetails');
+    console.log(state, 'This is state LeadDetails');
   };
 
   const handleAttachmentClick = () => {
@@ -359,8 +439,8 @@ function LeadDetails(props: any) {
   const id = open ? 'simple-popover' : undefined;
   // console.log(attachedFiles, 'dsfsd', attachmentList, 'aaaaa', attachments);
 
-  const module = 'Leads';
-  const crntPage = 'Lead Details';
+  const module = 'Deals';
+  const crntPage = 'Deal Details';
   const backBtn = 'Back To Leads';
   // console.log(tags, countries, source, status, industries, users, contacts, 'leaddetail')
   return (
@@ -407,7 +487,7 @@ function LeadDetails(props: any) {
                     color: '#1a3353f0',
                   }}
                 >
-                  Lead Information
+                  Deal Information
                 </div>
                 <div
                   style={{
@@ -435,47 +515,37 @@ function LeadDetails(props: any) {
                       alt={leadDetails?.created_by?.email}
                     />
                     &nbsp; &nbsp;
-                    {leadDetails?.first_name}&nbsp;
-                    {leadDetails?.last_name}
+                    {leadDetails?.created_by?.first_name}&nbsp;
+                    {leadDetails?.created_by?.last_name}
                   </div>
                 </div>
               </div>
-              <div
-                style={{
-                  padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginTop: '10px',
-                }}
-              >
-                <div className="title2">
-                  {leadDetails?.title}
-                  {/* {console.log(users?.length && users.length,'lll')} */}
-                  <Stack
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      mt: 1,
-                    }}
-                  >
-                    {/* {
+              <div>
+                <Stack
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    mt: 1,
+                  }}
+                >
+                  {/* {
                                                 lead.assigned_to && lead.assigned_to.map((assignItem) => (
                                                     assignItem.user_details.profile_pic
                                                         ? */}
 
-                    {usersDetails?.length
-                      ? usersDetails.map((val: any, i: any) => (
-                          <Avatar
-                            key={i}
-                            alt={val?.user_details?.email}
-                            src={val?.user_details?.profile_pic}
-                            sx={{ mr: 1 }}
-                          />
-                        ))
-                      : ''}
-                  </Stack>
-                </div>
+                  {usersDetails?.length
+                    ? usersDetails.map((val: any, i: any) => (
+                        <Avatar
+                          key={i}
+                          alt={val?.user_details?.email}
+                          src={val?.user_details?.profile_pic}
+                          sx={{ mr: 1 }}
+                        />
+                      ))
+                    : ''}
+                </Stack>
+
                 <Stack
                   sx={{
                     display: 'flex',
@@ -490,6 +560,39 @@ function LeadDetails(props: any) {
                       ))
                     : ''}
                 </Stack>
+              </div>
+              <div
+                style={{
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Assignee</div>
+                  <div className="title3">{getFullName(assignedUser)}</div>
+                </div>
+
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Status</div>
+                  <div
+                    className="title3"
+                    style={{ textTransform: 'capitalize' }}
+                  >
+                    {leadDetails?.status}
+                  </div>
+                </div>
+                <div style={{ width: '32%' }}>
+                  <div className="title2">Team</div>
+                  <div className="title3">
+                    {leadDetails?.teams?.length
+                      ? leadDetails?.teams.map((team: Team) => (
+                          <div key={team.id}>{team.name}</div>
+                        ))
+                      : '---'}
+                  </div>
+                </div>
               </div>
               <div
                 style={{
@@ -518,17 +621,15 @@ function LeadDetails(props: any) {
               </div>
               <div className="detailList">
                 <div style={{ width: '32%' }}>
-                  <div className="title2">Created from site</div>
-                  <div className="title3">
-                    {/* {lead.pipeline ? lead.pipeline : '------'} */}
-                    {/* {leadDetails?.created_from_site} */}
-                    <AntSwitch checked={leadDetails?.created_from_site} />
-                  </div>
+                  <div className="title2">Industry</div>
+                  <div className="title3">{leadDetails?.industry || '---'}</div>
                 </div>
                 <div style={{ width: '32%' }}>
                   <div className="title2">Probability</div>
                   <div className="title3">
-                    {leadDetails?.probability || '---'}
+                    {leadDetails?.probability
+                      ? `${leadDetails.probability}%`
+                      : '---'}
                   </div>
                 </div>
                 <div style={{ width: '32%' }}>
@@ -540,20 +641,6 @@ function LeadDetails(props: any) {
                       '---'
                     )}
                   </div>
-                </div>
-              </div>
-              <div className="detailList">
-                <div style={{ width: '32%' }}>
-                  <div className="title2">Industry</div>
-                  <div className="title3">{leadDetails?.industry || '---'}</div>
-                </div>
-                <div style={{ width: '32%' }}>                  
-                </div>
-                <div style={{ width: '32%' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 600 }}>
-                    &nbsp;
-                  </div>
-                  <div style={{ fontSize: '16px', color: 'gray' }}>&nbsp;</div>
                 </div>
               </div>
               {/* </div> */}
@@ -590,13 +677,13 @@ function LeadDetails(props: any) {
                   <div style={{ width: '32%' }}>
                     <div className="title2">First Name</div>
                     <div className="title3">
-                      {leadDetails?.first_name || '---'}
+                      {leadDetails?.created_by?.first_name || '---'}
                     </div>
                   </div>
                   <div style={{ width: '32%' }}>
                     <div className="title2">Last Name</div>
                     <div className="title3">
-                      {leadDetails?.last_name || '---'}
+                      {leadDetails?.created_by?.last_name || '---'}
                     </div>
                   </div>
                   <div style={{ width: '32%' }}>
@@ -624,9 +711,7 @@ function LeadDetails(props: any) {
                     <div className="title2">Mobile Number</div>
                     <div className="title3">
                       {leadDetails?.phone ? (
-                        <div>
-                          {leadDetails?.phone}
-                        </div>
+                        <div>{leadDetails?.phone}</div>
                       ) : (
                         '---'
                       )}
@@ -685,7 +770,7 @@ function LeadDetails(props: any) {
                 </div>
                 <div className="detailList">
                   <div style={{ width: '32%' }}>
-                    <div className="title2">postcode</div>
+                    <div className="title2">Postcode</div>
                     <div className="title3">
                       {leadDetails?.postcode || '---'}
                     </div>
@@ -1045,64 +1130,100 @@ function LeadDetails(props: any) {
                                 </div>
                             </div> */}
 
-                            <div style={{ padding: '20px', marginBottom: '10px' }}>
-                                <TextField
-                                    label='Add Note'
-                                    id='fullWidth'
-                                    value={note}
-                                    onChange={(e: any) => setNote(e.target.value)}
-                                    InputProps={{ style: { borderRadius: '10px' } }}
-                                    sx={{ mb: '30px', width: '100%', borderRadius: '10px' }}
-                                // InputProps={{ disableUnderline: true }}
-                                />
-                                <CustomInputBoxWrapper
-                                    aria-label='qwe'
-                                    // className='CustomInputBoxWrapper'
-                                    contentEditable="true"
-                                    onInput={(e: any) => setInputValue(e.currentTarget.innerText)}
-                                // onInput={(e: React.SyntheticEvent<HTMLDivElement>) => setInputValue(e.currentTarget.innerText)}
-                                // onInput={(e) => setInputValue(e.target.innerText)}
-                                >
-                                    {attachedFiles.length > 0 && (
-                                        <div>
-                                            {attachedFiles.map((file, index) => (
-                                                <div key={index}>
-                                                    <div>{file.name}</div>
-                                                    <img src={URL.createObjectURL(file)} alt={file.name} style={{ maxWidth: '100%', maxHeight: '100px', marginTop: '8px' }} />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </CustomInputBoxWrapper>
-                                <Box sx={{
-                                    pt: '10px', display: 'flex', justifyContent: 'space-between', border: '1px solid #ccc', borderTop: 'none', mt: '-5px',
-                                    borderBottomLeftRadius: '8px', borderBottomRightRadius: '8px', pb: '10px'
-                                }}>
-                                    <Button component='label' onClick={handleAttachmentClick} sx={{ ml: '5px' }}>
-                                        <FaPaperclip style={{ fill: 'gray' }} />
-                                    </Button>
-                                    <Grid container justifyContent="flex-end">
-                                        <Button
-                                            variant='contained'
-                                            size='small'
-                                            color='inherit'
-                                            disableFocusRipple
-                                            disableRipple
-                                            disableTouchRipple
-                                            sx={{ backgroundColor: '#808080b5', borderRadius: '8px', color: 'white', textTransform: 'none', ml: '8px', '&:hover': { backgroundColor: '#C0C0C0' } }}
-                                            onClick={resetForm}
-                                        >
-                                            Reset
-                                        </Button>
-                                        <Button variant='contained' size='small'
-                                            sx={{ backgroundColor: '#1976d2', borderRadius: '8px', textTransform: 'none', ml: '8px', mr: '12px' }}
-                                            onClick={sendComment}
-                                        >
-                                            Send
-                                        </Button>
-                                    </Grid>
-                                </Box>
-                                {/* {attachedFiles.length > 0 && (
+              <div style={{ padding: '20px', marginBottom: '10px' }}>
+                <TextField
+                  label="Add Note"
+                  id="fullWidth"
+                  value={note}
+                  onChange={(e: any) => setNote(e.target.value)}
+                  InputProps={{ style: { borderRadius: '10px' } }}
+                  sx={{ mb: '30px', width: '100%', borderRadius: '10px' }}
+                  // InputProps={{ disableUnderline: true }}
+                />
+                <CustomInputBoxWrapper
+                  aria-label="qwe"
+                  // className='CustomInputBoxWrapper'
+                  contentEditable="true"
+                  onInput={(e: any) => setInputValue(e.currentTarget.innerText)}
+                  // onInput={(e: React.SyntheticEvent<HTMLDivElement>) => setInputValue(e.currentTarget.innerText)}
+                  // onInput={(e) => setInputValue(e.target.innerText)}
+                >
+                  {attachedFiles.length > 0 && (
+                    <div>
+                      {attachedFiles.map((file, index) => (
+                        <div key={index}>
+                          <div>{file.name}</div>
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={file.name}
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: '100px',
+                              marginTop: '8px',
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CustomInputBoxWrapper>
+                <Box
+                  sx={{
+                    pt: '10px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    border: '1px solid #ccc',
+                    borderTop: 'none',
+                    mt: '-5px',
+                    borderBottomLeftRadius: '8px',
+                    borderBottomRightRadius: '8px',
+                    pb: '10px',
+                  }}
+                >
+                  <Button
+                    component="label"
+                    onClick={handleAttachmentClick}
+                    sx={{ ml: '5px' }}
+                  >
+                    <FaPaperclip style={{ fill: 'gray' }} />
+                  </Button>
+                  <Grid container justifyContent="flex-end">
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="inherit"
+                      disableFocusRipple
+                      disableRipple
+                      disableTouchRipple
+                      sx={{
+                        backgroundColor: '#808080b5',
+                        borderRadius: '8px',
+                        color: 'white',
+                        textTransform: 'none',
+                        ml: '8px',
+                        '&:hover': { backgroundColor: '#C0C0C0' },
+                      }}
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{
+                        backgroundColor: '#1976d2',
+                        borderRadius: '8px',
+                        textTransform: 'none',
+                        ml: '8px',
+                        mr: '12px',
+                      }}
+                      onClick={sendComment}
+                    >
+                      Send
+                    </Button>
+                  </Grid>
+                </Box>
+                {/* {attachedFiles.length > 0 && (
 
                                     <div>
                                         <strong>Attached Files:</strong>
