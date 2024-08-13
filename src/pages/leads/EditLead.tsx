@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { useQuill } from 'react-quilljs';
 import 'quill/dist/quill.snow.css';
-import { LeadUrl } from '../../services/ApiUrls';
+import { LeadUrl, SERVER, TeamsUrl } from '../../services/ApiUrls';
 import { fetchData, Header } from '../../components/FetchData';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import {
@@ -171,6 +171,9 @@ export function EditLead() {
   const [selectedContacts, setSelectedContacts] = useState('');
   const [selectedAssignTo, setSelectedAssignTo] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<any[]>([] || '');
+  const [selectedTeams, setSelectedTeams] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  
   const [selectedCountry, setSelectedCountry] = useState<any[]>([] || '');
   const [sourceSelectOpen, setSourceSelectOpen] = useState(false);
   const [statusSelectOpen, setStatusSelectOpen] = useState(false);
@@ -208,6 +211,44 @@ export function EditLead() {
   });
 
   useEffect(() => {
+    const fetchTeams = async () => {
+      const token = localStorage.getItem('Token');
+      const org = localStorage.getItem('org');
+  
+      if (!token || !org) {
+        setLoading(false);
+        return;
+      }
+  
+      try {
+        const response = await fetch(`${SERVER}${TeamsUrl}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: token,
+            org: org,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error fetching teams: ${response.statusText}`);
+        }
+  
+        const data = await response.json();
+        setSelectedTeams(data.teams);
+        console.log('teams data:', data.teams)
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchTeams();
+  }, []); 
+
+  useEffect(() => {
     // Scroll to the top of the page when the component mounts
     window.scrollTo(0, 0);
     // Set focus to the page container after the Quill editor loads its content
@@ -233,6 +274,7 @@ export function EditLead() {
         ...prev,
         ...state.value, // Ensure state.value matches FormData structure
       }));
+      setSelectedTeams(state.value.teams || []);
     }
   }, [state?.id]);
 
@@ -314,6 +356,12 @@ export function EditLead() {
         assigned_to: val ? [val.id] : [],
       });
       setSelectedAssignTo([val.id]);
+    }  else if (title === 'teams') {
+      setFormData({
+        ...formData,
+        teams: val.length > 0 ? val.map((item: any) => item.id) : [],
+      });
+      setSelectedTeams(val);
     } else if (title === 'tags') {
       setFormData({
         ...formData,
@@ -592,7 +640,7 @@ export function EditLead() {
                         <FormControl
                           error={!!errors?.contacts?.[0]}
                           sx={{ width: '70%' }}
-                        >
+                        >                        
                           <Autocomplete
                             //multiple
                             value={state.selectedContacts}
@@ -655,6 +703,73 @@ export function EditLead() {
                       </div>
                     </div>
                     <div className="fieldContainer2">
+                    <div className="fieldSubContainer">
+                        <div className="fieldTitle">Team</div>
+                        <FormControl
+                          error={!!errors?.teams?.[0]}
+                          sx={{ width: '70%' }}
+                        >
+                          <Autocomplete
+                            multiple
+                            limitTags={2}
+                            options={selectedTeams}
+                            getOptionLabel={(option: any) =>
+                              option?.name || option
+                            }
+                            onChange={(e: any, value: any) =>
+                              handleChange2('teams', value)
+                            }
+                            size="small"
+                            filterSelectedOptions
+                            renderTags={(value: any, getTagProps: any) =>
+                              value.map((option: any, index: any) => (
+                                <Chip
+                                  key={index}
+                                  deleteIcon={
+                                    <FaTimes style={{ width: '9px' }} />
+                                  }
+                                  sx={{
+                                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                                    height: '18px',
+                                  }}
+                                  variant="outlined"
+                                  label={option?.name || option}
+                                  {...getTagProps({ index })}
+                                />
+                              ))
+                            }
+                            popupIcon={
+                              <CustomPopupIcon>
+                                <FaPlus className="input-plus-icon" />
+                              </CustomPopupIcon>
+                            }
+                            renderInput={(params: any) => (
+                              <TextField
+                                {...params}
+                                placeholder="Select a Team"
+                                variant="outlined"
+                                error={!!errors?.teams?.[0]}
+                                InputProps={{
+                                  ...params.InputProps,
+                                  sx: {
+                                    '& .MuiAutocomplete-popupIndicator': {
+                                      '&:hover': { backgroundColor: 'white' },
+                                    },
+                                    '& .MuiAutocomplete-endAdornment': {
+                                      mt: '0px',
+                                      mr: '-8px',
+                                    },
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                          <FormHelperText>
+                            {errors?.teams?.[0] || ''}
+                          </FormHelperText>
+                        </FormControl>
+                      </div>
+                    
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Assign To</div>
                         <FormControl
@@ -732,7 +847,9 @@ export function EditLead() {
                             {errors?.assigned_to?.[0] || ''}
                           </FormHelperText>
                         </FormControl>
-                      </div>
+                        </div>
+                        </div>
+                      <div className="fieldContainer2"> 
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Industry</div>
                         <FormControl sx={{ width: '70%' }}>
@@ -802,8 +919,8 @@ export function EditLead() {
                           <FormHelperText>{errors?.industry?.[0] ? errors?.industry[0] : ''}</FormHelperText>
                         </FormControl> */}
                       </div>
-                    </div>
-                    <div className="fieldContainer2">
+                    
+                   
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Status</div>
                         <FormControl sx={{ width: '70%' }}>
@@ -843,6 +960,8 @@ export function EditLead() {
                           </FormHelperText>
                         </FormControl>
                       </div>
+                    </div>
+                    <div className="fieldContainer2">
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Probability</div>
                         <TextField
@@ -877,8 +996,7 @@ export function EditLead() {
                           error={!!errors?.probability?.[0]}
                         />
                       </div>
-                    </div>
-                    <div className="fieldContainer2">
+
                       <div className="fieldSubContainer">
                         <div className="fieldTitle">Lead Source</div>
                         <FormControl sx={{ width: '70%' }}>
@@ -919,7 +1037,9 @@ export function EditLead() {
                           </FormHelperText>
                         </FormControl>
                       </div>
-                      <div className="fieldSubContainer">
+                    </div>
+                    <div className="fieldContainer2">
+                    <div className="fieldSubContainer">
                         <div className="fieldTitle">Lead Attachment</div>
                         <TextField
                           name="lead_attachment"
@@ -974,57 +1094,10 @@ export function EditLead() {
                         />
                       </div>
                     </div>
-                    {/* <div className='fieldContainer2'>
-                      <div className='fieldSubContainer'>
-                        <div className='fieldTitle'> Close Date</div>
-                        <TextField
-                          name='account_name'
-                          type='date'
-                          value={formData.account_name}
-                          onChange={handleChange}
-                          style={{ width: '70%' }}
-                          size='small'
-                          helperText={errors?.account_name?.[0] ? errors?.account_name[0] : ''}
-                          error={!!errors?.account_name?.[0]}
-                        />
-                      </div>
-                    </div> */}
-                    {/* <div className='fieldContainer2'>
-                      <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Pipeline</div>
-                        <TextField
-                          error={!!(msg === 'pipeline' || msg === 'required')}
-                          name='pipeline'
-                          id='outlined-error-helper-text'
-                          // InputProps={{
-                          //   classes: {
-                          //     root: textFieldClasses.fieldHeight
-                          //   }
-                          // }}
-                          onChange={onChange} style={{ width: '80%' }}
-                          size='small'
-                          helperText={
-                            (error && msg === 'pipeline') || msg === 'required'
-                              ? error
-                              : ''
-                          }
-                        />
-                      </div>
-                      <div className='fieldSubContainer'>
-                        <div className='fieldTitle'>Lost Reason </div>
-                        <TextareaAutosize
-                          aria-label='minimum height'
-                          name='lost_reason'
-                          minRows={2}
-                          // onChange={onChange} 
-                          style={{ width: '80%' }}
-                        />
-                      </div>
-                    </div> */}
                   </Box>
                 </AccordionDetails>
               </Accordion>
-            </div>
+              </div>
             {/* contact details */}
             <div
               style={{
