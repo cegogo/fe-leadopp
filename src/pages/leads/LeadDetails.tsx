@@ -662,7 +662,7 @@ function LeadDetails(props: any) {
                       color: '#1a3353f0',
                     }}
                   >
-                    Contact Details
+                    Prospect Details
                   </div>
                 </div>
                 <div
