@@ -20,7 +20,12 @@ import {
   Grid,
   Popover,
   ListItemIcon,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   FaEllipsisV,
   FaPaperclip,
@@ -28,10 +33,12 @@ import {
   FaRegAddressCard,
   FaStar,
   FaTimes,
+  FaTrash,
+  FaTrashAlt,
 } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LeadUrl } from '../../services/ApiUrls';
+import { LeadUrl, SERVER } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { Label } from '../../components/Label';
 import {
@@ -39,6 +46,7 @@ import {
   CustomInputBoxWrapper,
   CustomSelectField,
   CustomSelectField1,
+  RequiredTextField,
   StyledListItemButton,
   StyledListItemText,
 } from '../../styles/CssStyled';
@@ -84,7 +92,13 @@ type FormErrors = {
   skype_ID?: string[];
   file?: string[];
 };
-
+type LeadAttachment = {
+  id: string;
+  created_by: string;
+};
+type Comments = {
+  id: string;
+};
 type response = {
   created_by: {
     email: string;
@@ -106,7 +120,7 @@ type response = {
   account_name: string;
   phone: string;
   email: string;
-  lead_attachment: string;
+  lead_attachment: LeadAttachment[];
   opportunity_amount: string;
   website: string;
   description: string | '';
@@ -172,6 +186,16 @@ interface LeadDetails {
   // Add other properties of LeadDetails if necessary
 }
 
+interface Attachment {
+  id: string;
+  created_by: string;
+  created_at: string;
+  file_name: string;
+  file_path: string;
+  type: string; // Add type if it’s required
+  file?: File; // Add this if you need access to the raw file
+}
+
 function LeadDetails(props: any) {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -185,7 +209,7 @@ function LeadDetails(props: any) {
       };
     }>
   >([]);
-  const [attachments, setAttachments] = useState<string[]>([]);
+  /*  const [attachments, setAttachments] = useState<string[]>([]); */
   const [attachmentList, setAttachmentList] = useState<File[]>([]);
   const [tags, setTags] = useState([]);
   const [countries, setCountries] = useState<string[][]>([]);
@@ -195,18 +219,27 @@ function LeadDetails(props: any) {
   const [contacts, setContacts] = useState([]);
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState<Team[]>([]);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comments[]>([]);
   const [commentList, setCommentList] = useState('Recent Last');
   const [note, setNote] = useState('');
   const [selectedFile, setSelectedFile] = useState();
   const [inputValue, setInputValue] = useState<string>('');
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [errors, setErrors] = useState<FormErrors>({});
+  /*   const [errors, setErrors] = useState<FormErrors>({}); */
   const [assignTo, setAssignTo] = useState([]);
   const [selectedContacts, setSelectedContacts] = useState();
 
   const assignedUser = leadDetails?.assigned_to?.[0];
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [deleteRowModal, setDeleteRowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>('');
 
   useEffect(() => {
     getLeadDetails(state.leadId);
@@ -256,32 +289,63 @@ function LeadDetails(props: any) {
         </Snackbar>;
       });
   };
-  const sendComment = () => {
-    const Header = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: localStorage.getItem('Token'),
-      org: localStorage.getItem('org'),
-    };
-    // const formData = new FormData();
-    // formData.append('inputValue', inputValue);
-    // attachedFiles.forEach((file, index) => {
-    //   formData.append(`file_${index}`, file);
-    // });
 
-    // const data = { comment: note }
-    // const data = { comment:  inputValue }
-    // const data = { comment: inputValue, attachedFiles }
-    const data = { Comment: inputValue || note, lead_attachment: attachments };
-    // fetchData(`${LeadUrl}/comment/${state.leadId}/`, 'PUT', JSON.stringify(data), Header)
-    fetchData(
-      `${LeadUrl}/${state.leadId}/`,
-      'POST',
-      JSON.stringify(data),
-      Header
-    )
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setFiles(filesArray);
+    }
+  };
+
+  const generateObjectURL = (file: File): string => {
+    if (!(file instanceof File)) {
+      console.error('Invalid file type:', file);
+      throw new Error('Invalid file type');
+    }
+    return URL.createObjectURL(file);
+  };
+
+  const sendComment = () => {
+    const headers: HeadersInit = {
+      Accept: 'application/json',
+      Authorization: localStorage.getItem('Token') || '', // Ensure it's a string
+      org: localStorage.getItem('org') || '', // Ensure it's a string
+    };
+
+    const formData = new FormData();
+    formData.append('comment', inputValue || note);
+    if (!note) {
+      setErrors({ comment: 'Comment field is required.' });
+      return;
+    }
+    // Clear the error if comment is valid
+      setErrors({});
+
+    files.forEach((file) => {
+      if (file instanceof File) {
+        formData.append('lead_attachment', file, file.name);
+      } else {
+        console.error('Invalid file type:', file);
+      }
+    });
+
+    fetch(`${SERVER}${LeadUrl}/${state.leadId}/`, {
+      method: 'POST',
+      headers, // Headers defined here
+      body: formData, // FormData directly as body
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then((res: any) => {
-        // console.log('Form data:', res);
+        console.log('Form data:', res);
         if (!res.error) {
           resetForm();
           getLeadDetails(state?.leadId);
@@ -289,7 +353,10 @@ function LeadDetails(props: any) {
           setErrors(res.errors || {});
         }
       })
-      .catch(() => {});
+      .catch((error:any) => {
+        setError(error.message);
+        console.error('Error:', error);
+      });
   };
 
   const getFullName = (user: AssignedTo | undefined): string => {
@@ -378,11 +445,15 @@ function LeadDetails(props: any) {
     console.log(state, 'This is state LeadDetails');
   };
 
-  const handleAttachmentClick = () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.addEventListener('change', handleFileInputChange);
-    fileInput.click();
+  const handleAttachmentClick = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const target = event.target;
+    if (target?.files) {
+      // Ensure target and files are not null
+      const filesArray: File[] = Array.from(target.files); // Explicitly typing as File[]
+      setAttachedFiles((prevFiles: File[]) => [...prevFiles, ...filesArray]); // Return a File[] array
+    }
   };
 
   const handleFileInputChange = (event: any) => {
@@ -394,7 +465,91 @@ function LeadDetails(props: any) {
       ]);
     }
   };
-  const addAttachments = (e: any) => {
+
+  const handleDelete = async (id: string) => {
+    const token = localStorage.getItem('Token');
+    const org = localStorage.getItem('org');
+
+    if (!token || !org) {
+      setError('Token or organization information is missing.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${SERVER}${LeadUrl}/attachment/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: token,
+          org: org,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error deleting attachment: ${response.statusText}`);
+      }
+
+      // Re-fetch teams after deleting one
+      sendComment();
+      window.location.reload();
+    } catch (error: any) {
+      setError(error.message);
+      setSuccess(null);
+    }
+  };
+  const handleDeleteComment = async (id: string) => {
+    const token = localStorage.getItem('Token');
+    const org = localStorage.getItem('org');
+
+    if (!token || !org) {
+      setError('Token or organization information is missing.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${SERVER}${LeadUrl}/comment/${id}/`, {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: token,
+          org: org,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error deleting comment: ${response.statusText}`);
+      }
+
+      // Re-fetch teams after deleting one
+      sendComment();
+      window.location.reload();
+    } catch (error: any) {
+      setError(error.message);
+      setSuccess(null);
+    }
+  };
+
+  const deleteRow = (deleteId: string) => {
+    setDeleteRowModal(true);
+    setSelectedId(deleteId);
+  };
+
+  const deleteRowModalClose = () => {
+    setDeleteRowModal(false);
+    setSelectedId('');
+  };
+  const DeleteItem = async () => {
+    if (selectedId) {
+      console.log('selected id:', selectedId);
+      await handleDelete(selectedId);
+      await handleDeleteComment(selectedId);
+      deleteRowModalClose();
+    }
+  };
+
+  /*  const addAttachments = (e: any) => {
     // console.log(e.target.files?.[0], 'e');
     const files = e.target.files;
     if (files) {
@@ -411,15 +566,15 @@ function LeadDetails(props: any) {
       const filesArray = Array.from(files);
       setAttachmentList((prevFiles: any) => [...prevFiles, ...filesArray]);
     }
-  };
+  }; */
 
-  const handleClickFile = (
+  /*   const handleClickFile = (
     event: React.MouseEvent<HTMLButtonElement>,
     pic: any
   ) => {
     setSelectedFile(pic);
     setAnchorEl(event.currentTarget);
-  };
+  }; */
 
   const handleCloseFile = () => {
     setAnchorEl(null);
@@ -880,7 +1035,7 @@ function LeadDetails(props: any) {
                   Attachments
                 </div>
                 {/* Add Social #1E90FF */}
-                <Button
+                {/* <Button
                   component="label"
                   variant="text"
                   startIcon={
@@ -891,14 +1046,122 @@ function LeadDetails(props: any) {
                     fontWeight: 600,
                     fontSize: '16px',
                   }}
-                >
-                  <input
+                > */}
+                {/* <input
                     type="file"
                     style={{ display: 'none' }}
                     onChange={(e: any) => addAttachments(e)}
-                  />
+                  /> */}
+                {/* <input type="file" style={{ display: 'none' }}
+                  multiple 
+                  onChange={handleFileChange} />
                   Add Attachments
-                </Button>
+                </Button>  */}
+              </div>
+
+              <div>
+                <div style={{ marginTop: '16px', marginLeft: '12px' }}>
+                  {files.length > 0 && (
+                    <div>
+                      <h3
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '16px',
+                          color: '#1a3353f0',
+                        }}
+                      >
+                        Newly Uploaded Files:
+                      </h3>
+                      <ul >
+
+                        {files.map((file, index) => {
+                          const fileUrl = generateObjectURL(file);
+                          return (
+                            <li key={index} style={{ marginBottom: '8px' }}>
+                              <a
+                                href={fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {file.name}
+                              </a>
+                              {file.type.startsWith('image/') && (
+                                <img
+                                  src={fileUrl}
+                                  alt={file.name}
+                                  style={{
+                                    width: '100px',
+                                    height: '100px',
+                                    marginLeft: '8px',
+                                  }}
+                                />
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+
+                  {attachments.length > 0 && (
+                    <div>
+                      <h3
+                        style={{
+                          fontWeight: 600,
+                          fontSize: '16px',
+                          color: '#1a3353f0',
+                        }}
+                      >
+                        Existing Attachments:
+                      </h3>
+                      <ul>
+                        {attachments.map((attachment, index) => (
+                          <li key={index} style={{ marginBottom: '8px' }}>
+                            <a
+                              href={attachment.file_path}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {attachment.file_name}
+                            </a>
+                            <IconButton
+                              color="error"
+                              onClick={() => deleteRow(attachments?.[0].id)}
+                            >
+                              <FaTrashAlt style={{
+                                    fill: '#1A3353',
+                                    cursor: 'pointer',
+                                    width: '15px',
+                                    marginLeft: '10px',
+                                  }}/>
+                            </IconButton>
+                            
+                            {/* Modal for Delete Confirmation */}
+                            <Dialog
+                              open={deleteRowModal}
+                              onClose={deleteRowModalClose}
+                              BackdropProps={{ invisible: true }}
+                            >
+                              <DialogTitle>Confirm Deletion</DialogTitle>
+                              <DialogContent>
+                                Are you sure you want to delete this item?
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={deleteRowModalClose}>
+                                  Cancel
+                                </Button>
+                                <Button color="error" onClick={DeleteItem}>
+                                  Delete
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
+                            {/* If needed, add logic to display previews for images */}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
               <div
                 style={{
@@ -935,12 +1198,12 @@ function LeadDetails(props: any) {
                             mb: 2,
                           }}
                         >
-                          <img
+                          {/*  <img
                             src={URL.createObjectURL(pic)}
                             alt={pic?.name}
                             style={{ width: '100%', height: '50%' }}
-                          />
-                          <Box
+                          /> */}
+                          {/*  <Box
                             sx={{
                               display: 'flex',
                               justifyContent: 'space-between',
@@ -961,12 +1224,13 @@ function LeadDetails(props: any) {
                             >
                               <FaEllipsisV />
                             </IconButton>
-                          </Box>
+                          </Box> */}
                         </Box>
                       ))
                     : ''}
                   {/* {attachments?.length ? attachments.map((pic: any, i: any) => <img src={pic} />) : ''} */}
                 </Box>
+
                 {/* {attachments?.length ? attachments.map((pic: any, i: any) =>
                                     <Box key={i} sx={{ width: '100px', height: '100px', border: '0.5px solid gray', borderRadius: '5px' }}>
                                         <img src={pic} alt={pic} />
@@ -974,6 +1238,7 @@ function LeadDetails(props: any) {
                                 ) : ''} */}
               </div>
             </Box>
+
             <Box
               sx={{
                 borderRadius: '10px',
@@ -1002,7 +1267,7 @@ function LeadDetails(props: any) {
                   Notes
                 </div>
                 <CustomSelectField1
-                  name="industry"
+                  name="comment"
                   select
                   value={commentList}
                   InputProps={{
@@ -1025,119 +1290,139 @@ function LeadDetails(props: any) {
                 </CustomSelectField1>
               </div>
               <List sx={{ maxWidth: '500px' }}>
-                {comments?.length
-                  ? comments.map((val: any, i: any) => (
-                      <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                          <Avatar alt="testing" src="test" />
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={
-                            <Stack
-                              sx={{ display: 'flex', flexDirection: 'column' }}
-                            >
-                              <Typography>{val.comment}</Typography>
-                              <Avatar
-                                alt="testing"
-                                src="test"
-                                sx={{ mt: 1, mb: 1 }}
-                              />
-                            </Stack>
-                          }
-                          secondary={
-                            <React.Fragment>
-                              <Stack
-                                sx={{
-                                  mt: 3,
-                                  display: 'flex',
-                                  flexDirection: 'row',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'flex-start',
-                                }}
-                              >
-                                <Typography>
-                                  {val?.lead}
-                                  test &nbsp;-&nbsp;
-                                  {val?.commented_by}
-                                  test &nbsp;-&nbsp;
-                                  <span style={{ textDecoration: 'underline' }}>
-                                    reply
-                                  </span>
-                                </Typography>
-                                <Typography
-                                  sx={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    alignItems: 'flex-start',
-                                  }}
-                                >
-                                  {FormateTime(val?.commented_on)}
-                                  &nbsp;-&nbsp;test
-                                  {val?.commented_by}
-                                </Typography>
-                              </Stack>
-                            </React.Fragment>
-                          }
+                {comments?.length ? (
+                  comments.map((val: any, i: any) => (
+                    <ListItem key={i} alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar
+                          src={leadDetails?.created_by?.profile_pic}
+                          alt={`${leadDetails?.created_by?.first_name} ${leadDetails?.created_by?.last_name}`}
+                          title={`${leadDetails?.created_by?.first_name} ${leadDetails?.created_by?.last_name}`}
                         />
-                        <Stack
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            mr: -1.5,
-                          }}
-                        >
-                          <IconButton aria-label="comments">
-                            <FaEllipsisV style={{ width: '7px' }} />
-                          </IconButton>
-                        </Stack>
-                      </ListItem>
-                    ))
-                  : ''}
-              </List>
-              {/* <div style={{ padding: '10px', marginTop: '15px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', flexDirection: 'row', marginTop: '5%' }}>
-                                    <div>
-                                        <Avatar
-                                            src='/broken-image.jpg'
-                                            style={{
-                                                height: '30px',
-                                                width: '30px'
-                                            }}
-                                        />
-                                    </div>
-                                    <div style={{ fontSize: '16px', marginLeft: '10px', marginRight: '10px', textAlign: 'justify' }}>
-                                        Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                                    </div>
-                                </div>
-                            </div>
-                            <div style={{ padding: '10px' }}>Attachments</div> */}
-              {/* <div style={{ paddingLeft: '10px', paddingBottom: '10px', paddingRight: '10px', width: '100%', marginBottom: '10px' }}>
-                                <div style={{
-                                    border: '1px solid gray',
-                                    padding: '10px',
-                                    // paddingBottom: '10px',
-                                    borderRadius: '5px',
-                                    // paddingLeft: '5px',
-                                    marginRight: '20px'
-                                }}
-                                >
-                                    <TextField
-                                        fullWidth
-                                        label='Add Note'
-                                        id='fullWidth'
-                                        InputProps={{ disableUnderline: true }}
-                                    />
-                                </div>
-                            </div> */}
 
+                        {/* <span style={{ marginLeft: '8px' }}>
+    {`${leadDetails?.created_by?.first_name} ${leadDetails?.created_by?.last_name}`}
+  </span> */}
+                      </ListItemAvatar>
+
+                      {/* <IconButton
+                        color="error"
+                        onClick={() => handleDeleteComment(comments[0]?.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton> */}
+
+                      <ListItemText
+                        primary={
+                          <Stack
+                            sx={{
+                              mt: 7,
+                              display: 'flex',
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'flex-start',
+                              marginLeft: '-56px',
+                            }}
+                          >
+                            <Typography>{val.comment}</Typography>
+                          </Stack>
+                        }
+                        
+                        secondary={
+                          <React.Fragment>
+                             {/* <a
+                            style={{fontSize:'12px', marginLeft:'-55px'}}
+                              href={attachments?.[0].file_path}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {attachments?.[0].file_name}
+                            </a>  */}
+                            <Typography
+                              sx={{
+                                mt: 2,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'flex-start',
+                                fontSize: '14px',
+                                marginLeft: '-56px',
+                              }}
+                            >
+                              
+                              {FormateTime(val?.commented_on)}
+                              &nbsp;-&nbsp;
+                              {leadDetails?.created_by?.first_name}&nbsp;
+                              {leadDetails?.created_by?.last_name}
+                            </Typography>
+                            <span
+                              style={{
+                                textDecoration: 'underline',
+                                marginLeft: '-56px',
+                              }}
+                            >
+                              reply
+                            </span>
+                          </React.Fragment>
+                        }
+                      />
+                      <Stack
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          mr: -4,
+                        }}
+                      >
+                        {/* <IconButton aria-label="comments">
+                          <FaEllipsisV style={{ width: '7px' }} />
+                        </IconButton> */}
+                        <IconButton
+                          color="error"
+                          onClick={() => deleteRow(comments[0]?.id)}
+                        >
+                          <FaTrashAlt style={{
+                                    fill: '#1A3353',
+                                    cursor: 'pointer',
+                                    width: '15px',
+                                  }}/> 
+                        </IconButton>
+                        {/* Modal for Delete Confirmation */}
+                        <Dialog
+                          open={deleteRowModal}
+                          onClose={deleteRowModalClose}
+                          
+                        >
+                          <DialogTitle>Confirm Deletion</DialogTitle>
+                          <DialogContent>
+                            Are you sure you want to delete this item?
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={deleteRowModalClose}>
+                              Cancel
+                            </Button>
+                            <Button color="error" onClick={DeleteItem}>
+                              Delete
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </Stack>
+                    </ListItem>
+                  ))
+                ) : (
+                  <Typography style={{ padding: '20px', marginBottom: '10px' }}>
+                    No comments available
+                  </Typography>
+                )}
+              </List>
               <div style={{ padding: '20px', marginBottom: '10px' }}>
-                <TextField
+                <RequiredTextField
                   label="Add Note"
                   id="fullWidth"
                   value={note}
                   onChange={(e: any) => setNote(e.target.value)}
                   InputProps={{ style: { borderRadius: '10px' } }}
                   sx={{ mb: '30px', width: '100%', borderRadius: '10px' }}
+                  error={!!errors.comment} // Assuming errors.comment is for the note field
+                  helperText={errors.comment || ''}
                   // InputProps={{ disableUnderline: true }}
                 />
                 <CustomInputBoxWrapper
@@ -1150,20 +1435,12 @@ function LeadDetails(props: any) {
                 >
                   {attachedFiles.length > 0 && (
                     <div>
-                      {attachedFiles.map((file, index) => (
-                        <div key={index}>
-                          <div>{file.name}</div>
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            style={{
-                              maxWidth: '100%',
-                              maxHeight: '100px',
-                              marginTop: '8px',
-                            }}
-                          />
-                        </div>
-                      ))}
+                      <strong>Attached Files:</strong>
+                      <ul>
+                        {attachedFiles.map((file: any, index) => (
+                          <li key={index}>{file.name}</li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </CustomInputBoxWrapper>
@@ -1180,13 +1457,36 @@ function LeadDetails(props: any) {
                     pb: '10px',
                   }}
                 >
+                  {/* Hidden file input */}
+                  <input
+                    type="file"
+                    id="fileInput"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={(event) => {
+                      handleFileChange(event);
+                      handleAttachmentClick(event);
+                    }}
+                  />
                   <Button
                     component="label"
-                    onClick={handleAttachmentClick}
-                    sx={{ ml: '5px' }}
+                    onClick={() =>
+                      document.getElementById('fileInput')?.click()
+                    }
                   >
                     <FaPaperclip style={{ fill: 'gray' }} />
                   </Button>
+
+                  {/* Your Button to trigger the file input */}
+                  {/*  <Button
+                    component="label"
+                    onClick={() =>
+                      document.getElementById('fileInput')?.click()
+                    }
+                  >
+                    <FaPaperclip style={{ fill: 'gray' }} />
+                  </Button> */}
+
                   <Grid container justifyContent="flex-end">
                     <Button
                       variant="contained"
@@ -1206,7 +1506,7 @@ function LeadDetails(props: any) {
                       onClick={resetForm}
                     >
                       Reset
-                    </Button>
+                    </Button>                    
                     <Button
                       variant="contained"
                       size="small"
@@ -1223,17 +1523,6 @@ function LeadDetails(props: any) {
                     </Button>
                   </Grid>
                 </Box>
-                {/* {attachedFiles.length > 0 && (
-
-                                    <div>
-                                        <strong>Attached Files:</strong>
-                                        <ul>
-                                            {attachedFiles.map((file: any, index) => (
-                                                <li key={index}>{file.name}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )} */}
               </div>
             </Box>
           </Box>
@@ -1272,40 +1561,3 @@ function LeadDetails(props: any) {
   );
 }
 export default LeadDetails;
-{
-  /* <form>
-                                    <div style={{
-                                        border: '1px solid gray',
-                                        padding: '10px',
-                                        borderRadius: '5px',
-                                        marginRight: '20px'
-                                    }}
-                                    >
-                                        <TextField
-                                            fullWidth label='Add Note'
-                                            id='fullWidth' style={{ marginBottom: '30px' }}
-                                            InputProps={{ disableUnderline: true }}
-                                        /> 
-                                        <Divider light style={{ marginTop: '30px' }} />
-                                        <div className='bottom-box' style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px', paddingTop: '9px' }}>
-                                            <div>
-                                                <Button component='label'>
-                                                    <FaRegAddressCard style={{ fill: 'gray' }} />
-                                                    <input
-                                                        type='file'
-                                                        hidden
-                                                    />
-                                                </Button>
-                                            </div>
-                                            <div>
-                                                <Button variant='contained' size='small' style={{ backgroundColor: '#C0C0C0', marginRight: '3px' }}>
-                                                    Cancel
-                                                </Button>
-                                                <Button variant='contained' size='small' style={{ backgroundColor: '#1F51FF', marginRight: '3px' }}>
-                                                    Send
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form> */
-}
