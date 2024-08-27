@@ -113,6 +113,11 @@ type FormErrors = {
   skype_ID?: string[];
   file?: string[];
 };
+interface LeadAttachment {
+  id: string;
+  file_name: string;
+  created_by: string;
+}
 interface FormData {
   title: string;
   first_name: string;
@@ -120,7 +125,7 @@ interface FormData {
   account_name: string;
   phone: string;
   email: string;
-  lead_attachment: string | null;
+  lead_attachment: LeadAttachment[];
   opportunity_amount: string;
   website: string;
   description: string;
@@ -187,7 +192,7 @@ export function EditLead() {
     account_name: '',
     phone: '',
     email: '',
-    lead_attachment: null,
+    lead_attachment: [],
     opportunity_amount: '',
     website: '',
     description: '',
@@ -465,7 +470,7 @@ export function EditLead() {
       account_name: '',
       phone: '',
       email: '',
-      lead_attachment: null,
+      lead_attachment: [],
       opportunity_amount: '',
       website: '',
       description: '',
@@ -1043,8 +1048,8 @@ export function EditLead() {
                         <div className="fieldTitle">Lead Attachment</div>
                         <TextField
                           name="lead_attachment"
-                          value={formData.lead_attachment}
-                          InputProps={{
+                          value={formData.lead_attachment?.[0]?.file_name}
+                          InputProps={{ 
                             endAdornment: (
                               <InputAdornment position="end">
                                 <IconButton

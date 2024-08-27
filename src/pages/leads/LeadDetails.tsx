@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
   Card,
   Link,
@@ -33,7 +33,6 @@ import {
   FaRegAddressCard,
   FaStar,
   FaTimes,
-  FaTrash,
   FaTrashAlt,
 } from 'react-icons/fa';
 import { CustomAppBar } from '../../components/CustomAppBar';
@@ -46,6 +45,8 @@ import {
   CustomInputBoxWrapper,
   CustomSelectField,
   CustomSelectField1,
+  FabLeft,
+  FabRight,
   RequiredTextField,
   StyledListItemButton,
   StyledListItemText,
@@ -53,6 +54,12 @@ import {
 import FormateTime from '../../components/FormateTime';
 import { formatFileSize } from '../../components/FormatSize';
 import '../../styles/style.css';
+import {
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronUp,
+} from 'react-icons/fi';
 
 export const formatDate = (dateString: any) => {
   const options: Intl.DateTimeFormatOptions = {
@@ -240,12 +247,93 @@ function LeadDetails(props: any) {
   const [error, setError] = useState<string | null>(null);
   const [deleteRowModal, setDeleteRowModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string>('');
+  const [openRecordsPerPage, setOpenRecordsPerPage] = useState<number>(10);
+  const [closedRecordsPerPage, setClosedRecordsPerPage] = useState<number>(10);
+  const [tab, setTab] = useState('open');
+  const [openLoading, setOpenLoading] = useState(true);
+  const [closedCurrentPage, setClosedCurrentPage] = useState<number>(1);
+  const [openCurrentPage, setOpenCurrentPage] = useState<number>(1);
+  const [closedLoading, setClosedLoading] = useState(true);
+  const [selectOpen, setSelectOpen] = useState(false);
+  const [openTotalPages, setOpenTotalPages] = useState<number>(1);
+  const [closedTotalPages, setClosedTotalPages] = useState<number>(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [fileUrls, setFileUrls] = useState<string[]>([]);
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const droppedFiles = Array.from(event.dataTransfer.files); // Convert FileList to an array
+
+    if (droppedFiles.length) {
+      const newFileUrls = droppedFiles.map((file) => URL.createObjectURL(file)); // Generate URLs for each file
+
+      setFiles((prevFiles) => [...prevFiles, ...droppedFiles]); // Add new files to existing ones
+      setFileUrls((prevUrls) => [...prevUrls, ...newFileUrls]); // Add new file URLs to existing ones
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      setFiles(filesArray);
+    }
+  };
+
+  const recordsList = [
+    [10, '10 Records per page'],
+    [20, '20 Records per page'],
+    [30, '30 Records per page'],
+    [40, '40 Records per page'],
+    [50, '50 Records per page'],
+  ];
+
+  const handleRecordsPerPage = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    const value = event.target.value as number;
+    if (tab === 'open') {
+      setOpenLoading(true);
+      setOpenRecordsPerPage(value);
+      setOpenCurrentPage(1);
+    } else {
+      setClosedLoading(true);
+      setClosedRecordsPerPage(value);
+      setClosedCurrentPage(1);
+    }
+  };
+  const handlePreviousPage = () => {
+    if (tab === 'open') {
+      setOpenCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+      setOpenLoading(true);
+    } else {
+      setClosedCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+      setClosedLoading(true);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (tab === 'open') {
+      setOpenCurrentPage((prevPage) => Math.min(prevPage + 1, openTotalPages));
+      setOpenLoading(true);
+    } else {
+      setClosedCurrentPage((prevPage) =>
+        Math.min(prevPage + 1, closedTotalPages)
+      );
+      setClosedLoading(true);
+    }
+  };
 
   useEffect(() => {
     getLeadDetails(state.leadId);
   }, [state.leadId]);
 
   const getLeadDetails = (id: any) => {
+    console.log('Lead Details:', leadDetails);
     const Header = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -290,16 +378,9 @@ function LeadDetails(props: any) {
       });
   };
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  /* const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const filesArray = Array.from(e.target.files);
-      setFiles(filesArray);
-    }
-  };
+  }; */
 
   const generateObjectURL = (file: File): string => {
     if (!(file instanceof File)) {
@@ -308,6 +389,16 @@ function LeadDetails(props: any) {
     }
     return URL.createObjectURL(file);
   };
+
+  useEffect(() => {
+    const newFileUrls = files.map((file) => URL.createObjectURL(file));
+    setFileUrls(newFileUrls);
+
+    // Clean up URLs when component unmounts or files change
+    return () => {
+      newFileUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [files]);
 
   const sendComment = () => {
     const headers: HeadersInit = {
@@ -319,11 +410,11 @@ function LeadDetails(props: any) {
     const formData = new FormData();
     formData.append('comment', inputValue || note);
     if (!note) {
-      setErrors({ comment: 'Comment field is required.' });
+      setErrors({ comment: 'This field is required.' });
       return;
     }
     // Clear the error if comment is valid
-      setErrors({});
+    setErrors({});
 
     files.forEach((file) => {
       if (file instanceof File) {
@@ -353,11 +444,14 @@ function LeadDetails(props: any) {
           setErrors(res.errors || {});
         }
       })
-      .catch((error:any) => {
+      .catch((error: any) => {
         setError(error.message);
         console.error('Error:', error);
       });
   };
+  console.log('Note:', note);
+  console.log('Input Value:', inputValue);
+  console.log('Attached Files:', attachedFiles);
 
   const getFullName = (user: AssignedTo | undefined): string => {
     if (!user) return 'Unassigned';
@@ -374,9 +468,11 @@ function LeadDetails(props: any) {
   const resetForm = () => {
     setNote('');
     setInputValue('');
+    /* setAttachedFiles([]); */ 
     setAttachmentList([]);
-    setAttachedFiles([]);
-    setAttachments([]);
+    setFiles([]);
+    setFileUrls([]);
+    /* setAttachments([]);  */
   };
 
   const editHandle = () => {
@@ -445,7 +541,7 @@ function LeadDetails(props: any) {
     console.log(state, 'This is state LeadDetails');
   };
 
-  const handleAttachmentClick = (
+  /* const handleAttachmentClick = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const target = event.target;
@@ -454,8 +550,12 @@ function LeadDetails(props: any) {
       const filesArray: File[] = Array.from(target.files); // Explicitly typing as File[]
       setAttachedFiles((prevFiles: File[]) => [...prevFiles, ...filesArray]); // Return a File[] array
     }
+  }; */
+  const handleAttachmentClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
-
   const handleFileInputChange = (event: any) => {
     const files = event.target.files;
     if (files) {
@@ -1072,8 +1172,7 @@ function LeadDetails(props: any) {
                       >
                         Newly Uploaded Files:
                       </h3>
-                      <ul >
-
+                      <ul>
                         {files.map((file, index) => {
                           const fileUrl = generateObjectURL(file);
                           return (
@@ -1128,19 +1227,20 @@ function LeadDetails(props: any) {
                               color="error"
                               onClick={() => deleteRow(attachments?.[0].id)}
                             >
-                              <FaTrashAlt style={{
-                                    fill: '#1A3353',
-                                    cursor: 'pointer',
-                                    width: '15px',
-                                    marginLeft: '10px',
-                                  }}/>
+                              <FaTrashAlt
+                                style={{
+                                  fill: '#1A3353',
+                                  cursor: 'pointer',
+                                  width: '15px',
+                                  marginLeft: '10px',
+                                }}
+                              />
                             </IconButton>
-                            
+
                             {/* Modal for Delete Confirmation */}
                             <Dialog
                               open={deleteRowModal}
                               onClose={deleteRowModalClose}
-                              BackdropProps={{ invisible: true }}
                             >
                               <DialogTitle>Confirm Deletion</DialogTitle>
                               <DialogContent>
@@ -1197,51 +1297,16 @@ function LeadDetails(props: any) {
                             mr: 2.5,
                             mb: 2,
                           }}
-                        >
-                          {/*  <img
-                            src={URL.createObjectURL(pic)}
-                            alt={pic?.name}
-                            style={{ width: '100%', height: '50%' }}
-                          /> */}
-                          {/*  <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'flex-start',
-                            }}
-                          >
-                            <Box sx={{ ml: 1 }}>
-                              <Typography sx={{ overflow: 'hidden' }}>
-                                {pic?.name}
-                              </Typography>
-                              <br />
-                              <Typography sx={{ color: 'gray' }}>
-                                {formatFileSize(pic?.size)}
-                              </Typography>
-                            </Box>
-                            <IconButton
-                              onClick={(e: any) => handleClickFile(e, i)}
-                            >
-                              <FaEllipsisV />
-                            </IconButton>
-                          </Box> */}
-                        </Box>
+                        ></Box>
                       ))
                     : ''}
-                  {/* {attachments?.length ? attachments.map((pic: any, i: any) => <img src={pic} />) : ''} */}
                 </Box>
-
-                {/* {attachments?.length ? attachments.map((pic: any, i: any) =>
-                                    <Box key={i} sx={{ width: '100px', height: '100px', border: '0.5px solid gray', borderRadius: '5px' }}>
-                                        <img src={pic} alt={pic} />
-                                    </Box>
-                                ) : ''} */}
               </div>
             </Box>
 
             <Box
               sx={{
-                borderRadius: '10px',
+                borderRadius: '7px',
                 mt: '15px',
                 border: '1px solid #80808038',
                 backgroundColor: 'white',
@@ -1255,6 +1320,7 @@ function LeadDetails(props: any) {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                  marginRight: '10px',
                 }}
               >
                 <div
@@ -1266,28 +1332,93 @@ function LeadDetails(props: any) {
                 >
                   Notes
                 </div>
-                <CustomSelectField1
-                  name="comment"
-                  select
-                  value={commentList}
-                  InputProps={{
-                    style: {
-                      height: '32px',
-                      maxHeight: '32px',
-                      borderRadius: '10px',
-                    },
+
+                {/* Wrapper for the "Records per page" and pagination controls */}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: '10px', // Adjust the spacing between the elements here
                   }}
-                  onChange={(e: any) => setCommentList(e.target.value)}
-                  sx={{ width: '27%' }}
-                  // helperText={errors?.industry?.[0] ? errors?.industry[0] : ''}
-                  // error={!!errors?.industry?.[0]}
                 >
-                  {['Recent Last', 'Recent Last'].map((option: any) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </CustomSelectField1>
+                  <TextField
+                    select
+                    name="recordsPerPage"
+                    value={
+                      tab === 'open' ? openRecordsPerPage : closedRecordsPerPage
+                    }
+                    onChange={handleRecordsPerPage}
+                    InputProps={{
+                      style: {
+                        height: '40px',
+                        maxHeight: '50px',
+                        borderRadius: '7px',
+                        width: '150px',
+                      },
+                    }}
+                    sx={{ width: '27%' }}
+                    className="custom-select"
+                    SelectProps={{
+                      open: selectOpen,
+                      onOpen: () => setSelectOpen(true),
+                      onClose: () => setSelectOpen(false),
+                      IconComponent: selectOpen ? FiChevronUp : FiChevronDown,
+                    }}
+                  >
+                    {recordsList.map((item, i) => (
+                      <MenuItem key={i} value={item[0]}>
+                        {item[1]}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+                  <Box
+                    sx={{
+                      borderRadius: '7px',
+                      backgroundColor: 'white',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginLeft: '70px',
+                      marginRight: '-90px',
+                    }}
+                  >
+                    <FabLeft
+                      onClick={handlePreviousPage}
+                      disabled={
+                        tab === 'open'
+                          ? openCurrentPage === 1
+                          : closedCurrentPage === 1
+                      }
+                    >
+                      <FiChevronLeft style={{ height: '15px' }} />
+                    </FabLeft>
+                    <Typography
+                      sx={{
+                        mt: 0,
+                        textTransform: 'lowercase',
+                        fontSize: '15px',
+                        color: '#1A3353',
+                        textAlign: 'center',
+                      }}
+                    >
+                      {tab === 'open'
+                        ? `Page ${openCurrentPage} of ${openTotalPages}`
+                        : `Page ${closedCurrentPage} of ${closedTotalPages}`}
+                    </Typography>
+                    <FabRight
+                      onClick={handleNextPage}
+                      disabled={
+                        tab === 'open'
+                          ? openCurrentPage === openTotalPages
+                          : closedCurrentPage === closedTotalPages
+                      }
+                    >
+                      <FiChevronRight style={{ height: '15px' }} />
+                    </FabRight>
+                  </Box>
+                </div>
               </div>
               <List sx={{ maxWidth: '500px' }}>
                 {comments?.length ? (
@@ -1327,10 +1458,9 @@ function LeadDetails(props: any) {
                             <Typography>{val.comment}</Typography>
                           </Stack>
                         }
-                        
                         secondary={
                           <React.Fragment>
-                             {/* <a
+                            {/* <a
                             style={{fontSize:'12px', marginLeft:'-55px'}}
                               href={attachments?.[0].file_path}
                               target="_blank"
@@ -1348,7 +1478,6 @@ function LeadDetails(props: any) {
                                 marginLeft: '-56px',
                               }}
                             >
-                              
                               {FormateTime(val?.commented_on)}
                               &nbsp;-&nbsp;
                               {leadDetails?.created_by?.first_name}&nbsp;
@@ -1379,17 +1508,18 @@ function LeadDetails(props: any) {
                           color="error"
                           onClick={() => deleteRow(comments[0]?.id)}
                         >
-                          <FaTrashAlt style={{
-                                    fill: '#1A3353',
-                                    cursor: 'pointer',
-                                    width: '15px',
-                                  }}/> 
+                          <FaTrashAlt
+                            style={{
+                              fill: '#1A3353',
+                              cursor: 'pointer',
+                              width: '15px',
+                            }}
+                          />
                         </IconButton>
                         {/* Modal for Delete Confirmation */}
                         <Dialog
                           open={deleteRowModal}
                           onClose={deleteRowModalClose}
-                          
                         >
                           <DialogTitle>Confirm Deletion</DialogTitle>
                           <DialogContent>
@@ -1425,6 +1555,33 @@ function LeadDetails(props: any) {
                   helperText={errors.comment || ''}
                   // InputProps={{ disableUnderline: true }}
                 />
+                <div
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onClick={handleAttachmentClick}
+                  style={{
+                    border: '2px dashed #ccc',
+                    padding: '20px',
+                    borderRadius: '10px',
+                    textAlign: 'center',
+                    marginBottom: '20px',
+                    cursor: 'pointer',
+                    backgroundColor: attachedFiles.length ? '#f9f9f9' : '#fff',
+                  }}
+                >
+                  <p>Drag & Drop files here, or click to select files</p>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                    id="fileUpload"
+                    multiple
+                  />
+                  <label htmlFor="fileUpload" style={{ cursor: 'pointer' }}>
+                    <strong>Click to select files</strong>
+                  </label>
+                </div>
                 <CustomInputBoxWrapper
                   aria-label="qwe"
                   // className='CustomInputBoxWrapper'
@@ -1433,11 +1590,11 @@ function LeadDetails(props: any) {
                   // onInput={(e: React.SyntheticEvent<HTMLDivElement>) => setInputValue(e.currentTarget.innerText)}
                   // onInput={(e) => setInputValue(e.target.innerText)}
                 >
-                  {attachedFiles.length > 0 && (
+                  {files.length > 0 && (
                     <div>
                       <strong>Attached Files:</strong>
                       <ul>
-                        {attachedFiles.map((file: any, index) => (
+                        {files.map((file: any, index) => (
                           <li key={index}>{file.name}</li>
                         ))}
                       </ul>
@@ -1460,20 +1617,11 @@ function LeadDetails(props: any) {
                   {/* Hidden file input */}
                   <input
                     type="file"
-                    id="fileInput"
-                    multiple
+                    ref={fileInputRef} // Using the same ref to avoid redundant inputs
                     style={{ display: 'none' }}
-                    onChange={(event) => {
-                      handleFileChange(event);
-                      handleAttachmentClick(event);
-                    }}
+                    onChange={handleFileChange}
                   />
-                  <Button
-                    component="label"
-                    onClick={() =>
-                      document.getElementById('fileInput')?.click()
-                    }
-                  >
+                  <Button component="label" onClick={handleAttachmentClick}>
                     <FaPaperclip style={{ fill: 'gray' }} />
                   </Button>
 
@@ -1506,7 +1654,7 @@ function LeadDetails(props: any) {
                       onClick={resetForm}
                     >
                       Reset
-                    </Button>                    
+                    </Button>
                     <Button
                       variant="contained"
                       size="small"
