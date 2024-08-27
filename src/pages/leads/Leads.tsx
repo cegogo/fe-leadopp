@@ -17,6 +17,7 @@ import {
   MenuItem,
   Select,
   InputBase,
+  Chip,
 } from '@mui/material';
 import styled from '@emotion/styled';
 import { SERVER, LeadUrl, ProfileUrl } from '../../services/ApiUrls';
@@ -50,6 +51,11 @@ interface User {
   user_details?: UserDetails;
 }
 
+interface Team {
+  id: string;
+  name: string;
+  description: string;
+}
 interface Lead {
   assigned_to?: User[];
   account_name?: string;
@@ -58,7 +64,7 @@ interface Lead {
   status?: string;
   tags?: string[];
   created_at?: string;
-  team?: string[];
+  teams?: Team[];
   id?: string[];
   probability?: number;
 }
@@ -435,11 +441,16 @@ export default function Leads(props: any) {
         lead.assigned_to?.[0]?.user_details?.email?.toLowerCase() || '';
       const accountName = lead.account_name?.toLowerCase() || '';
       const search = searchQuery.toLowerCase();
+      // Check if any team name matches the search query
+      const teamsMatch = lead.teams?.some((teams) =>
+        teams.name.toLowerCase().includes(search)
+      );
 
       const matchesSearch =
         fullName.includes(search) ||
         email.includes(search) ||
-        accountName.includes(search);
+        accountName.includes(search) ||
+        teamsMatch;
 
       const matchesUnassignedFilter =
         !showUnassignedOnly || !lead.assigned_to?.length;
@@ -730,11 +741,11 @@ export default function Leads(props: any) {
                             {' '}
                             {item?.opportunity_amount
                               ? `€${parseFloat(
-                                String(item.opportunity_amount)
-                              ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}`
+                                  String(item.opportunity_amount)
+                                ).toLocaleString(undefined, {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}`
                               : '---'}
                           </span>{' '}
                         </div>
@@ -820,27 +831,46 @@ export default function Leads(props: any) {
                           >
                             {item?.probability || '---'}%
                           </span>
+                          {item?.teams &&
+                            item?.teams.map((team: any, index: any) => (
+                              <Chip
+                                key={index}
+                                label={team.name} // Use label to display the team name
+                                sx={{
+                                  margin: '2px',
+                                  marginLeft: '10px',
+                                  padding: '5px',
+                                  alignSelf: 'center', // Ensure the Chip is vertically aligned
+                                  fontSize: '15px'
+                                }} // Adjust margin as needed
+                              />
+                            ))}
                         </div>
                       </div>
-                      <Box sx={{ ml: 1 }}>
+                     {/*  <Box sx={{ ml: 1 }}>
                         <div style={{ display: 'flex' }}>
                           <AvatarGroup
                             // total={2}
                             max={3}
-                          >
+                          > */}
                             {/* <Tooltip title={con.user.username}> */}
                             {/* {tag.map((tagData: any, index: any) => ( */}
-                            {item?.team &&
-                              item?.team?.map((team: any, index: any) => (
-                                <Avatar alt={team} src={team}>
-                                  {team}
+                          {/*  {item?.teams &&
+                              item?.teams.map((team: any, index: any) => (
+                                <Avatar
+                                  key={index}
+                                  alt={team.name} 
+                                 
+                                >
+                                  {team.name}
                                 </Avatar>
-                              ))}
+                              ))}  */}
+
                             {/* </Tooltip> */}
                             {/* )} */}
-                          </AvatarGroup>
+                          {/* </AvatarGroup>
                         </div>
-                      </Box>
+                      </Box> */}
                     </div>
                     <div className="lead-row2-col2">
                       {/* created on {formatDate(item.created_on)} by   &nbsp;<span> */}
@@ -849,10 +879,10 @@ export default function Leads(props: any) {
                         alt={item?.created_by?.first_name}
                         src={item?.created_by?.profile_pic}
                         sx={{ ml: 1 }}
-                      // style={{
-                      //   height: '20px',
-                      //   width: '20px'
-                      // }}
+                        // style={{
+                        //   height: '20px',
+                        //   width: '20px'
+                        // }}
                       />{' '}
                       &nbsp;&nbsp;{item?.created_by?.first_name}&nbsp;
                       {item?.created_by?.last_name}
