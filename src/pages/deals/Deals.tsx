@@ -17,6 +17,7 @@ import MeetingColumn from './MeetingColumn';
 import OpportunityColumn from './OpportunityColumn';
 import QualifiedColumn from './QualifiedColumn';
 import NegotiationColumn from './NegotiationColumn';
+import WonColumn from './WonColumn';
 
 const Deals: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -301,130 +302,8 @@ const Deals: React.FC = () => {
 
             <NegotiationColumn />
 
-            <div style={columnStyle}>
-              <div
-                style={{
-                  ...headerStyleBase,
-                  backgroundColor: '#1A3353',
-                  marginRight: '30px',
-                }}
-                onClick={() => handleHeaderClick('Won')}
-              >
-                Won
-              </div>
-              {filterLeadsByStatus('won').length > 0 ? (
-                filterLeadsByStatus('won').map((won) => (
-                  <PipelineCard
-                    key={won?.id}
-                    leadId={won?.id}
-                    title={won?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {won.opportunity_amount
-                              ? `€${parseFloat(
-                                won.opportunity_amount
-                              ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {won.assigned_to?.[0]?.user_details?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                won.assigned_to?.[0]?.user_details?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {won.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {won.assigned_to?.[0]?.user_details?.first_name &&
-                              won.assigned_to?.[0]?.user_details?.last_name
-                              ? `${won.assigned_to[0].user_details.first_name} ${won.assigned_to[0].user_details.last_name}`
-                              : won.assigned_to?.[0]?.user_details?.email ||
-                              'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
-                          <div
-                            style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            <div
-                              style={{
-                                height: '100%',
-                                width: `${won.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  won.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
-                              }}
-                            />
-                          </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {won.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/* <p>No won leads available</p> */}</div>
-              )}
-            </div>
+            <WonColumn />
+
           </div>
         </DragDropContext>
       </div>
