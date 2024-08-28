@@ -13,6 +13,7 @@ import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import LeadsColumn from './LeadsColumn';
+import MeetingColumn from './MeetingColumn';
 
 const Deals: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -289,129 +290,8 @@ const Deals: React.FC = () => {
 
             <LeadsColumn />
 
-            <div style={columnStyle}>
-              <div
-                style={{ ...headerStyleBase, backgroundColor: '#2ebafb' }}
-                onClick={() => handleHeaderClick('Meeting')}
-              >
-                Meeting
-              </div>
-              {filterLeadsByStatus('meeting').length > 0 ? (
-                filterLeadsByStatus('meeting').map((meeting) => (
-                  <PipelineCard
-                    key={meeting?.id}
-                    leadId={meeting?.id}
-                    title={meeting?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {meeting.opportunity_amount
-                              ? `€${parseFloat(
-                                meeting.opportunity_amount
-                              ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {meeting.assigned_to?.[0]?.user_details
-                            ?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                meeting.assigned_to?.[0]?.user_details
-                                  ?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {meeting.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {meeting.assigned_to?.[0]?.user_details
-                              ?.first_name &&
-                              meeting.assigned_to?.[0]?.user_details?.last_name
-                              ? `${meeting.assigned_to[0].user_details.first_name} ${meeting.assigned_to[0].user_details.last_name}`
-                              : meeting.assigned_to?.[0]?.user_details?.email ||
-                              'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
-                          <div
-                            style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            <div
-                              style={{
-                                height: '100%',
-                                width: `${meeting.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  meeting.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
-                              }}
-                            />
-                          </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {meeting.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/* <p>No meetings available</p> */}</div>
-              )}
-            </div>
+            <MeetingColumn />
+
             <div style={columnStyle}>
               <div
                 style={{ ...headerStyleBase, backgroundColor: '#0993f3' }}
