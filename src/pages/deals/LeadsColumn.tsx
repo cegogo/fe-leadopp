@@ -71,18 +71,6 @@ const LeadsColumn: React.FC = () => {
         fetchUserProfile();
     }, []);
 
-    // Define inline styles as JavaScript objects
-    const containerStyle: React.CSSProperties = {
-        padding: '20px',
-        marginLeft: '1em',
-        marginTop: '3em',
-    };
-
-    const columnsStyle: React.CSSProperties = {
-        display: 'flex',
-        gap: '0',
-    };
-
     const columnStyle: React.CSSProperties = {
         display: 'flex',
         gap: '0',
@@ -91,6 +79,7 @@ const LeadsColumn: React.FC = () => {
         border: 0,
         overflow: 'hidden',
         position: 'relative',
+        flexDirection: 'column',
     };
 
     const firstHeaderStyleBase: React.CSSProperties = {
@@ -238,164 +227,160 @@ const LeadsColumn: React.FC = () => {
 
 
     return (
-        <div style={containerStyle}>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div style={columnsStyle}>
-                    {/* Leads Column */}
-                    <Droppable droppableId="lead">
-                        {(provided) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                style={columnStyle}
-                            >
-                                <div
-                                    style={{
-                                        ...firstHeaderStyleBase,
-                                        backgroundColor: '#87c7e5',
-                                        marginLeft: '30px',
-                                    }}
-                                    onClick={() => handleHeaderClick('Leads')}
-                                >
-                                    <span style={{ marginRight: '15%' }}>Leads</span>
-                                </div>
-                                {leads && leads.length > 0 ? (
-                                    filterLeadsByStatus('lead').map(
-                                        (lead, index) => (
-                                            <Draggable
-                                                key={lead.id}
-                                                draggableId={lead.id}
-                                                index={index}
+        <DragDropContext onDragEnd={onDragEnd}>
+            {/* Leads Column */}
+            <Droppable droppableId="lead">
+                {(provided) => (
+                    <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={columnStyle}
+                    >
+                        <div
+                            style={{
+                                ...firstHeaderStyleBase,
+                                backgroundColor: '#87c7e5',
+                                marginLeft: '30px',
+                            }}
+                            onClick={() => handleHeaderClick('Leads')}
+                        >
+                            <span style={{ marginRight: '15%' }}>Leads</span>
+                        </div>
+                        {leads && leads.length > 0 ? (
+                            filterLeadsByStatus('lead').map(
+                                (lead, index) => (
+                                    <Draggable
+                                        key={lead.id}
+                                        draggableId={lead.id}
+                                        index={index}
+                                    >
+                                        {(provided) => (
+                                            <div
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
                                             >
-                                                {(provided) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <PipelineCard
-                                                            key={lead.id}
-                                                            leadId={lead?.id}
-                                                            title={lead.account_name}
-                                                            content={
-                                                                <>
-                                                                    <div>
-                                                                        Value:{' '}
-                                                                        <span
-                                                                            style={{
-                                                                                color: '#1a3353',
-                                                                                fontWeight: 500,
-                                                                                textTransform: 'none',
-                                                                            }}
-                                                                        >
-                                                                            {lead.opportunity_amount
-                                                                                ? `€${parseFloat(
-                                                                                    lead.opportunity_amount
-                                                                                ).toLocaleString(undefined, {
-                                                                                    minimumFractionDigits: 2,
-                                                                                    maximumFractionDigits: 2,
-                                                                                })}`
-                                                                                : '---'}
-                                                                        </span>
-                                                                    </div>
-                                                                    <div
-                                                                        style={{
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            marginTop: '10px',
-                                                                        }}
-                                                                    >
-                                                                        Assignee:&nbsp;{' '}
-                                                                        {lead.assigned_to?.[0]?.user_details
-                                                                            ?.profile_pic ? (
-                                                                            <Avatar
-                                                                                alt="Profile Picture"
-                                                                                src={
-                                                                                    lead.assigned_to?.[0]?.user_details
-                                                                                        ?.profile_pic
-                                                                                }
-                                                                                style={{ marginRight: '8px' }}
-                                                                            />
-                                                                        ) : (
-                                                                            <Avatar alt="Profile Initial">
-                                                                                {lead.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                                                                    0
-                                                                                )}
-                                                                            </Avatar>
+                                                <PipelineCard
+                                                    key={lead.id}
+                                                    leadId={lead?.id}
+                                                    title={lead.account_name}
+                                                    content={
+                                                        <>
+                                                            <div>
+                                                                Value:{' '}
+                                                                <span
+                                                                    style={{
+                                                                        color: '#1a3353',
+                                                                        fontWeight: 500,
+                                                                        textTransform: 'none',
+                                                                    }}
+                                                                >
+                                                                    {lead.opportunity_amount
+                                                                        ? `€${parseFloat(
+                                                                            lead.opportunity_amount
+                                                                        ).toLocaleString(undefined, {
+                                                                            minimumFractionDigits: 2,
+                                                                            maximumFractionDigits: 2,
+                                                                        })}`
+                                                                        : '---'}
+                                                                </span>
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    marginTop: '10px',
+                                                                }}
+                                                            >
+                                                                Assignee:&nbsp;{' '}
+                                                                {lead.assigned_to?.[0]?.user_details
+                                                                    ?.profile_pic ? (
+                                                                    <Avatar
+                                                                        alt="Profile Picture"
+                                                                        src={
+                                                                            lead.assigned_to?.[0]?.user_details
+                                                                                ?.profile_pic
+                                                                        }
+                                                                        style={{ marginRight: '8px' }}
+                                                                    />
+                                                                ) : (
+                                                                    <Avatar alt="Profile Initial">
+                                                                        {lead.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                                                            0
                                                                         )}
-                                                                        <span
-                                                                            style={{
-                                                                                color: '#1a3353',
-                                                                                fontWeight: 500,
-                                                                                textTransform: 'none',
-                                                                            }}
-                                                                        >
-                                                                            &nbsp;
-                                                                            {lead.assigned_to?.[0]?.user_details
-                                                                                ?.first_name &&
-                                                                                lead.assigned_to?.[0]?.user_details?.last_name
-                                                                                ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
-                                                                                : lead.assigned_to?.[0]?.user_details
-                                                                                    ?.email || 'Unassigned'}
-                                                                        </span>
-                                                                    </div>
+                                                                    </Avatar>
+                                                                )}
+                                                                <span
+                                                                    style={{
+                                                                        color: '#1a3353',
+                                                                        fontWeight: 500,
+                                                                        textTransform: 'none',
+                                                                    }}
+                                                                >
+                                                                    &nbsp;
+                                                                    {lead.assigned_to?.[0]?.user_details
+                                                                        ?.first_name &&
+                                                                        lead.assigned_to?.[0]?.user_details?.last_name
+                                                                        ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                                                                        : lead.assigned_to?.[0]?.user_details
+                                                                            ?.email || 'Unassigned'}
+                                                                </span>
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    marginTop: '10px',
+                                                                    marginBottom: '10px',
+                                                                }}
+                                                            >
+                                                                <span>Probability:&nbsp;</span>
+                                                                <div
+                                                                    style={{
+                                                                        flexGrow: 1,
+                                                                        height: '10px',
+                                                                        backgroundColor: '#e0e0e0',
+                                                                        borderRadius: '5px',
+                                                                        overflow: 'hidden',
+                                                                    }}
+                                                                >
                                                                     <div
                                                                         style={{
-                                                                            display: 'flex',
-                                                                            alignItems: 'center',
-                                                                            marginTop: '10px',
-                                                                            marginBottom: '10px',
+                                                                            height: '100%',
+                                                                            width: `${lead.probability || 0}%`,
+                                                                            backgroundColor: getColorForProbability(
+                                                                                lead.probability || 0
+                                                                            ),
+                                                                            transition: 'width 0.5s ease',
                                                                         }}
-                                                                    >
-                                                                        <span>Probability:&nbsp;</span>
-                                                                        <div
-                                                                            style={{
-                                                                                flexGrow: 1,
-                                                                                height: '10px',
-                                                                                backgroundColor: '#e0e0e0',
-                                                                                borderRadius: '5px',
-                                                                                overflow: 'hidden',
-                                                                            }}
-                                                                        >
-                                                                            <div
-                                                                                style={{
-                                                                                    height: '100%',
-                                                                                    width: `${lead.probability || 0}%`,
-                                                                                    backgroundColor: getColorForProbability(
-                                                                                        lead.probability || 0
-                                                                                    ),
-                                                                                    transition: 'width 0.5s ease',
-                                                                                }}
-                                                                            />
-                                                                        </div>
-                                                                        <span
-                                                                            style={{
-                                                                                color: '#1a3353',
-                                                                                fontWeight: 500,
-                                                                                textTransform: 'none',
-                                                                                marginLeft: '10px',
-                                                                            }}
-                                                                        >
-                                                                            {lead.probability || '---'}%
-                                                                        </span>
-                                                                    </div>
-                                                                </>
-                                                            }
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ))
-                                ) : (
-                                    <div>{/* <p>No leads available</p> */}</div>
-                                )}
-                                {provided.placeholder}
-                            </div>
+                                                                    />
+                                                                </div>
+                                                                <span
+                                                                    style={{
+                                                                        color: '#1a3353',
+                                                                        fontWeight: 500,
+                                                                        textTransform: 'none',
+                                                                        marginLeft: '10px',
+                                                                    }}
+                                                                >
+                                                                    {lead.probability || '---'}%
+                                                                </span>
+                                                            </div>
+                                                        </>
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                ))
+                        ) : (
+                            <div>{/* <p>No leads available</p> */}</div>
                         )}
-                    </Droppable>
-                </div>
-            </DragDropContext>
-        </div>
+                        {provided.placeholder}
+                    </div>
+                )}
+            </Droppable>
+        </DragDropContext>
     );
 };
 
