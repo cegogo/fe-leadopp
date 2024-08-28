@@ -22,6 +22,7 @@ import Meeting from './Meeting';
 import Negotiation from './Negotiation';
 import Qualified from './Qualified';
 import Won from './Won';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 const Deals: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -259,6 +260,66 @@ const Deals: React.FC = () => {
     }
   };
 
+  const updateLeadStatus = async (leadId: string, newStatus: string) => {
+    const token = localStorage.getItem('Token');
+    const org = localStorage.getItem('org');
+
+    if (!token || !org) {
+      throw new Error('Authorization or organization details missing');
+    }
+
+    // Prepare the updated lead data
+    const updatedLeadData = {
+      status: newStatus,
+    };
+
+    // Send the updated lead data to the server
+    const response = await fetchData(
+      `${LeadUrl}/${leadId}/`,
+      'PUT',
+      JSON.stringify(updatedLeadData),
+      {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        org: org,
+      }
+    );
+
+    if (response.error) {
+      throw new Error(`Failed to update lead status: ${response.error}`);
+    }
+
+    return response;
+  };
+
+  const onDragEnd = async (result: DropResult) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+      return;
+    }
+
+    const updatedLeads = Array.from(leads);
+    const [movedLead] = updatedLeads.splice(source.index, 1);
+    movedLead.status = destination.droppableId;
+    updatedLeads.splice(destination.index, 0, movedLead);
+
+    // Update local state
+    setLeads(updatedLeads);
+
+    try {
+      // Update lead status on the server
+      await updateLeadStatus(movedLead.id, destination.droppableId);
+    } catch (error) {
+      console.error('Error updating lead status on the server:', error);
+      // Optionally revert the local changes or show an error message to the user
+      // For example, you might want to revert the state change in case of an error
+      setLeads(leads);
+    }
+  };
+
+
   return (
     <Box
       sx={{
@@ -294,758 +355,780 @@ const Deals: React.FC = () => {
             {renderComponent()}
           </div>
         ) : (
-          <div style={columnsStyle}>
-            <div style={columnStyle}>
-              <div
-                style={{
-                  ...firstHeaderStyleBase,
-                  backgroundColor: '#87c7e5',
-                  marginLeft: '30px',
-                }}
-                onClick={() => handleHeaderClick('Leads')}
-              >
-                <span style={{ marginRight: '15%' }}>Leads</span>
-              </div>
-              {leads && leads.length > 0 ? (
-                filterLeadsByStatus('lead').map(
-                  (lead) => (
-                    console.log(lead),
-                    (
-                      <PipelineCard
-                        key={lead.id}
-                        leadId={lead?.id}
-                        title={lead.account_name}
-                        content={
-                          <>
-                            <div>
-                              Value:{' '}
-                              <span
-                                style={{
-                                  color: '#1a3353',
-                                  fontWeight: 500,
-                                  textTransform: 'none',
-                                }}
-                              >
-                                {lead.opportunity_amount
-                                  ? `€${parseFloat(
-                                      lead.opportunity_amount
-                                    ).toLocaleString(undefined, {
-                                      minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2,
-                                    })}`
-                                  : '---'}
-                              </span>
-                            </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                marginTop: '10px',
-                              }}
-                            >
-                              Assignee:&nbsp;{' '}
-                              {lead.assigned_to?.[0]?.user_details
-                                ?.profile_pic ? (
-                                <Avatar
-                                  alt="Profile Picture"
-                                  src={
-                                    lead.assigned_to?.[0]?.user_details
-                                      ?.profile_pic
-                                  }
-                                  style={{ marginRight: '8px' }}
-                                />
-                              ) : (
-                                <Avatar alt="Profile Initial">
-                                  {lead.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                    0
-                                  )}
-                                </Avatar>
-                              )}
-                              <span
-                                style={{
-                                  color: '#1a3353',
-                                  fontWeight: 500,
-                                  textTransform: 'none',
-                                }}
-                              >
-                                &nbsp;
-                                {lead.assigned_to?.[0]?.user_details
-                                  ?.first_name &&
-                                lead.assigned_to?.[0]?.user_details?.last_name
-                                  ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
-                                  : lead.assigned_to?.[0]?.user_details
-                                      ?.email || 'Unassigned'}
-                              </span>
-                            </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                marginTop: '10px',
-                                marginBottom: '10px',
-                              }}
-                            >
-                              <span>Probability:&nbsp;</span>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div style={columnsStyle}>
+              {/* Leads Column */}
+              <Droppable droppableId="lead">
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    style={columnStyle}
+                  >
+                    <div
+                      style={{
+                        ...firstHeaderStyleBase,
+                        backgroundColor: '#87c7e5',
+                        marginLeft: '30px',
+                      }}
+                      onClick={() => handleHeaderClick('Leads')}
+                    >
+                      <span style={{ marginRight: '15%' }}>Leads</span>
+                    </div>
+                    {leads && leads.length > 0 ? (
+                      filterLeadsByStatus('lead').map(
+                        (lead, index) => (
+                          <Draggable
+                            key={lead.id}
+                            draggableId={lead.id}
+                            index={index}
+                          >
+                            {(provided) => (
                               <div
-                                style={{
-                                  flexGrow: 1,
-                                  height: '10px',
-                                  backgroundColor: '#e0e0e0',
-                                  borderRadius: '5px',
-                                  overflow: 'hidden',
-                                }}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
                               >
-                                <div
-                                  style={{
-                                    height: '100%',
-                                    width: `${lead.probability || 0}%`,
-                                    backgroundColor: getColorForProbability(
-                                      lead.probability || 0
-                                    ),
-                                    transition: 'width 0.5s ease',
-                                  }}
+                                <PipelineCard
+                                  key={lead.id}
+                                  leadId={lead?.id}
+                                  title={lead.account_name}
+                                  content={
+                                    <>
+                                      <div>
+                                        Value:{' '}
+                                        <span
+                                          style={{
+                                            color: '#1a3353',
+                                            fontWeight: 500,
+                                            textTransform: 'none',
+                                          }}
+                                        >
+                                          {lead.opportunity_amount
+                                            ? `€${parseFloat(
+                                              lead.opportunity_amount
+                                            ).toLocaleString(undefined, {
+                                              minimumFractionDigits: 2,
+                                              maximumFractionDigits: 2,
+                                            })}`
+                                            : '---'}
+                                        </span>
+                                      </div>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          marginTop: '10px',
+                                        }}
+                                      >
+                                        Assignee:&nbsp;{' '}
+                                        {lead.assigned_to?.[0]?.user_details
+                                          ?.profile_pic ? (
+                                          <Avatar
+                                            alt="Profile Picture"
+                                            src={
+                                              lead.assigned_to?.[0]?.user_details
+                                                ?.profile_pic
+                                            }
+                                            style={{ marginRight: '8px' }}
+                                          />
+                                        ) : (
+                                          <Avatar alt="Profile Initial">
+                                            {lead.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                              0
+                                            )}
+                                          </Avatar>
+                                        )}
+                                        <span
+                                          style={{
+                                            color: '#1a3353',
+                                            fontWeight: 500,
+                                            textTransform: 'none',
+                                          }}
+                                        >
+                                          &nbsp;
+                                          {lead.assigned_to?.[0]?.user_details
+                                            ?.first_name &&
+                                            lead.assigned_to?.[0]?.user_details?.last_name
+                                            ? `${lead.assigned_to[0].user_details.first_name} ${lead.assigned_to[0].user_details.last_name}`
+                                            : lead.assigned_to?.[0]?.user_details
+                                              ?.email || 'Unassigned'}
+                                        </span>
+                                      </div>
+                                      <div
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          marginTop: '10px',
+                                          marginBottom: '10px',
+                                        }}
+                                      >
+                                        <span>Probability:&nbsp;</span>
+                                        <div
+                                          style={{
+                                            flexGrow: 1,
+                                            height: '10px',
+                                            backgroundColor: '#e0e0e0',
+                                            borderRadius: '5px',
+                                            overflow: 'hidden',
+                                          }}
+                                        >
+                                          <div
+                                            style={{
+                                              height: '100%',
+                                              width: `${lead.probability || 0}%`,
+                                              backgroundColor: getColorForProbability(
+                                                lead.probability || 0
+                                              ),
+                                              transition: 'width 0.5s ease',
+                                            }}
+                                          />
+                                        </div>
+                                        <span
+                                          style={{
+                                            color: '#1a3353',
+                                            fontWeight: 500,
+                                            textTransform: 'none',
+                                            marginLeft: '10px',
+                                          }}
+                                        >
+                                          {lead.probability || '---'}%
+                                        </span>
+                                      </div>
+                                    </>
+                                  }
                                 />
                               </div>
-                              <span
-                                style={{
-                                  color: '#1a3353',
-                                  fontWeight: 500,
-                                  textTransform: 'none',
-                                  marginLeft: '10px',
-                                }}
-                              >
-                                {lead.probability || '---'}%
-                              </span>
-                            </div>
-                          </>
-                        }
-                      />
-                    )
-                  )
-                )
-              ) : (
-                <div>{/* <p>No leads available</p> */}</div>
-              )}
-            </div>
-            <div style={columnStyle}>
-              <div
-                style={{ ...headerStyleBase, backgroundColor: '#2ebafb' }}
-                onClick={() => handleHeaderClick('Meeting')}
-              >
-                Meeting
-              </div>
-              {filterLeadsByStatus('meeting').length > 0 ? (
-                filterLeadsByStatus('meeting').map((meeting) => (
-                  <PipelineCard
-                    key={meeting?.id}
-                    leadId={meeting?.id}
-                    title={meeting?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {meeting.opportunity_amount
-                              ? `€${parseFloat(
+                            )}
+                          </Draggable>
+                        ))
+                    ) : (
+                      <div>{/* <p>No leads available</p> */}</div>
+                    )}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+              <div style={columnStyle}>
+                <div
+                  style={{ ...headerStyleBase, backgroundColor: '#2ebafb' }}
+                  onClick={() => handleHeaderClick('Meeting')}
+                >
+                  Meeting
+                </div>
+                {filterLeadsByStatus('meeting').length > 0 ? (
+                  filterLeadsByStatus('meeting').map((meeting) => (
+                    <PipelineCard
+                      key={meeting?.id}
+                      leadId={meeting?.id}
+                      title={meeting?.account_name}
+                      content={
+                        <>
+                          <div>
+                            Value:{' '}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              {meeting.opportunity_amount
+                                ? `€${parseFloat(
                                   meeting.opportunity_amount
                                 ).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
                                 })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {meeting.assigned_to?.[0]?.user_details
-                            ?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                meeting.assigned_to?.[0]?.user_details
-                                  ?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {meeting.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {meeting.assigned_to?.[0]?.user_details
-                              ?.first_name &&
-                            meeting.assigned_to?.[0]?.user_details?.last_name
-                              ? `${meeting.assigned_to[0].user_details.first_name} ${meeting.assigned_to[0].user_details.last_name}`
-                              : meeting.assigned_to?.[0]?.user_details?.email ||
-                                'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
+                                : '---'}
+                            </span>
+                          </div>
                           <div
                             style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
                             }}
                           >
+                            Assignee:&nbsp;{' '}
+                            {meeting.assigned_to?.[0]?.user_details
+                              ?.profile_pic ? (
+                              <Avatar
+                                alt="Profile Picture"
+                                src={
+                                  meeting.assigned_to?.[0]?.user_details
+                                    ?.profile_pic
+                                }
+                                style={{ marginRight: '8px' }}
+                              />
+                            ) : (
+                              <Avatar alt="Profile Initial">
+                                {meeting.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                  0
+                                )}
+                              </Avatar>
+                            )}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              &nbsp;
+                              {meeting.assigned_to?.[0]?.user_details
+                                ?.first_name &&
+                                meeting.assigned_to?.[0]?.user_details?.last_name
+                                ? `${meeting.assigned_to[0].user_details.first_name} ${meeting.assigned_to[0].user_details.last_name}`
+                                : meeting.assigned_to?.[0]?.user_details?.email ||
+                                'Unassigned'}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                              marginBottom: '10px',
+                            }}
+                          >
+                            <span>Probability:&nbsp;</span>
                             <div
                               style={{
-                                height: '100%',
-                                width: `${meeting.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  meeting.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
+                                flexGrow: 1,
+                                height: '10px',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                                overflow: 'hidden',
                               }}
-                            />
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  width: `${meeting.probability || 0}%`,
+                                  backgroundColor: getColorForProbability(
+                                    meeting.probability || 0
+                                  ),
+                                  transition: 'width 0.5s ease',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                marginLeft: '10px',
+                              }}
+                            >
+                              {meeting.probability || '---'}%
+                            </span>
                           </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {meeting.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/* <p>No meetings available</p> */}</div>
-              )}
-            </div>
-            <div style={columnStyle}>
-              <div
-                style={{ ...headerStyleBase, backgroundColor: '#0993f3' }}
-                onClick={() => handleHeaderClick('Opportunities')}
-              >
-                Opportunity
+                        </>
+                      }
+                    />
+                  ))
+                ) : (
+                  <div>{/* <p>No meetings available</p> */}</div>
+                )}
               </div>
-              {filterLeadsByStatus('opportunity').length > 0 ? (
-                filterLeadsByStatus('opportunity').map((opportunity) => (
-                  <PipelineCard
-                    key={opportunity?.id}
-                    leadId={opportunity?.id}
-                    title={opportunity?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {opportunity.opportunity_amount
-                              ? `€${parseFloat(
+              <div style={columnStyle}>
+                <div
+                  style={{ ...headerStyleBase, backgroundColor: '#0993f3' }}
+                  onClick={() => handleHeaderClick('Opportunities')}
+                >
+                  Opportunity
+                </div>
+                {filterLeadsByStatus('opportunity').length > 0 ? (
+                  filterLeadsByStatus('opportunity').map((opportunity) => (
+                    <PipelineCard
+                      key={opportunity?.id}
+                      leadId={opportunity?.id}
+                      title={opportunity?.account_name}
+                      content={
+                        <>
+                          <div>
+                            Value:{' '}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              {opportunity.opportunity_amount
+                                ? `€${parseFloat(
                                   opportunity.opportunity_amount
                                 ).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
                                 })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {opportunity.assigned_to?.[0]?.user_details
-                            ?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                opportunity.assigned_to?.[0]?.user_details
-                                  ?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {opportunity.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {opportunity.assigned_to?.[0]?.user_details
-                              ?.first_name &&
-                            opportunity.assigned_to?.[0]?.user_details
-                              ?.last_name
-                              ? `${opportunity.assigned_to[0].user_details.first_name} ${opportunity.assigned_to[0].user_details.last_name}`
-                              : opportunity.assigned_to?.[0]?.user_details
-                                  ?.email || 'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
+                                : '---'}
+                            </span>
+                          </div>
                           <div
                             style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
                             }}
                           >
+                            Assignee:&nbsp;{' '}
+                            {opportunity.assigned_to?.[0]?.user_details
+                              ?.profile_pic ? (
+                              <Avatar
+                                alt="Profile Picture"
+                                src={
+                                  opportunity.assigned_to?.[0]?.user_details
+                                    ?.profile_pic
+                                }
+                                style={{ marginRight: '8px' }}
+                              />
+                            ) : (
+                              <Avatar alt="Profile Initial">
+                                {opportunity.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                  0
+                                )}
+                              </Avatar>
+                            )}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              &nbsp;
+                              {opportunity.assigned_to?.[0]?.user_details
+                                ?.first_name &&
+                                opportunity.assigned_to?.[0]?.user_details
+                                  ?.last_name
+                                ? `${opportunity.assigned_to[0].user_details.first_name} ${opportunity.assigned_to[0].user_details.last_name}`
+                                : opportunity.assigned_to?.[0]?.user_details
+                                  ?.email || 'Unassigned'}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                              marginBottom: '10px',
+                            }}
+                          >
+                            <span>Probability:&nbsp;</span>
                             <div
                               style={{
-                                height: '100%',
-                                width: `${opportunity.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  opportunity.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
+                                flexGrow: 1,
+                                height: '10px',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                                overflow: 'hidden',
                               }}
-                            />
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  width: `${opportunity.probability || 0}%`,
+                                  backgroundColor: getColorForProbability(
+                                    opportunity.probability || 0
+                                  ),
+                                  transition: 'width 0.5s ease',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                marginLeft: '10px',
+                              }}
+                            >
+                              {opportunity.probability || '---'}%
+                            </span>
                           </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {opportunity.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/*  <p>No opportunities available</p> */}</div>
-              )}
-            </div>
-            <div style={columnStyle}>
-              <div
-                style={{ ...headerStyleBase, backgroundColor: '#0763e5' }}
-                onClick={() => handleHeaderClick('Qualified')}
-              >
-                Qualified
+                        </>
+                      }
+                    />
+                  ))
+                ) : (
+                  <div>{/*  <p>No opportunities available</p> */}</div>
+                )}
               </div>
-              {filterLeadsByStatus('qualified').length > 0 ? (
-                filterLeadsByStatus('qualified').map((qualified) => (
-                  <PipelineCard
-                    key={qualified?.id}
-                    leadId={qualified?.id}
-                    title={qualified?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {qualified.opportunity_amount
-                              ? `€${parseFloat(
+              <div style={columnStyle}>
+                <div
+                  style={{ ...headerStyleBase, backgroundColor: '#0763e5' }}
+                  onClick={() => handleHeaderClick('Qualified')}
+                >
+                  Qualified
+                </div>
+                {filterLeadsByStatus('qualified').length > 0 ? (
+                  filterLeadsByStatus('qualified').map((qualified) => (
+                    <PipelineCard
+                      key={qualified?.id}
+                      leadId={qualified?.id}
+                      title={qualified?.account_name}
+                      content={
+                        <>
+                          <div>
+                            Value:{' '}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              {qualified.opportunity_amount
+                                ? `€${parseFloat(
                                   qualified.opportunity_amount
                                 ).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
                                 })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {qualified.assigned_to?.[0]?.user_details
-                            ?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                qualified.assigned_to?.[0]?.user_details
-                                  ?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {qualified.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {qualified.assigned_to?.[0]?.user_details
-                              ?.first_name &&
-                            qualified.assigned_to?.[0]?.user_details?.last_name
-                              ? `${qualified.assigned_to[0].user_details.first_name} ${qualified.assigned_to[0].user_details.last_name}`
-                              : qualified.assigned_to?.[0]?.user_details
-                                  ?.email || 'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
+                                : '---'}
+                            </span>
+                          </div>
                           <div
                             style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
                             }}
                           >
+                            Assignee:&nbsp;{' '}
+                            {qualified.assigned_to?.[0]?.user_details
+                              ?.profile_pic ? (
+                              <Avatar
+                                alt="Profile Picture"
+                                src={
+                                  qualified.assigned_to?.[0]?.user_details
+                                    ?.profile_pic
+                                }
+                                style={{ marginRight: '8px' }}
+                              />
+                            ) : (
+                              <Avatar alt="Profile Initial">
+                                {qualified.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                  0
+                                )}
+                              </Avatar>
+                            )}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              &nbsp;
+                              {qualified.assigned_to?.[0]?.user_details
+                                ?.first_name &&
+                                qualified.assigned_to?.[0]?.user_details?.last_name
+                                ? `${qualified.assigned_to[0].user_details.first_name} ${qualified.assigned_to[0].user_details.last_name}`
+                                : qualified.assigned_to?.[0]?.user_details
+                                  ?.email || 'Unassigned'}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                              marginBottom: '10px',
+                            }}
+                          >
+                            <span>Probability:&nbsp;</span>
                             <div
                               style={{
-                                height: '100%',
-                                width: `${qualified.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  qualified.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
+                                flexGrow: 1,
+                                height: '10px',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                                overflow: 'hidden',
                               }}
-                            />
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  width: `${qualified.probability || 0}%`,
+                                  backgroundColor: getColorForProbability(
+                                    qualified.probability || 0
+                                  ),
+                                  transition: 'width 0.5s ease',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                marginLeft: '10px',
+                              }}
+                            >
+                              {qualified.probability || '---'}%
+                            </span>
                           </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {qualified.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/* <p>No qualified leads available</p> */}</div>
-              )}
-            </div>
-            <div style={columnStyle}>
-              <div
-                style={{ ...headerStyleBase, backgroundColor: '#0e458b' }}
-                onClick={() => handleHeaderClick('Negotiation')}
-              >
-                Negotiation
+                        </>
+                      }
+                    />
+                  ))
+                ) : (
+                  <div>{/* <p>No qualified leads available</p> */}</div>
+                )}
               </div>
-              {filterLeadsByStatus('negotiation').length > 0 ? (
-                filterLeadsByStatus('negotiation').map((negotiation) => (
-                  <PipelineCard
-                    key={negotiation?.id}
-                    leadId={negotiation?.id}
-                    title={negotiation?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {negotiation.opportunity_amount
-                              ? `€${parseFloat(
+              <div style={columnStyle}>
+                <div
+                  style={{ ...headerStyleBase, backgroundColor: '#0e458b' }}
+                  onClick={() => handleHeaderClick('Negotiation')}
+                >
+                  Negotiation
+                </div>
+                {filterLeadsByStatus('negotiation').length > 0 ? (
+                  filterLeadsByStatus('negotiation').map((negotiation) => (
+                    <PipelineCard
+                      key={negotiation?.id}
+                      leadId={negotiation?.id}
+                      title={negotiation?.account_name}
+                      content={
+                        <>
+                          <div>
+                            Value:{' '}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              {negotiation.opportunity_amount
+                                ? `€${parseFloat(
                                   negotiation.opportunity_amount
                                 ).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
                                 })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {negotiation.assigned_to?.[0]?.user_details
-                            ?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                negotiation.assigned_to?.[0]?.user_details
-                                  ?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {negotiation.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {negotiation.assigned_to?.[0]?.user_details
-                              ?.first_name &&
-                            negotiation.assigned_to?.[0]?.user_details
-                              ?.last_name
-                              ? `${negotiation.assigned_to[0].user_details.first_name} ${negotiation.assigned_to[0].user_details.last_name}`
-                              : negotiation.assigned_to?.[0]?.user_details
-                                  ?.email || 'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
+                                : '---'}
+                            </span>
+                          </div>
                           <div
                             style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
                             }}
                           >
+                            Assignee:&nbsp;{' '}
+                            {negotiation.assigned_to?.[0]?.user_details
+                              ?.profile_pic ? (
+                              <Avatar
+                                alt="Profile Picture"
+                                src={
+                                  negotiation.assigned_to?.[0]?.user_details
+                                    ?.profile_pic
+                                }
+                                style={{ marginRight: '8px' }}
+                              />
+                            ) : (
+                              <Avatar alt="Profile Initial">
+                                {negotiation.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                  0
+                                )}
+                              </Avatar>
+                            )}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              &nbsp;
+                              {negotiation.assigned_to?.[0]?.user_details
+                                ?.first_name &&
+                                negotiation.assigned_to?.[0]?.user_details
+                                  ?.last_name
+                                ? `${negotiation.assigned_to[0].user_details.first_name} ${negotiation.assigned_to[0].user_details.last_name}`
+                                : negotiation.assigned_to?.[0]?.user_details
+                                  ?.email || 'Unassigned'}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                              marginBottom: '10px',
+                            }}
+                          >
+                            <span>Probability:&nbsp;</span>
                             <div
                               style={{
-                                height: '100%',
-                                width: `${negotiation.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  negotiation.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
+                                flexGrow: 1,
+                                height: '10px',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                                overflow: 'hidden',
                               }}
-                            />
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  width: `${negotiation.probability || 0}%`,
+                                  backgroundColor: getColorForProbability(
+                                    negotiation.probability || 0
+                                  ),
+                                  transition: 'width 0.5s ease',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                marginLeft: '10px',
+                              }}
+                            >
+                              {negotiation.probability || '---'}%
+                            </span>
                           </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {negotiation.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/*<p>No negotiations available</p> */}</div>
-              )}
-            </div>
-            <div style={columnStyle}>
-              <div
-                style={{
-                  ...headerStyleBase,
-                  backgroundColor: '#1A3353',
-                  marginRight: '30px',
-                }}
-                onClick={() => handleHeaderClick('Won')}
-              >
-                Won
+                        </>
+                      }
+                    />
+                  ))
+                ) : (
+                  <div>{/*<p>No negotiations available</p> */}</div>
+                )}
               </div>
-              {filterLeadsByStatus('won').length > 0 ? (
-                filterLeadsByStatus('won').map((won) => (
-                  <PipelineCard
-                    key={won?.id}
-                    leadId={won?.id}
-                    title={won?.account_name}
-                    content={
-                      <>
-                        <div>
-                          Value:{' '}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            {won.opportunity_amount
-                              ? `€${parseFloat(
+              <div style={columnStyle}>
+                <div
+                  style={{
+                    ...headerStyleBase,
+                    backgroundColor: '#1A3353',
+                    marginRight: '30px',
+                  }}
+                  onClick={() => handleHeaderClick('Won')}
+                >
+                  Won
+                </div>
+                {filterLeadsByStatus('won').length > 0 ? (
+                  filterLeadsByStatus('won').map((won) => (
+                    <PipelineCard
+                      key={won?.id}
+                      leadId={won?.id}
+                      title={won?.account_name}
+                      content={
+                        <>
+                          <div>
+                            Value:{' '}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              {won.opportunity_amount
+                                ? `€${parseFloat(
                                   won.opportunity_amount
                                 ).toLocaleString(undefined, {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,
                                 })}`
-                              : '---'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                          }}
-                        >
-                          Assignee:&nbsp;{' '}
-                          {won.assigned_to?.[0]?.user_details?.profile_pic ? (
-                            <Avatar
-                              alt="Profile Picture"
-                              src={
-                                won.assigned_to?.[0]?.user_details?.profile_pic
-                              }
-                              style={{ marginRight: '8px' }}
-                            />
-                          ) : (
-                            <Avatar alt="Profile Initial">
-                              {won.assigned_to?.[0]?.user_details?.first_name?.charAt(
-                                0
-                              )}
-                            </Avatar>
-                          )}
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                            }}
-                          >
-                            &nbsp;
-                            {won.assigned_to?.[0]?.user_details?.first_name &&
-                            won.assigned_to?.[0]?.user_details?.last_name
-                              ? `${won.assigned_to[0].user_details.first_name} ${won.assigned_to[0].user_details.last_name}`
-                              : won.assigned_to?.[0]?.user_details?.email ||
-                                'Unassigned'}
-                          </span>
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            marginTop: '10px',
-                            marginBottom: '10px',
-                          }}
-                        >
-                          <span>Probability:&nbsp;</span>
+                                : '---'}
+                            </span>
+                          </div>
                           <div
                             style={{
-                              flexGrow: 1,
-                              height: '10px',
-                              backgroundColor: '#e0e0e0',
-                              borderRadius: '5px',
-                              overflow: 'hidden',
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
                             }}
                           >
+                            Assignee:&nbsp;{' '}
+                            {won.assigned_to?.[0]?.user_details?.profile_pic ? (
+                              <Avatar
+                                alt="Profile Picture"
+                                src={
+                                  won.assigned_to?.[0]?.user_details?.profile_pic
+                                }
+                                style={{ marginRight: '8px' }}
+                              />
+                            ) : (
+                              <Avatar alt="Profile Initial">
+                                {won.assigned_to?.[0]?.user_details?.first_name?.charAt(
+                                  0
+                                )}
+                              </Avatar>
+                            )}
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                              }}
+                            >
+                              &nbsp;
+                              {won.assigned_to?.[0]?.user_details?.first_name &&
+                                won.assigned_to?.[0]?.user_details?.last_name
+                                ? `${won.assigned_to[0].user_details.first_name} ${won.assigned_to[0].user_details.last_name}`
+                                : won.assigned_to?.[0]?.user_details?.email ||
+                                'Unassigned'}
+                            </span>
+                          </div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginTop: '10px',
+                              marginBottom: '10px',
+                            }}
+                          >
+                            <span>Probability:&nbsp;</span>
                             <div
                               style={{
-                                height: '100%',
-                                width: `${won.probability || 0}%`,
-                                backgroundColor: getColorForProbability(
-                                  won.probability || 0
-                                ),
-                                transition: 'width 0.5s ease',
+                                flexGrow: 1,
+                                height: '10px',
+                                backgroundColor: '#e0e0e0',
+                                borderRadius: '5px',
+                                overflow: 'hidden',
                               }}
-                            />
+                            >
+                              <div
+                                style={{
+                                  height: '100%',
+                                  width: `${won.probability || 0}%`,
+                                  backgroundColor: getColorForProbability(
+                                    won.probability || 0
+                                  ),
+                                  transition: 'width 0.5s ease',
+                                }}
+                              />
+                            </div>
+                            <span
+                              style={{
+                                color: '#1a3353',
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                marginLeft: '10px',
+                              }}
+                            >
+                              {won.probability || '---'}%
+                            </span>
                           </div>
-                          <span
-                            style={{
-                              color: '#1a3353',
-                              fontWeight: 500,
-                              textTransform: 'none',
-                              marginLeft: '10px',
-                            }}
-                          >
-                            {won.probability || '---'}%
-                          </span>
-                        </div>
-                      </>
-                    }
-                  />
-                ))
-              ) : (
-                <div>{/* <p>No won leads available</p> */}</div>
-              )}
+                        </>
+                      }
+                    />
+                  ))
+                ) : (
+                  <div>{/* <p>No won leads available</p> */}</div>
+                )}
+              </div>
             </div>
-          </div>
+          </DragDropContext>
         )}
       </div>
     </Box>
