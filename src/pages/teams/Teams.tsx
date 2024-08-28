@@ -17,7 +17,6 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SERVER, TeamsUrl } from '../../services/ApiUrls';
-import PersonIcon from '@mui/icons-material/Person';
 import { fetchData } from '../../components/FetchData';
 import { DeleteModal } from '../../components/DeleteModal';
 
@@ -29,9 +28,10 @@ interface UserDetails {
 }
 
 interface User {
+  id: string;
   is_active: boolean;
   user_details: UserDetails;
-  workload: string; // Add the workload property here
+  workload: string;
   expertise: string;
 }
 
@@ -49,8 +49,12 @@ const GetTeams: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [deleteRowModal, setDeleteRowModal] = useState(false);
+  const [deleteRowModal, setDeleteRowModal] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string>('');
+  const [deleteUserModal, setDeleteUserModal] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [message, setMessage] = useState<string>('');
 
   const fetchTeams = async () => {
     const token = localStorage.getItem('Token');
@@ -78,7 +82,6 @@ const GetTeams: React.FC = () => {
       }
 
       const data = await response.json();
-      console.log('Fetched data:', data);
       setTeams(data.teams);
     } catch (error: any) {
       setError(error.message);
@@ -115,13 +118,52 @@ const GetTeams: React.FC = () => {
         throw new Error(`Error deleting team: ${response.statusText}`);
       }
 
-      // Re-fetch teams after deleting one
       fetchTeams();
     } catch (error: any) {
       setError(error.message);
     }
   };
 
+  const onDeleteUser = async (teamId: string, userId: string) => {
+    const token = localStorage.getItem('Token');
+    const org = localStorage.getItem('org');
+
+    if (!token || !org) {
+      setError('Token or organization information is missing.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${SERVER}${TeamsUrl}${teamId}/user/${userId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': token,
+          'org': org,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error removing user: ${response.statusText}`);
+      }
+      
+      fetchTeams();
+      window.location.reload();
+
+      const data = await response.json();
+      if (response.ok) {
+        setMessage('User removed from team successfully.');
+      } else {
+        setMessage(data.message || 'An error occurred.');
+      }
+    } catch (error: any) {
+      setMessage('Failed to remove user. Please try again later.');
+    }
+  };
+
+  
+  
   const deleteRow = (deleteId: string) => {
     setDeleteRowModal(true);
     setSelectedId(deleteId);
@@ -135,6 +177,31 @@ const GetTeams: React.FC = () => {
   const DeleteItem = async () => {
     await onDelete(selectedId);
     deleteRowModalClose();
+  };
+
+  const deleteUser = (teamId: string, userId: string) => {
+    setDeleteUserModal(true);
+    setSelectedUserId(userId);
+    setSelectedTeamId(teamId);
+  };
+
+  const deleteUserModalClose = () => {
+    setDeleteUserModal(false);
+    setSelectedUserId('');
+    setSelectedTeamId('');
+  };
+
+  const DeleteUserItem = async () => {
+    try {
+      if (selectedUserId && selectedTeamId) {
+        await onDeleteUser(selectedTeamId, selectedUserId);
+        deleteUserModalClose();
+      } else {
+        setError('User ID or Team ID is missing.');
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   if (loading) {
@@ -172,26 +239,18 @@ const GetTeams: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ fontWeight: 'bold' }}>
-                    Email Address
-                  </TableCell>
-                  <TableCell style={{ fontWeight: 'bold' }}>
-                    Team member
-                  </TableCell>
-                  <TableCell style={{ fontWeight: 'bold' }}>
-                    User's status
-                  </TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Email Address</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Team member</TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>User's status</TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>Workload</TableCell>
-                  <TableCell style={{ fontWeight: 'bold' }}>
-                    Expertise
-                  </TableCell>
+                  <TableCell style={{ fontWeight: 'bold' }}>Expertise</TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {team.users.length > 0 ? (
                   team.users.map((user, userIndex) => (
-                    <TableRow key={userIndex}>
+                    <TableRow key={user.id}>
                       <TableCell>
                         <Box display="flex" alignItems="center">
                           <Avatar
@@ -204,32 +263,27 @@ const GetTeams: React.FC = () => {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        {user.user_details.first_name ||
-                        user.user_details.last_name
-                          ? `${user.user_details.first_name ?? ''} ${
-                              user.user_details.last_name ?? ''
-                            }`
+                        {user.user_details.first_name || user.user_details.last_name
+                          ? `${user.user_details.first_name ?? ''} ${user.user_details.last_name ?? ''}`
                           : 'N/A'}
                       </TableCell>
-
-                      <TableCell>
-                        {user.is_active ? 'Active' : 'Inactive'}
-                      </TableCell>
+                      <TableCell>{user.is_active ? 'Active' : 'Inactive'}</TableCell>
                       <TableCell>{user.workload}</TableCell>
                       <TableCell>{user.expertise}</TableCell>
                       <TableCell>
                         <IconButton>
                           <EditIcon />
                         </IconButton>
+                        <IconButton onClick={() => deleteUser(team.id, user.id)}>
+                          <DeleteIcon />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4}>
-                      <Typography variant="body2">
-                        No users in this team.
-                      </Typography>
+                    <TableCell colSpan={6}>
+                      <Typography variant="body2">No users in this team.</Typography>
                     </TableCell>
                   </TableRow>
                 )}
@@ -242,10 +296,19 @@ const GetTeams: React.FC = () => {
         onClose={deleteRowModalClose}
         open={deleteRowModal}
         id={selectedId}
-        modalDialog="Are you sure you want to delete the selected Team?"
+        modalDialog="Are you sure you want to delete this team?"
         modalTitle="Delete Team"
         DeleteItem={DeleteItem}
       />
+      <DeleteModal
+        onClose={deleteUserModalClose}
+        open={deleteUserModal}
+        id={selectedUserId}
+        modalDialog="Are you sure you want to delete this user?"
+        modalTitle="Delete User"
+        DeleteItem={DeleteUserItem}
+      />
+      {message && <Typography variant="body2">{message}</Typography>}
     </Box>
   );
 };
