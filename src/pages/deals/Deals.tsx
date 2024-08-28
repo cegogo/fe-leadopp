@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Avatar, Box, Button, Tabs } from '@mui/material';
+import { Box, Button, Tabs } from '@mui/material';
 import {
   LeadUrl,
   ProfileUrl,
   SERVER,
 } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
-import PipelineCard from './Card';
 import { CustomTab, CustomToolbar } from '../../styles/CssStyled';
 import '../../styles/style.css';
 import { FiPlus } from '@react-icons/all-files/fi/FiPlus';
 import { useNavigate } from 'react-router-dom';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import LeadsColumn from './LeadsColumn';
 import MeetingColumn from './MeetingColumn';
 import OpportunityColumn from './OpportunityColumn';
@@ -33,9 +32,6 @@ const Deals: React.FC = () => {
   const [industries, setIndustries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const filterLeadsByStatus = (status: string) => {
-    return leads.filter((lead) => lead.status === status);
-  };
   const [userRole, setUserRole] = useState<string>(
     localStorage.getItem('role') || ''
   );
@@ -91,42 +87,6 @@ const Deals: React.FC = () => {
     gap: '0',
   };
 
-  const columnStyle: React.CSSProperties = {
-    flex: 1,
-    margin: '0 -2%',
-    border: 0,
-    overflow: 'hidden',
-    position: 'relative',
-  };
-
-  const headerStyleBase: React.CSSProperties = {
-    paddingLeft: '18%',
-    padding: '9px',
-    color: 'white',
-    position: 'relative',
-    clipPath: 'polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%)',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.9)',
-    letterSpacing: '2px',
-    height: '50px',
-    fontSize: '1.5rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-
-  const getColorForProbability = (probability: number) => {
-    if (probability <= 20) return '#da2700'; // Red
-    if (probability <= 40) return '#fe8701'; // Orange
-    if (probability <= 60) return '#fcf000'; // Yellow
-    if (probability <= 80) return '#87ea00'; // Light green
-    return '#00b308'; // Green
-  };
-
-  const handleHeaderClick = (component: string) => {
-    navigate(`/app/deals/${component}`);
-  };
 
   const onAddHandle = () => {
     if (!loading) {
