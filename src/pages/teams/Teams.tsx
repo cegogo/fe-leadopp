@@ -19,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { SERVER, TeamsUrl } from '../../services/ApiUrls';
 import { fetchData } from '../../components/FetchData';
 import { DeleteModal } from '../../components/DeleteModal';
+import AddTeamMember from './AddTeamMember';
 
 interface UserDetails {
   email: string;
@@ -163,7 +164,6 @@ const GetTeams: React.FC = () => {
   };
 
   
-  
   const deleteRow = (deleteId: string) => {
     setDeleteRowModal(true);
     setSelectedId(deleteId);
@@ -234,6 +234,9 @@ const GetTeams: React.FC = () => {
           <IconButton onClick={() => deleteRow(team.id)}>
             <DeleteIcon />
           </IconButton>
+          
+          <AddTeamMember/>
+                        
           <Divider style={{ margin: '16px 0' }} />
           <TableContainer component={Paper}>
             <Table>

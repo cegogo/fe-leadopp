@@ -1,19 +1,12 @@
 import React, { useState } from "react";
 import { SERVER, TeamsUrl } from "../../services/ApiUrls";
 
-interface AddTeamMemberProps {
-  open: boolean;
-  onClose: () => void;
-  teamId: string | null;
-}
-
-const AddTeamMember: React.FC<AddTeamMemberProps> = ({ open, onClose, teamId }) => {
-  // State to hold user ID
+const AddTeamMember: React.FC = () => {
   const [userId, setUserId] = useState<string>("");
+  const [teamId, setTeamId] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  // Function to handle the POST request to add a user to a team
   const handleAddUser = async () => {
     const token = localStorage.getItem('Token');
     const org = localStorage.getItem('org');
@@ -46,6 +39,7 @@ const AddTeamMember: React.FC<AddTeamMemberProps> = ({ open, onClose, teamId }) 
       } else {
         setMessage(data.message || "An error occurred while adding the user.");
       }
+      window.location.reload();
     } catch (error) {
       setMessage("An error occurred while making the request.");
       console.error("Error:", error);
@@ -57,12 +51,19 @@ const AddTeamMember: React.FC<AddTeamMemberProps> = ({ open, onClose, teamId }) 
       <h1>Add User to Team</h1>
       <input
         type="text"
+        placeholder="Team ID"
+        value={teamId}
+        onChange={(e) => setTeamId(e.target.value)}
+      />
+      <input
+        type="text"
         placeholder="User ID"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
       />
       <button onClick={handleAddUser}>Add User</button>
       {message && <p>{message}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
