@@ -68,7 +68,7 @@ const QualifiedColumn: React.FC = () => {
         };
 
         fetchUserProfile();
-    }, []);
+    }, [profileId]);
 
     const columnStyle: React.CSSProperties = {
         display: 'flex',
@@ -123,12 +123,14 @@ const QualifiedColumn: React.FC = () => {
         };
 
         try {
-            const res = await fetchData(
-                `${LeadUrl}/?limit=50&page=${currentPage}`,
-                'GET',
-                null as any,
-                Header
-            ); // Added page parameter for pagination
+            let url = `${LeadUrl}/?status=qualified`;
+            
+            // User-specific logic
+            if (userRole !== 'ADMIN') {
+              url += `&assigned_to=${profileId}`;
+            }
+        
+            const res = await fetchData(url, 'GET', null as any, Header);
 
             if (!res.error) {
                 setLeads(res?.open_leads?.open_leads || []);
@@ -172,8 +174,8 @@ const QualifiedColumn: React.FC = () => {
             >
                 Qualified
             </div>
-            {filterLeadsByStatus('qualified').length > 0 ? (
-                filterLeadsByStatus('qualified').map((qualified) => (
+            {leads.length > 0 ? (
+                leads.map((qualified) => (
                     <PipelineCard
                         key={qualified?.id}
                         leadId={qualified?.id}

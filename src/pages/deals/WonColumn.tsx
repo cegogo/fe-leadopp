@@ -68,7 +68,7 @@ const WonColumn: React.FC = () => {
         };
 
         fetchUserProfile();
-    }, []);
+    }, [profileId]);
 
     const columnStyle: React.CSSProperties = {
         display: 'flex',
@@ -123,12 +123,14 @@ const WonColumn: React.FC = () => {
         };
 
         try {
-            const res = await fetchData(
-                `${LeadUrl}/?limit=50&page=${currentPage}`,
-                'GET',
-                null as any,
-                Header
-            ); // Added page parameter for pagination
+            let url = `${LeadUrl}/?status=won`;
+            
+            // User-specific logic
+            if (userRole !== 'ADMIN') {
+              url += `&assigned_to=${profileId}`;
+            }
+        
+            const res = await fetchData(url, 'GET', null as any, Header);
 
             if (!res.error) {
                 setLeads(res?.open_leads?.open_leads || []);
@@ -176,8 +178,8 @@ const WonColumn: React.FC = () => {
             >
                 Won
             </div>
-            {filterLeadsByStatus('won').length > 0 ? (
-                filterLeadsByStatus('won').map((won) => (
+            {leads.length > 0 ? (
+                leads.map((won) => (
                     <PipelineCard
                         key={won?.id}
                         leadId={won?.id}
