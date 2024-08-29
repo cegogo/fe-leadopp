@@ -234,9 +234,10 @@ const GetTeams: React.FC = () => {
           <IconButton onClick={() => deleteRow(team.id)}>
             <DeleteIcon />
           </IconButton>
-          
+          <IconButton>
           <AddTeamMember/>
-                        
+          </IconButton>
+                     
           <Divider style={{ margin: '16px 0' }} />
           <TableContainer component={Paper}>
             <Table>
