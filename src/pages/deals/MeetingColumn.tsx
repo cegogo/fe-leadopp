@@ -68,7 +68,7 @@ const MeetingColumn: React.FC = () => {
         };
 
         fetchUserProfile();
-    }, []);
+    }, [profileId]);
 
     const columnStyle: React.CSSProperties = {
         display: 'flex',
@@ -123,12 +123,14 @@ const MeetingColumn: React.FC = () => {
         };
 
         try {
-            const res = await fetchData(
-                `${LeadUrl}/?limit=50&page=${currentPage}`,
-                'GET',
-                null as any,
-                Header
-            ); // Added page parameter for pagination
+            let url = `${LeadUrl}/?status=meeting`;
+            
+            // User-specific logic
+            if (userRole !== 'ADMIN') {
+              url += `&assigned_to=${profileId}`;
+            }
+        
+            const res = await fetchData(url, 'GET', null as any, Header);
 
             if (!res.error) {
                 setLeads(res?.open_leads?.open_leads || []);
@@ -146,16 +148,6 @@ const MeetingColumn: React.FC = () => {
                     setCurrentPage(res?.pagination.currentPage || 1);
                     setTotalPages(res?.pagination.totalPages || 1);
                 }
-
-                // Handle user-specific logic
-                if (userRole === 'ADMIN') {
-                    setLeads(res?.open_leads?.open_leads);
-                } else {
-                    const userLeads = res?.open_leads?.open_leads?.filter(
-                        (lead: any) => lead.assigned_to?.[0]?.id === profileId
-                    );
-                    setLeads(userLeads);
-                }
             }
             setLoading(false); // Set loading to false after data is fetched
         } catch (error) {
@@ -172,8 +164,8 @@ const MeetingColumn: React.FC = () => {
             >
                 Meeting
             </div>
-            {filterLeadsByStatus('meeting').length > 0 ? (
-                filterLeadsByStatus('meeting').map((meeting) => (
+            {leads.length > 0 ? (
+                leads.map((meeting) => (
                     <PipelineCard
                         key={meeting?.id}
                         leadId={meeting?.id}
