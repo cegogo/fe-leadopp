@@ -265,7 +265,7 @@ export default function Leads(props: any) {
       const openOffset = (openCurrentPage - 1) * openRecordsPerPage;
       const closeOffset = (closedCurrentPage - 1) * closedRecordsPerPage;
   
-      let url = `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset}&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}&search=${searchQuery}`;
+      let url = `${LeadUrl}/?offset=${tab === 'open' ? openOffset : closeOffset}&limit=${tab === 'open' ? openRecordsPerPage : closedRecordsPerPage}&status=won&search=${searchQuery}`;
   
       if (userRole !== 'ADMIN') {
         url += `&assigned_to=${profileId}`;
@@ -444,9 +444,8 @@ export default function Leads(props: any) {
 
       const matchesUnassignedFilter =
         !showUnassignedOnly || !lead.assigned_to?.length;
-      const matchesStatusFilter = lead.status === 'won';
 
-      return matchesSearch && matchesUnassignedFilter && matchesStatusFilter;
+      return matchesSearch && matchesUnassignedFilter;
     })
     .sort((a, b) => {
       const aValue =
