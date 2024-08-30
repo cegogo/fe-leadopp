@@ -50,6 +50,8 @@ const AddModal: React.FC<AddModalProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           padding: '15px',
+          marginTop:'10px',
+          fontWeight:'bold !important'
         }}
       >
         {title}
@@ -63,7 +65,7 @@ const AddModal: React.FC<AddModalProps> = ({
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
-          padding: '15px',
+          padding: '5px',
         }}
       >
         <Button

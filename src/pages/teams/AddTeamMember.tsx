@@ -154,10 +154,12 @@ const AddTeamMember: React.FC = () => {
         {loading && <p>Loading...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
         <div>
-          <label htmlFor="user-select">Select User:</label>
+          <label 
+          style={{marginRight:'10px', marginLeft: '6px', }}
+          htmlFor="user-select">Select User:</label>
 
           <select
-          
+          style={{borderRadius:'7px'}}
             id="user-select"
             value={selectedUserId || ""}
             onChange={(e) => setSelectedUserId(e.target.value)}
@@ -177,9 +179,11 @@ const AddTeamMember: React.FC = () => {
             )}
           </select>
         </div>
-        <div>
+        <div 
+        style={{marginRight:'10px', marginLeft: '6px', marginTop:'6px', }}>
           <label htmlFor="team-select">Select Team:</label>
           <select
+           style={{marginLeft:'8px', borderRadius:'7px',width:'141px'}}
             id="team-select"
             value={selectedTeamId || ""}
             onChange={(e) => setSelectedTeamId(e.target.value)}

@@ -275,9 +275,9 @@ const GetTeams: React.FC = () => {
                       <TableCell>{user.workload}</TableCell>
                       <TableCell>{user.expertise}</TableCell>
                       <TableCell>
-                        <IconButton>
+                        {/* <IconButton>
                           <EditIcon />
-                        </IconButton>
+                        </IconButton> */}
                         <IconButton onClick={() => deleteUser(team.id, user.id)}>
                           <DeleteIcon />
                         </IconButton>
