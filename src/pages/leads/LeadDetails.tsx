@@ -622,7 +622,7 @@ function LeadDetails(props: any) {
         throw new Error(`Error deleting comment: ${response.statusText}`);
       }
 
-      // Re-fetch teams after deleting one
+      // Re-fetch comments after deleting one
       sendComment();
       window.location.reload();
     } catch (error: any) {
